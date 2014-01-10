@@ -18,13 +18,13 @@ int initResources(){
 	GLint linkOK = GL_FALSE;
 
 	//Create a vertex shader
-	GLuint vs = createShader("vertex.glsl",GL_VERTEX_SHADER);
+	GLuint vs = createShader("./data/shaders/vertex.glsl",GL_VERTEX_SHADER);
 	if(vs == 0){
 		return 0;
 	}
 
 	//Create a fragment shader
-	GLuint fs = createShader("fragment.glsl",GL_FRAGMENT_SHADER);
+	GLuint fs = createShader("./data/shaders/fragment.glsl",GL_FRAGMENT_SHADER);
 	if(fs == 0){
 		return 0;
 	}

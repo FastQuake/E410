@@ -88,8 +88,10 @@ bool loadIQMMesh(string filename, iqmheader header, Model &target, unsigned char
 		iqmmesh &m = meshes[i];
 		cout << "LOADING MESH: " << &str[m.name] << endl;
 		cout << "WITH TEXTURE: " << &str[m.material] << endl;
+		string texture = "./data/textures/";
+		texture += &str[m.material];
 		sf::Image img;
-		img.loadFromFile(&str[m.material]);
+		img.loadFromFile(texture);
 		glGenTextures(1,&texid);
 		glBindTexture(GL_TEXTURE_2D, texid);
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR);

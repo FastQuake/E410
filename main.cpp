@@ -58,7 +58,7 @@ int main(int argc, char *argv[]){
 	initData();
 
 	Model mesh;
-	loadIQM("mrfixit.iqm",mesh);
+	loadIQM("./data/models/mrfixit.iqm",mesh);
 	float currentFrame = 0;
 
 	glEnable(GL_BLEND);
