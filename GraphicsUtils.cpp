@@ -131,7 +131,7 @@ GLint ShaderProgram::getAttribute(string name){
 	GLint attribute = glGetAttribLocation(programID,cstr);
 	if(attribute == -1){
 		cerr << "Could not find attribute " << name << endl;
-		return 0;
+		return -1;
 	}
 
 	return attribute;
@@ -142,7 +142,7 @@ GLint ShaderProgram::setAttribute(string name){
 	GLint attribute = glGetAttribLocation(programID,cstr);
 	if(attribute == -1){
 		cerr << "Could not find attribute " << name << endl;
-		return 0;
+		return -1;
 	}
 
 	attributes.push_back(attribute);
@@ -158,7 +158,7 @@ GLint ShaderProgram::getUniform(string name){
 	GLint uniform = glGetUniformLocation(programID,cstr);
 	if(uniform == -1){
 		cerr << "Could not find uniform " << name << endl;
-		return 0;
+		return -1;
 	}
 
 	return uniform;
@@ -169,7 +169,7 @@ GLint ShaderProgram::setUniform(string name){
 	GLint uniform = glGetUniformLocation(programID,cstr);
 	if(uniform == -1){
 		cerr << "Could not find uniform " << name << endl;
-		return 0;
+		return -1;
 	}
 
 	uniforms.push_back(uniform);
