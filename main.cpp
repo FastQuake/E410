@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "shaderutils.hpp"
+#include "GraphicsUtils.hpp"
 #include "model.hpp"
 using namespace std;
 
@@ -19,22 +19,6 @@ struct attributes {
 	GLfloat coord3d[3];
 	GLfloat colour[3];
 };
-
-void initData(){
-	attribute_coord3d = getAttribute("coord3d");
-	attribute_texcoord = getAttribute("texcoord");
-	attribute_vweight = getAttribute("vweight");
-	//attribute_normal = getAttribute("normal");
-	//attribute_vtangent = getAttribute("vtangent");
-	attribute_vbones = getAttribute("vbones");
-	uniform_mvp = getUniform("mvp");
-	uniform_bonemats = getUniform("bonemats");
-}
-
-void clearResources(){
-	glDeleteProgram(programShader);
-	glDeleteBuffers(1,&vboTriangle);
-}
 
 int main(int argc, char *argv[]){
 	sf::ContextSettings cs;
@@ -54,8 +38,15 @@ int main(int argc, char *argv[]){
 		return EXIT_FAILURE;
 	}
 
-	initResources();
-	initData();
+	ShaderProgram prg("./data/shaders/vertex.glsl",
+			"./data/shaders/fragment.glsl");
+	prg.setAttribute("coord3d");
+	prg.setAttribute("texcoord");
+	prg.setAttribute("vweight");
+	prg.setAttribute("vbones");
+	prg.setUniform("mvp");
+	prg.setUniform("bonemats");
+	prg.setUniform("texture");
 
 	Model mesh;
 	loadIQM("./data/models/mrfixit.iqm",mesh);
@@ -148,12 +139,11 @@ int main(int argc, char *argv[]){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//Do all drawing here
-		glUniformMatrix4fv(uniform_mvp,1,GL_FALSE,glm::value_ptr(mvp));
+		glUseProgram(prg.getID());
+		glUniformMatrix4fv(prg.getUniform(0),1,GL_FALSE,glm::value_ptr(mvp));
 
-		mesh.draw();
+		mesh.draw(&prg);
 
 		window.display();
 	}
-
-	clearResources();
 }

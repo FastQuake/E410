@@ -10,6 +10,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/norm.hpp>
 #include "iqm.hpp"
+#include "GraphicsUtils.hpp"
 
 struct vertex{
     GLfloat position[3];
@@ -42,7 +43,7 @@ class Model {
 		void setVBO(GLuint vbo);
 		void setTEXID(GLuint id);
 
-		void draw();
+		void draw(ShaderProgram *prg);
 		void animate(float currentframe);
 };
 

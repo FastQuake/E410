@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <SFML/Graphics.hpp>
 #include "model.hpp"
-#include "shaderutils.hpp"
 using namespace std;
 
 
@@ -302,32 +301,32 @@ void Model::animate(float currentframe){
 	}
 }
 
-void Model::draw(){
+void Model::draw(ShaderProgram *prg){
 	//shadow shit
 	//GLuint scoord3d = glGetAttribLocation(depthShader,"coord3d");
 	//GLuint scoord3d = glGetAttribLocation(depthShader,"coord3d");
 
-	glUseProgram(programShader);
+	glUseProgram(prg->getID());
 	glm::mat3x4 outframe3x4[outframe.size()];
 	for(int i=0;i<outframe.size();i++)
 		outframe3x4[i] = glm::mat3x4(outframe[i]);
 
 	GLsizei arrsize = outframe.size(); //OpenGL will complain if I feed it a size_t
 	if(frames.size() > 0)
-		glUniformMatrix3x4fv(uniform_bonemats, arrsize, GL_FALSE, glm::value_ptr(outframe3x4[0]));
+		glUniformMatrix3x4fv(prg->getUniform(1), arrsize, GL_FALSE, glm::value_ptr(outframe3x4[0]));
 
 	glBindBuffer(GL_ARRAY_BUFFER,verts_vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tris_ebo);
 	vertex *vert = NULL;
 	glVertexAttribPointer(
-			attribute_coord3d,
+			prg->getAttribute(0),
 			3,
 			GL_FLOAT,
 			GL_FALSE,
 			sizeof(vertex),
 			&vert->position);
 	glVertexAttribPointer(
-			attribute_texcoord,
+			prg->getAttribute(1),
 			2,
 			GL_FLOAT,
 			GL_FALSE,
@@ -335,36 +334,37 @@ void Model::draw(){
 			&vert->texcoord);
 	if(frames.size() > 0){
 		glVertexAttribPointer(
-				attribute_vweight,
+				prg->getAttribute(2),
 				4,
 				GL_UNSIGNED_BYTE,
 				GL_TRUE,
 				sizeof(vertex),
 				&vert->blendweight);
 		glVertexAttribPointer(
-				attribute_vbones,
+				prg->getAttribute(3),
 				4,
 				GL_UNSIGNED_BYTE,
 				GL_FALSE,
 				sizeof(vertex),
 				&vert->blendindex);
 	}
-	glEnableVertexAttribArray(attribute_coord3d);
-	glEnableVertexAttribArray(attribute_texcoord);
-	glEnableVertexAttribArray(attribute_vweight);
-	glEnableVertexAttribArray(attribute_vbones);
+	glEnableVertexAttribArray(prg->getAttribute(0));
+	glEnableVertexAttribArray(prg->getAttribute(1));
+	glEnableVertexAttribArray(prg->getAttribute(2));
+	glEnableVertexAttribArray(prg->getAttribute(3));
 
 	iqmtriangle *tris = NULL;
 	for(int i=0;i<meshes.size();i++){
 		iqmmesh &m = meshes[i];
 		glBindTexture(GL_TEXTURE_2D, textureIDS[i]);
+		glUniform1i(prg->getUniform(2),0);
 		glDrawElements(GL_TRIANGLES, 3*m.num_triangles, GL_UNSIGNED_INT, &tris[m.first_triangle]);
 	}
 
-	glDisableVertexAttribArray(attribute_coord3d);
-	glDisableVertexAttribArray(attribute_texcoord);
-	glDisableVertexAttribArray(attribute_vweight);
-	glDisableVertexAttribArray(attribute_vbones);
+	glDisableVertexAttribArray(prg->getAttribute(0));
+	glDisableVertexAttribArray(prg->getAttribute(1));
+	glDisableVertexAttribArray(prg->getAttribute(2));
+	glDisableVertexAttribArray(prg->getAttribute(3));
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
 }
