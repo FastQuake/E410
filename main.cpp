@@ -9,12 +9,6 @@
 #include "model.hpp"
 using namespace std;
 
-GLuint vboTriangle;
-GLuint vboColour;
-GLint attribute_texcoord, attribute_coord3d, attribute_vweight, 
-	  attribute_vtangent, attribute_normal,attribute_vbones;
-GLint uniform_texture, uniform_mvp, uniform_bonemats;
-
 struct attributes {
 	GLfloat coord3d[3];
 	GLfloat colour[3];
