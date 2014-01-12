@@ -1,0 +1,41 @@
+#include "GuiManager.hpp"
+using namespace std;
+
+GuiManager::GuiManager(InputManager *im){
+	this->im = im;
+}
+
+void GuiManager::add(GuiElement *element){
+	elements.push_back(element);
+}
+
+void GuiManager::update(){
+	bool lock = false;
+	for(int i=0;i<elements.size();i++){
+		if(elements.at(i)->alive == false){
+			elements.erase(elements.begin() + i);
+			continue;
+		}
+
+		if(elements.at(i)->updates){
+			elements.at(i)->update(im);
+		}
+
+		lock = elements.at(i)->locks;
+	}
+	if(lock){
+		im->lockToGui(true);
+	} else {
+		im->lockToGui(false);
+	}
+}
+
+void GuiManager::draw(sf::RenderWindow *screen){
+	screen->pushGLStates();
+	for(int i=0;i<elements.size();i++){
+		if(elements.at(i)->visible){
+			elements.at(i)->draw(screen);
+		}
+	}
+	screen->popGLStates();
+}

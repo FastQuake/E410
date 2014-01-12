@@ -10,6 +10,7 @@
 #include "InputManager.hpp"
 #include "GUI/GuiManager.hpp"
 #include "GUI/Box.hpp"
+#include "GUI/TextBox.hpp"
 using namespace std;
 
 struct attributes {
@@ -31,11 +32,13 @@ int main(int argc, char *argv[]){
 	sf::Event event;
 
 	Box box(sf::Vector2f(100,100),sf::Vector2f(100,100),sf::Color(150,10,30));
+	TextBox text(sf::Vector2f(100,100),20);
 
 	InputManager im(&window);
 	
 	GuiManager gui(&im);
 	gui.add(&box);
+	gui.add(&text);
 
 	GLenum glewStatus = glewInit();
 	if(glewStatus != GLEW_OK){

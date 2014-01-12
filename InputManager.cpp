@@ -86,7 +86,9 @@ void InputManager::addInput(string input){
 	if(inputString.size() > 512){
 		inputString = "";
 	}
-	inputString += input;
+	if(input != "\r"){
+		inputString += input;
+	}
 }
 
 string InputManager::getString(){

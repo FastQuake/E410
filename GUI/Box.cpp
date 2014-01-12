@@ -11,6 +11,7 @@ Box::Box(sf::Vector2f pos, sf::Vector2f size, sf::Color colour) :
 		visible = true;
 		updates = false;
 		alive = true;
+		locks = false;
 }
 
 void Box::draw(sf::RenderWindow *screen){
