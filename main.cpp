@@ -5,20 +5,22 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <lua.hpp>
+#include "globals.hpp"
 #include "GraphicsUtils.hpp"
 #include "model.hpp"
 #include "InputManager.hpp"
-#include "GUI/GuiManager.hpp"
-#include "GUI/Box.hpp"
-#include "GUI/TextBox.hpp"
+#include "GUI/Console.hpp"
+#include "Lua/luabinding.hpp"
 using namespace std;
 
-struct attributes {
-	GLfloat coord3d[3];
-	GLfloat colour[3];
-};
+Console *global_con;
 
 int main(int argc, char *argv[]){
+	//Create lua vm
+	lua_State *l = luaL_newstate();
+	bindFunctions(l);
+
 	sf::ContextSettings cs;
 	cs.majorVersion = 3;
 	cs.minorVersion = 0;
@@ -31,19 +33,15 @@ int main(int argc, char *argv[]){
 	window.setVerticalSyncEnabled(true);
 	sf::Event event;
 
-	Box box(sf::Vector2f(100,100),sf::Vector2f(100,100),sf::Color(150,10,30));
-	TextBox text(sf::Vector2f(100,100),20,sf::Color::White);
-	ScrollText scroll(sf::Vector2f(0,0),sf::Vector2i(20,4),sf::Color::White);
-
-	scroll.println("Hello lucas rocks");
-	scroll.println("This should be on the second line or something");
-
 	InputManager im(&window);
+
+	Console con(l,sf::Vector2f(0,0),
+			sf::Color(50,50,50),sf::Color::White);
+
+	global_con = &con;
 	
 	GuiManager gui(&im);
-	gui.add(&box);
-	gui.add(&text);
-	gui.add(&scroll);
+	gui.add(&con);
 
 	GLenum glewStatus = glewInit();
 	if(glewStatus != GLEW_OK){

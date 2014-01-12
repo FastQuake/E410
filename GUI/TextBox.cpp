@@ -47,7 +47,10 @@ void TextBox::updateString(string input){
 }
 
 string TextBox::getString(){
-	return textString;
+	string out = textString;
+	textString = "";
+	textPos = 0;
+	return out;
 }
 
 void TextBox::update(InputManager *im){
@@ -126,6 +129,8 @@ void ScrollText::print(string text){
 			textPos.x = 0;
 			textPos.y++;
 			lines.push_back("");
+		} else if(c == '\t'){
+			textPos.x += 4;
 		} else{
 			textPos.x++;
 		}
@@ -140,8 +145,6 @@ void ScrollText::print(string text){
 		lines.erase(lines.begin());
 		textPos.y--;
 	}
-
-	cout << "Size is " << lines.size() << endl;
 }
 
 void ScrollText::println(string text){

@@ -1,7 +1,7 @@
 SRCS = $(wildcard *.cpp) $(wildcard */*.cpp)
 OBJS = $(patsubst %.cpp,%.o,$(SRCS))
 CXX = g++
-LD_FLAGS = -lsfml-system -lsfml-window -lsfml-graphics -lGLEW -lGL 
+LD_FLAGS = -lsfml-system -lsfml-window -lsfml-graphics -lGLEW -lGL -llua 
 CC_FLAGS = -g
 TITLE = e410
 
