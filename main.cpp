@@ -8,9 +8,9 @@
 #include "GraphicsUtils.hpp"
 #include "model.hpp"
 #include "InputManager.hpp"
+#include "GUI/GuiManager.hpp"
+#include "GUI/Box.hpp"
 using namespace std;
-
-InputManager im;
 
 struct attributes {
 	GLfloat coord3d[3];
@@ -30,7 +30,12 @@ int main(int argc, char *argv[]){
 	window.setVerticalSyncEnabled(true);
 	sf::Event event;
 
-	im.setWindow(&window);
+	Box box(sf::Vector2f(100,100),sf::Vector2f(100,100),sf::Color(150,10,30));
+
+	InputManager im(&window);
+	
+	GuiManager gui(&im);
+	gui.add(&box);
 
 	GLenum glewStatus = glewInit();
 	if(glewStatus != GLEW_OK){
@@ -132,6 +137,9 @@ int main(int argc, char *argv[]){
 		glm::mat4 mvp = projection * view * model; //* anim;
 		if(spin) mvp *= anim;
 
+		//Updating code
+		gui.update();
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//Do all drawing here
@@ -139,6 +147,9 @@ int main(int argc, char *argv[]){
 		glUniformMatrix4fv(prg.getUniform(0),1,GL_FALSE,glm::value_ptr(mvp));
 
 		mesh.draw(&prg);
+
+		//Do sfml drawing here
+		gui.draw(&window);
 
 		window.display();
 	}
