@@ -7,7 +7,10 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "GraphicsUtils.hpp"
 #include "model.hpp"
+#include "InputManager.hpp"
 using namespace std;
+
+InputManager im;
 
 struct attributes {
 	GLfloat coord3d[3];
@@ -24,7 +27,10 @@ int main(int argc, char *argv[]){
 	int width = 800;
 	int height = 600;
 	sf::RenderWindow window(sf::VideoMode(width,height),"SPACE!!!", sf::Style::Default, cs);
+	window.setVerticalSyncEnabled(true);
 	sf::Event event;
+
+	im.setWindow(&window);
 
 	GLenum glewStatus = glewInit();
 	if(glewStatus != GLEW_OK){
@@ -74,38 +80,34 @@ int main(int argc, char *argv[]){
 				height = event.size.height;
 				glViewport(0,0,width,height);
 			}
-			if(event.type == sf::Event::KeyPressed) {
-				if(event.key.code == sf::Keyboard::Left)
-					if(currentFrame>0)
-						currentFrame--;
-				if(event.key.code == sf::Keyboard::Right)
-					currentFrame++;
-				if(event.key.code == sf::Keyboard::M)
-					animate = !animate;
-				if(event.key.code == sf::Keyboard::P)
-					spin = !spin;
-				if(event.key.code == sf::Keyboard::O)
-					ortho = !ortho;
+			if(event.type == sf::Event::GainedFocus){
+				im.setFocus(true);
+			}
+			if(event.type == sf::Event::LostFocus){
+				im.setFocus(false);
+			}
+			if(event.type == sf::Event::TextEntered){
+				im.addInput(sf::String(event.text.unicode));
 			}
 		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
-			cameraPos.y++;
+
+		if(im.isKeyDown(sf::Keyboard::Left)){
+			if(currentFrame>0){
+				currentFrame--;
+			}
 		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
-			cameraPos.x--;
+		if(im.isKeyDown(sf::Keyboard::Right)){
+			if(currentFrame < mesh.numFrames){
+				currentFrame++;
+			}
 		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
-			cameraPos.y--;
+		if(im.isKeyDown(sf::Keyboard::M)){
+			animate = !animate;
 		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
-			cameraPos.x++;
+		if(im.isKeyDown(sf::Keyboard::P)){
+			spin = !spin;
 		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)){
-			cameraPos.z--;
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)){
-			cameraPos.z++;
-		}
+
 		//Uncomment this to play the animation normally
 		if(animate){
 				float timey = time.getElapsedTime().asMilliseconds();
