@@ -32,13 +32,18 @@ int main(int argc, char *argv[]){
 	sf::Event event;
 
 	Box box(sf::Vector2f(100,100),sf::Vector2f(100,100),sf::Color(150,10,30));
-	TextBox text(sf::Vector2f(100,100),20);
+	TextBox text(sf::Vector2f(100,100),20,sf::Color::White);
+	ScrollText scroll(sf::Vector2f(0,0),sf::Vector2i(20,4),sf::Color::White);
+
+	scroll.println("Hello lucas rocks");
+	scroll.println("This should be on the second line or something");
 
 	InputManager im(&window);
 	
 	GuiManager gui(&im);
 	gui.add(&box);
 	gui.add(&text);
+	gui.add(&scroll);
 
 	GLenum glewStatus = glewInit();
 	if(glewStatus != GLEW_OK){

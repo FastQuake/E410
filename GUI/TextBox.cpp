@@ -1,12 +1,14 @@
 #include "TextBox.hpp"
 using namespace std;
 
-TextBox::TextBox(sf::Vector2f pos, int length):
+TextBox::TextBox(sf::Vector2f pos, int length, sf::Color colour):
 rect(sf::Vector2f(7,14)){
 	font.loadFromFile("./data/fonts/DejaVuSansMono.ttf");
 	this->length = length;
 	this->pos = pos;
 	inputTimer.restart();
+	blinkTimer.restart();
+	drawCursor = false;
 	
 	textPos = 0;
 	textString = "";
@@ -14,12 +16,12 @@ rect(sf::Vector2f(7,14)){
 	text.setFont(font);
 	text.setCharacterSize(12);
 	text.setStyle(sf::Text::Regular);
-	text.setColor(sf::Color::White);
+	text.setColor(colour);
 	text.setString(textString);
 	text.setPosition(pos.x,pos.y);
 
 	rect.setPosition(pos.x,pos.y);
-	rect.setFillColor(sf::Color::Red);
+	rect.setFillColor(colour);
 	rect.setOutlineThickness(0);
 
 	visible = true;
@@ -84,6 +86,85 @@ void TextBox::update(InputManager *im){
 }
 
 void TextBox::draw(sf::RenderWindow *screen){
-	screen->draw(rect);
+	if(blinkTimer.getElapsedTime().asMilliseconds() > 500){
+		drawCursor = !drawCursor;
+		blinkTimer.restart();
+	}
+	if(drawCursor){
+		screen->draw(rect);
+	}
 	screen->draw(text);
+}
+
+ScrollText::ScrollText(sf::Vector2f pos, sf::Vector2i size, 
+		sf::Color colour){
+	font.loadFromFile("./data/fonts/DejaVuSansMono.ttf");	
+
+	this->pos = pos;
+	this->size = size;
+	textPos = sf::Vector2i(0,0);
+	lines.push_back("");
+	history = 500;
+
+	text.setFont(font);
+	text.setCharacterSize(12);
+	text.setStyle(sf::Text::Regular);
+	text.setColor(colour);
+	text.setPosition(pos.x,pos.y);
+
+	visible = true;
+	updates = true;
+	alive = true;
+	locks = true;
+}
+
+void ScrollText::print(string text){
+	for(int i=0;i<text.length();i++){
+		char c = text.at(i);
+		lines.at(textPos.y) += c;
+		if(c == '\n'){
+			textPos.x = 0;
+			textPos.y++;
+			lines.push_back("");
+		} else{
+			textPos.x++;
+		}
+		if(textPos.x > size.x){
+			textPos.x = 0;
+			textPos.y++;
+			lines.push_back("");
+		}
+	}
+
+	while(lines.size() > history){
+		lines.erase(lines.begin());
+		textPos.y--;
+	}
+
+	cout << "Size is " << lines.size() << endl;
+}
+
+void ScrollText::println(string text){
+	print(text+"\n");
+}
+
+void ScrollText::update(InputManager *im){
+}
+
+void ScrollText::draw(sf::RenderWindow *screen){
+	if(lines.size() < size.y){
+		for(int i=0;i<lines.size();i++){
+			text.setPosition(pos.x,pos.y+(i*14));
+			text.setString(lines.at(i));
+			screen->draw(text);
+		}
+	}else{
+		int j = (size.y-1);
+		for(int i=0;i<size.y;i++){
+			text.setPosition(pos.x,pos.y+(j*14));
+			text.setString(lines.at((lines.size()-1)-i));
+			screen->draw(text);
+			j--;
+		}
+	}
 }
