@@ -100,6 +100,14 @@ int main(int argc, char *argv[]){
 			if(event.type == sf::Event::TextEntered){
 				im.addInput(sf::String(event.text.unicode));
 			}
+			if(event.type == sf::Event::KeyPressed){
+				//Toggle console is user hits f1
+				if(event.key.code == sf::Keyboard::F1){
+					im.getString();
+					con.visible = !con.visible;
+					con.updates = !con.updates;
+				}
+			}
 		}
 
 		if(im.isKeyDown(sf::Keyboard::Left)){

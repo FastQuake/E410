@@ -8,7 +8,9 @@ class Console : public GuiElement{
 	private:
 		sf::RectangleShape bg;
 
+		sf::Vector2i size;
 		sf::Vector2f pos;
+		sf::Color bgColour;
 		sf::Clock inputTimer;
 		lua_State *l;
 	

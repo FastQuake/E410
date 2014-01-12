@@ -21,21 +21,22 @@ void GuiManager::update(){
 			elements.at(i)->update(im);
 		}
 
-		lock = elements.at(i)->locks;
+	}
+}
+
+void GuiManager::draw(sf::RenderWindow *screen){
+	bool lock = false;
+	screen->pushGLStates();
+	for(int i=0;i<elements.size();i++){
+		if(elements.at(i)->visible){
+			elements.at(i)->draw(screen);
+			lock = elements.at(i)->locks;
+		}
 	}
 	if(lock){
 		im->lockToGui(true);
 	} else {
 		im->lockToGui(false);
-	}
-}
-
-void GuiManager::draw(sf::RenderWindow *screen){
-	screen->pushGLStates();
-	for(int i=0;i<elements.size();i++){
-		if(elements.at(i)->visible){
-			elements.at(i)->draw(screen);
-		}
 	}
 	screen->popGLStates();
 }
