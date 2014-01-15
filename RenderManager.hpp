@@ -8,7 +8,6 @@
 class RenderManager{
 private:
 	std::vector<GameObject> drawList;
-	std::map<std::string,Model> modelList;
 public:
 	void render();
 };

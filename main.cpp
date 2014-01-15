@@ -29,7 +29,7 @@ int main(int argc, char *argv[]){
 	cs.antialiasingLevel = 4;
 	int width = 800;
 	int height = 600;
-	sf::RenderWindow window(sf::VideoMode(width,height),"SPACE!!!", sf::Style::Default, cs);
+	sf::RenderWindow window(sf::VideoMode(width,height),"E410 | dev", sf::Style::Default, cs);
 	window.setVerticalSyncEnabled(true);
 	sf::Event event;
 
