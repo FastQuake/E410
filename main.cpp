@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 #include <lua.hpp>
 #include "globals.hpp"
 #include "GraphicsUtils.hpp"
@@ -30,6 +31,7 @@ int main(int argc, char *argv[]){
 	int width = 800;
 	int height = 600;
 	sf::RenderWindow window(sf::VideoMode(width,height),"E410 | dev", sf::Style::Default, cs);
+	window.setMouseCursorVisible(false);
 	window.setVerticalSyncEnabled(true);
 	sf::Event event;
 
@@ -79,7 +81,10 @@ int main(int argc, char *argv[]){
 	bool spin = false;
 	bool ortho = false;
 
-	glm::vec3 cameraPos = glm::vec3(0.0,10.0,8.0);
+	glm::vec3 cameraPos = glm::vec3(0.0,0.0,-25.0);
+
+	float camRotX = 0.0;
+	float camRotY = 0.0;
 
 	while(window.isOpen()){
 		while(window.pollEvent(event)){
@@ -127,6 +132,28 @@ int main(int argc, char *argv[]){
 			spin = !spin;
 		}
 
+		sf::Vector2i center = sf::Vector2i(width/2,height/2);
+		sf::Vector2i mousePos = im.getMousePos();
+
+		if(mousePos != center){
+			mousePos -= center;
+			float mouseX = mousePos.x;
+			float mouseY = mousePos.y;
+			float vecLength = sqrt(pow(mouseX,2)+pow(mouseY,2));
+			cout << "vecLength: " << vecLength << ", ";
+
+			camRotX += asin(mouseY/vecLength);
+			camRotY += asin(mouseX/vecLength);
+			if(abs(camRotX) > 360.0)
+				camRotX = (camRotX-abs(camRotX))*(abs(camRotX)-360);
+			if(abs(camRotY) > 360.0)
+				camRotY = (camRotY-abs(camRotY))*(abs(camRotY)-360);
+			cout << "camRotX: " << camRotX << ", camRotY: " << camRotY << endl;
+		}
+		//Keep cursor locked into the window
+		//FIXME: The cursor jumps outside the window sometimes
+		im.setMousePos(center);
+
 		//Uncomment this to play the animation normally
 		if(animate){
 				float timey = time.getElapsedTime().asMilliseconds();
@@ -140,9 +167,11 @@ int main(int argc, char *argv[]){
 			glm::rotate(glm::mat4(1.0f), angle*2.0f, glm::vec3(0, 1, 0)) *  // Y axis
 			glm::rotate(glm::mat4(1.0f), angle*4.0f, glm::vec3(0, 0, 1));   // Z axis
 
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, -15.0));
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 0.0));
 		//cameraPos = glm::vec3(0.0,10.0,0.0);
-		glm::mat4 view = glm::lookAt(cameraPos, glm::vec3(0.0, 0.0, -15.0), glm::vec3(0.0, 1.0, 0.0));
+		glm::mat4 view = glm::rotate(glm::mat4(1.0f),camRotX,glm::vec3(1.0,0.0,0.0));
+		view = glm::rotate(view,camRotY,glm::vec3(0.0,1.0,0.0));
+		view = glm::translate(view,cameraPos);
 		glm::mat4 projection;
 		if(!ortho)
 			projection = glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
