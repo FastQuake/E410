@@ -131,23 +131,40 @@ int main(int argc, char *argv[]){
 		if(im.isKeyDown(sf::Keyboard::P)){
 			spin = !spin;
 		}
+		if(im.isKeyDown(sf::Keyboard::W)){
+
+		}
 
 		sf::Vector2i center = sf::Vector2i(width/2,height/2);
 		sf::Vector2i mousePos = im.getMousePos();
 
+		//FIXME: Somehow the camera inverts itself; to x,y angle 180,180 to see this.
 		if(mousePos != center){
 			mousePos -= center;
 			float mouseX = mousePos.x;
 			float mouseY = mousePos.y;
 			float vecLength = sqrt(pow(mouseX,2)+pow(mouseY,2));
-			cout << "vecLength: " << vecLength << ", ";
+			//cout << "vecLength: " << vecLength << ", ";
 
 			camRotX += asin(mouseY/vecLength);
 			camRotY += asin(mouseX/vecLength);
-			if(abs(camRotX) > 360.0)
-				camRotX = (camRotX-abs(camRotX))*(abs(camRotX)-360);
-			if(abs(camRotY) > 360.0)
-				camRotY = (camRotY-abs(camRotY))*(abs(camRotY)-360);
+
+			if(abs(camRotX) > 360.0){
+				int sign;
+				if(camRotX>0)
+					sign = 1;
+				else
+					sign = -1;
+				camRotX = sign*(abs(camRotX)-360.0);
+			}
+			if(abs(camRotY) > 360.0){
+				int sign;
+				if(camRotY>0)
+					sign = 1;
+				else
+					sign = -1;
+				camRotY = sign*(abs(camRotY)-360.0);
+			}
 			cout << "camRotX: " << camRotX << ", camRotY: " << camRotY << endl;
 		}
 		//Keep cursor locked into the window
