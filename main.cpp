@@ -156,14 +156,13 @@ int main(int argc, char *argv[]){
 			cameraPos.x += xlen*amount;
 			cameraPos.y += ylen*amount;
 			cameraPos.z += zlen*amount;
-			cout << "fw: " << xlen << "," << ylen << "," << zlen << "," << cameraPos.x << "," << cameraPos.y << "," << cameraPos.z << endl;
+			cout << "bw: " << xlen << "," << ylen << "," << zlen << "," << cameraPos.x << "," << cameraPos.y << "," << cameraPos.z << endl;
 
 		}
 
 		sf::Vector2i center = sf::Vector2i(width/2,height/2);
 		sf::Vector2i mousePos = im.getMousePos();
 
-		//FIXME: Somehow the camera inverts itself; to x,y angle 180,180 to see this.
 		if(mousePos != center){
 			const float sensitivity = 0.024;
 			mousePos -= center;
