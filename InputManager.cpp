@@ -1,4 +1,5 @@
 #include "InputManager.hpp"
+#include "globals.hpp"
 using namespace std;
 
 InputManager::InputManager(){
@@ -46,7 +47,7 @@ sf::Vector2i InputManager::getMousePos(){
 	if(!isLocked && isFocused){
 		return sf::Mouse::getPosition(*window);
 	}
-	return sf::Vector2i(0,0);
+	return sf::Vector2i(width/2,height/2);
 }
 
 void InputManager::setMousePos(sf::Vector2i pos){

@@ -9,6 +9,7 @@
 #include <lua.hpp>
 #include "globals.hpp"
 #include "GraphicsUtils.hpp"
+#include "FPSCamera.hpp"
 #include "model.hpp"
 #include "InputManager.hpp"
 #include "GUI/Console.hpp"
@@ -16,6 +17,9 @@
 using namespace std;
 
 Console *global_con;
+FPSCamera cam(0,0,0,0,0);
+
+int width, height;
 
 int main(int argc, char *argv[]){
 	//Create lua vm
@@ -28,8 +32,8 @@ int main(int argc, char *argv[]){
 	cs.depthBits = 24;
 	cs.stencilBits = 8;
 	cs.antialiasingLevel = 4;
-	int width = 800;
-	int height = 600;
+	width = 800;
+	height = 600;
 	sf::RenderWindow window(sf::VideoMode(width,height),"E410 | dev", sf::Style::Default, cs);
 	window.setMouseCursorVisible(false);
 	window.setVerticalSyncEnabled(true);
@@ -75,15 +79,19 @@ int main(int argc, char *argv[]){
 	sf::Clock time;
 	time.restart();
 
+	sf::Clock dtTimer;
+	dtTimer.restart();
+	sf::Time dt;
+
+	sf::Vector2i middle(width/2,height/2);
+	float sensitivity = 50.0;
+	float speed = 10;
+
 	window.setActive(true);
 
 	bool animate = false;
 	bool spin = false;
 	bool ortho = false;
-
-	glm::vec3 cameraPos = glm::vec3(0.0,0.0,-25.0);
-
-	glm::vec3 cameraRot = glm::vec3(0.0,0.0,0.0);
 
 	while(window.isOpen()){
 		while(window.pollEvent(event)){
@@ -93,6 +101,7 @@ int main(int argc, char *argv[]){
 			if(event.type == sf::Event::Resized){
 				width = event.size.width;
 				height = event.size.height;
+				middle = sf::Vector2i(width/2,height/2);
 				glViewport(0,0,width,height);
 			}
 			if(event.type == sf::Event::GainedFocus){
@@ -110,6 +119,7 @@ int main(int argc, char *argv[]){
 					im.getString();
 					con.visible = !con.visible;
 					con.updates = !con.updates;
+					im.setGuiMousePos(middle);
 				}
 			}
 		}
@@ -130,67 +140,24 @@ int main(int argc, char *argv[]){
 		if(im.isKeyDown(sf::Keyboard::P)){
 			spin = !spin;
 		}
+		
+		//Do camera stuff
+		sf::Vector2i pos = im.getMousePos() - middle;
+		cam.turnX(pos.x*dt.asSeconds()*sensitivity);
+		cam.turnY(pos.y*dt.asSeconds()*sensitivity);
+		im.setMousePos(middle);
 		if(im.isKeyDown(sf::Keyboard::W)){
-			const float amount = 0.2;
-			glm::vec3 cameraRotn = glm::normalize(cameraRot);
-			float xlen = -sin(cameraRot.y);
-			float ylen = sin(cameraRot.x);
-			float zlen = cos(asin(ylen));
-			zlen = cos(cameraRot.y);
-			//cout << zlen << endl;
-
-			cameraPos.x += xlen*amount;
-			cameraPos.y += ylen*amount;
-			cameraPos.z += zlen*amount;
-
-			cout << "fw: " << xlen << "," << ylen << "," << zlen << "," << cameraPos.x << "," << cameraPos.y << "," << cameraPos.z << endl;
+			cam.move(speed*dt.asSeconds());
 		}
-
 		if(im.isKeyDown(sf::Keyboard::S)){
-			const float amount = -0.2;
-			glm::vec3 cameraRotn = glm::normalize(cameraRot);
-			float xlen = -sin(cameraRot.y);
-			float ylen = sin(cameraRot.x);
-			float zlen = cos(cameraRot.y);
-
-			cameraPos.x += xlen*amount;
-			cameraPos.y += ylen*amount;
-			cameraPos.z += zlen*amount;
-			cout << "bw: " << xlen << "," << ylen << "," << zlen << "," << cameraPos.x << "," << cameraPos.y << "," << cameraPos.z << endl;
-
+			cam.move(-speed*dt.asSeconds());
 		}
-
-		sf::Vector2i center = sf::Vector2i(width/2,height/2);
-		sf::Vector2i mousePos = im.getMousePos();
-
-		if(mousePos != center){
-			const float sensitivity = 0.024;
-			mousePos -= center;
-			sf::Vector2f mousePosf = sf::Vector2f(mousePos.x,mousePos.y);
-			float vecLength = sqrt(pow(mousePosf.x,2)+pow(mousePosf.y,2));
-			//cout << "vecLength: " << vecLength << ", ";
-
-			cameraRot.x += asin(mousePosf.y/vecLength)*sensitivity;
-			cameraRot.y += asin(mousePosf.x/vecLength)*sensitivity;
-			cameraRot.z = 0.0f;
-
-			if(cameraRot.x > M_PI/2.0)
-				cameraRot.x = M_PI/2.0;
-			if(cameraRot.x < -M_PI/2.0)
-				cameraRot.x = -M_PI/2.0;
-			if(abs(cameraRot.y) > 2.0*M_PI){
-				int sign;
-				if(cameraRot.y>0)
-					sign = 1;
-				else
-					sign = -1;
-				cameraRot.y = sign*(abs(cameraRot.y)-2.0*M_PI);
-			}
-			//cout << "camRotX: " << cameraRot.x << ", camRotY: " << cameraRot.y << endl;
+		if(im.isKeyDown(sf::Keyboard::A)){
+			cam.strafe(-speed*dt.asSeconds());
 		}
-		//Keep cursor locked into the window
-		//FIXME: The cursor jumps outside the window sometimes
-		im.setMousePos(center);
+		if(im.isKeyDown(sf::Keyboard::D)){
+			cam.strafe(speed*dt.asSeconds());
+		}
 
 		//Uncomment this to play the animation normally
 		if(animate){
@@ -206,21 +173,13 @@ int main(int argc, char *argv[]){
 			glm::rotate(glm::mat4(1.0f), angle*4.0f, glm::vec3(0, 0, 1));   // Z axis
 
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 0.0));
-		//cameraPos = glm::vec3(0.0,10.0,0.0);
 
-		float pi_f = (float) M_PI;
-
-		glm::mat4 view = \
-			glm::rotate(glm::mat4(1.0f),cameraRot.x*(180/pi_f),glm::vec3(1.0,0.0,0.0)) *
-			glm::rotate(glm::mat4(1.0f),cameraRot.y*(180/pi_f),glm::vec3(0.0,1.0,0.0)) *
-			glm::rotate(glm::mat4(1.0f),cameraRot.z*(180/pi_f),glm::vec3(0.0,0.0,1.0));
-		view = view*glm::translate(glm::mat4(1.0f),cameraPos);
 		glm::mat4 projection;
 		if(!ortho)
 			projection = glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
 		else
 			projection = glm::ortho<float>(-10.0,10.0,-10.0,10.0,-10,40);
-		glm::mat4 mvp = projection * view * model; //* anim;
+		glm::mat4 mvp = projection * cam.view() * model; //* anim;
 		if(spin) mvp *= anim;
 
 		//Updating code
@@ -238,5 +197,6 @@ int main(int argc, char *argv[]){
 		gui.draw(&window);
 
 		window.display();
+		dt = dtTimer.restart();
 	}
 }
