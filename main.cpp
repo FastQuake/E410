@@ -170,14 +170,10 @@ int main(int argc, char *argv[]){
 			cameraRot.x += asin(mousePosf.y/vecLength)*sensitivity;
 			cameraRot.y += asin(mousePosf.x/vecLength)*sensitivity;
 
-			if(abs(cameraRot.x) > 2.0*M_PI){
-				int sign;
-				if(cameraRot.x>0)
-					sign = 1;
-				else
-					sign = -1;
-				cameraRot.x = sign*(abs(cameraRot.x)-2.0*M_PI);
-			}
+			if(cameraRot.x > M_PI/2.0)
+				cameraRot.x = M_PI/2.0;
+			if(cameraRot.x < -M_PI/2.0)
+				cameraRot.x = -M_PI/2.0;
 			if(abs(cameraRot.y) > 2.0*M_PI){
 				int sign;
 				if(cameraRot.y>0)
