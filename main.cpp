@@ -17,7 +17,7 @@
 using namespace std;
 
 Console *global_con;
-FPSCamera cam(0,0,0,0,0);
+FPSCamera cam(0,0,0);
 
 int width, height;
 
@@ -143,8 +143,7 @@ int main(int argc, char *argv[]){
 		
 		//Do camera stuff
 		sf::Vector2i pos = im.getMousePos() - middle;
-		cam.turnX(pos.x*dt.asSeconds()*sensitivity);
-		cam.turnY(pos.y*dt.asSeconds()*sensitivity);
+		cam.turn(glm::vec2(pos.x,pos.y));
 		im.setMousePos(middle);
 		if(im.isKeyDown(sf::Keyboard::W)){
 			cam.move(speed*dt.asSeconds());

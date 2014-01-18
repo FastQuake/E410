@@ -7,15 +7,16 @@
 class FPSCamera{
 	private:
 		glm::vec3 pos;
-		glm::vec3 angle;
+		glm::vec3 right;
+		glm::vec3 lookat;
+		glm::vec3 up;
+
 	public:
-		FPSCamera(float x, float y, float z,
-				float xangle, float yangle);
+		FPSCamera(float x, float y, float z);
 
 		void move(float amount);
 		void strafe(float amount);
-		void turnX(float amount);
-		void turnY(float amount);
+		void turn(glm::vec2 amount);
 
 		glm::mat4 view();
 };
