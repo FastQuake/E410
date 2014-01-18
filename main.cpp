@@ -83,7 +83,7 @@ int main(int argc, char *argv[]){
 
 	glm::vec3 cameraPos = glm::vec3(0.0,0.0,-25.0);
 
-	glm::vec2 cameraRot = glm::vec2(0.0,0.0);
+	glm::vec3 cameraRot = glm::vec3(0.0,0.0,0.0);
 
 	while(window.isOpen()){
 		while(window.pollEvent(event)){
@@ -132,28 +132,32 @@ int main(int argc, char *argv[]){
 		}
 		if(im.isKeyDown(sf::Keyboard::W)){
 			const float amount = 0.2;
-			glm::vec2 cameraRotn = glm::normalize(cameraRot);
+			glm::vec3 cameraRotn = glm::normalize(cameraRot);
 			float xlen = -sin(cameraRot.y);
 			float ylen = sin(cameraRot.x);
-			float zlen = sin(acos(xlen));
+			float zlen = cos(asin(ylen));
+			zlen = cos(cameraRot.y);
+			//cout << zlen << endl;
 
 			cameraPos.x += xlen*amount;
 			cameraPos.y += ylen*amount;
 			cameraPos.z += zlen*amount;
 
-			cout << "fw: " << cameraRot.x << "," << cameraRot.y << "," << endl;// << cameraRot.z << endl;
+			cout << "fw: " << xlen << "," << ylen << "," << zlen << "," << cameraPos.x << "," << cameraPos.y << "," << cameraPos.z << endl;
 		}
 
 		if(im.isKeyDown(sf::Keyboard::S)){
 			const float amount = -0.2;
-			glm::vec2 cameraRotn = glm::normalize(cameraRot);
+			glm::vec3 cameraRotn = glm::normalize(cameraRot);
 			float xlen = -sin(cameraRot.y);
 			float ylen = sin(cameraRot.x);
-			float zlen = sin(acos(xlen));
+			float zlen = cos(cameraRot.y);
 
 			cameraPos.x += xlen*amount;
 			cameraPos.y += ylen*amount;
 			cameraPos.z += zlen*amount;
+			cout << "fw: " << xlen << "," << ylen << "," << zlen << "," << cameraPos.x << "," << cameraPos.y << "," << cameraPos.z << endl;
+
 		}
 
 		sf::Vector2i center = sf::Vector2i(width/2,height/2);
@@ -169,6 +173,7 @@ int main(int argc, char *argv[]){
 
 			cameraRot.x += asin(mousePosf.y/vecLength)*sensitivity;
 			cameraRot.y += asin(mousePosf.x/vecLength)*sensitivity;
+			cameraRot.z = 0.0f;
 
 			if(cameraRot.x > M_PI/2.0)
 				cameraRot.x = M_PI/2.0;
@@ -209,7 +214,7 @@ int main(int argc, char *argv[]){
 		glm::mat4 view = \
 			glm::rotate(glm::mat4(1.0f),cameraRot.x*(180/pi_f),glm::vec3(1.0,0.0,0.0)) *
 			glm::rotate(glm::mat4(1.0f),cameraRot.y*(180/pi_f),glm::vec3(0.0,1.0,0.0)) *
-			glm::rotate(glm::mat4(1.0f),0.0f,glm::vec3(0.0,0.0,1.0));
+			glm::rotate(glm::mat4(1.0f),cameraRot.z*(180/pi_f),glm::vec3(0.0,0.0,1.0));
 		view = view*glm::translate(glm::mat4(1.0f),cameraPos);
 		glm::mat4 projection;
 		if(!ortho)
