@@ -133,25 +133,25 @@ int main(int argc, char *argv[]){
 		if(im.isKeyDown(sf::Keyboard::W)){
 			const float amount = 0.2;
 			glm::vec2 cameraRotn = glm::normalize(cameraRot);
-			float xlen = sin(cameraRot.y);
+			float xlen = -sin(cameraRot.y);
 			float ylen = sin(cameraRot.x);
 			float zlen = sin(acos(xlen));
 
-			cameraPos.x -= xlen*amount;
+			cameraPos.x += xlen*amount;
 			cameraPos.y += ylen*amount;
 			cameraPos.z += zlen*amount;
 
-			//cout << "fw: " << xlen << "," << ylen << "," << zlen << endl;
+			cout << "fw: " << cameraRot.x << "," << cameraRot.y << "," << endl;// << cameraRot.z << endl;
 		}
 
 		if(im.isKeyDown(sf::Keyboard::S)){
 			const float amount = -0.2;
 			glm::vec2 cameraRotn = glm::normalize(cameraRot);
-			float xlen = sin(cameraRot.y);
+			float xlen = -sin(cameraRot.y);
 			float ylen = sin(cameraRot.x);
 			float zlen = sin(acos(xlen));
 
-			cameraPos.x -= xlen*amount;
+			cameraPos.x += xlen*amount;
 			cameraPos.y += ylen*amount;
 			cameraPos.z += zlen*amount;
 		}
@@ -182,7 +182,7 @@ int main(int argc, char *argv[]){
 					sign = -1;
 				cameraRot.y = sign*(abs(cameraRot.y)-2.0*M_PI);
 			}
-			cout << "camRotX: " << cameraRot.x << ", camRotY: " << cameraRot.y << endl;
+			//cout << "camRotX: " << cameraRot.x << ", camRotY: " << cameraRot.y << endl;
 		}
 		//Keep cursor locked into the window
 		//FIXME: The cursor jumps outside the window sometimes
