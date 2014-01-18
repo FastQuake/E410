@@ -83,8 +83,7 @@ int main(int argc, char *argv[]){
 
 	glm::vec3 cameraPos = glm::vec3(0.0,0.0,-25.0);
 
-	float camRotX = 0.0;
-	float camRotY = 0.0;
+	glm::vec2 cameraRot = glm::vec2(0.0,0.0);
 
 	while(window.isOpen()){
 		while(window.pollEvent(event)){
@@ -132,7 +131,29 @@ int main(int argc, char *argv[]){
 			spin = !spin;
 		}
 		if(im.isKeyDown(sf::Keyboard::W)){
+			const float amount = 0.2;
+			glm::vec2 cameraRotn = glm::normalize(cameraRot);
+			float xlen = sin(cameraRot.y);
+			float ylen = sin(cameraRot.x);
+			float zlen = sin(acos(xlen));
 
+			cameraPos.x -= xlen*amount;
+			cameraPos.y += ylen*amount;
+			cameraPos.z += zlen*amount;
+
+			//cout << "fw: " << xlen << "," << ylen << "," << zlen << endl;
+		}
+
+		if(im.isKeyDown(sf::Keyboard::S)){
+			const float amount = -0.2;
+			glm::vec2 cameraRotn = glm::normalize(cameraRot);
+			float xlen = sin(cameraRot.y);
+			float ylen = sin(cameraRot.x);
+			float zlen = sin(acos(xlen));
+
+			cameraPos.x -= xlen*amount;
+			cameraPos.y += ylen*amount;
+			cameraPos.z += zlen*amount;
 		}
 
 		sf::Vector2i center = sf::Vector2i(width/2,height/2);
@@ -140,32 +161,32 @@ int main(int argc, char *argv[]){
 
 		//FIXME: Somehow the camera inverts itself; to x,y angle 180,180 to see this.
 		if(mousePos != center){
+			const float sensitivity = 0.024;
 			mousePos -= center;
-			float mouseX = mousePos.x;
-			float mouseY = mousePos.y;
-			float vecLength = sqrt(pow(mouseX,2)+pow(mouseY,2));
+			sf::Vector2f mousePosf = sf::Vector2f(mousePos.x,mousePos.y);
+			float vecLength = sqrt(pow(mousePosf.x,2)+pow(mousePosf.y,2));
 			//cout << "vecLength: " << vecLength << ", ";
 
-			camRotX += asin(mouseY/vecLength);
-			camRotY += asin(mouseX/vecLength);
+			cameraRot.x += asin(mousePosf.y/vecLength)*sensitivity;
+			cameraRot.y += asin(mousePosf.x/vecLength)*sensitivity;
 
-			if(abs(camRotX) > 360.0){
+			if(abs(cameraRot.x) > 2.0*M_PI){
 				int sign;
-				if(camRotX>0)
+				if(cameraRot.x>0)
 					sign = 1;
 				else
 					sign = -1;
-				camRotX = sign*(abs(camRotX)-360.0);
+				cameraRot.x = sign*(abs(cameraRot.x)-2.0*M_PI);
 			}
-			if(abs(camRotY) > 360.0){
+			if(abs(cameraRot.y) > 2.0*M_PI){
 				int sign;
-				if(camRotY>0)
+				if(cameraRot.y>0)
 					sign = 1;
 				else
 					sign = -1;
-				camRotY = sign*(abs(camRotY)-360.0);
+				cameraRot.y = sign*(abs(cameraRot.y)-2.0*M_PI);
 			}
-			cout << "camRotX: " << camRotX << ", camRotY: " << camRotY << endl;
+			cout << "camRotX: " << cameraRot.x << ", camRotY: " << cameraRot.y << endl;
 		}
 		//Keep cursor locked into the window
 		//FIXME: The cursor jumps outside the window sometimes
@@ -186,9 +207,14 @@ int main(int argc, char *argv[]){
 
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 0.0));
 		//cameraPos = glm::vec3(0.0,10.0,0.0);
-		glm::mat4 view = glm::rotate(glm::mat4(1.0f),camRotX,glm::vec3(1.0,0.0,0.0));
-		view = glm::rotate(view,camRotY,glm::vec3(0.0,1.0,0.0));
-		view = glm::translate(view,cameraPos);
+
+		float pi_f = (float) M_PI;
+
+		glm::mat4 view = \
+			glm::rotate(glm::mat4(1.0f),cameraRot.x*(180/pi_f),glm::vec3(1.0,0.0,0.0)) *
+			glm::rotate(glm::mat4(1.0f),cameraRot.y*(180/pi_f),glm::vec3(0.0,1.0,0.0)) *
+			glm::rotate(glm::mat4(1.0f),0.0f,glm::vec3(0.0,0.0,1.0));
+		view = view*glm::translate(glm::mat4(1.0f),cameraPos);
 		glm::mat4 projection;
 		if(!ortho)
 			projection = glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
