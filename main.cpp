@@ -12,6 +12,8 @@
 #include "FPSCamera.hpp"
 #include "model.hpp"
 #include "InputManager.hpp"
+#include "ResourceManager.hpp"
+#include "RenderManager.hpp"
 #include "GUI/Console.hpp"
 #include "Lua/luabinding.hpp"
 using namespace std;
@@ -40,6 +42,8 @@ int main(int argc, char *argv[]){
 	sf::Event event;
 
 	InputManager im(&window);
+	ResourceManager resman;
+	RenderManager rendman;
 
 	Console con(l,sf::Vector2f(0,0),
 			sf::Color(50,50,50),sf::Color::White);
@@ -65,8 +69,7 @@ int main(int argc, char *argv[]){
 	prg.setUniform("bonemats");
 	prg.setUniform("texture");
 
-	Model mesh;
-	loadIQM("./data/models/mrfixit.iqm",mesh);
+	Model mesh = *resman.loadModel("mrfixit.iqm");
 	float currentFrame = 0;
 
 	glEnable(GL_BLEND);
@@ -121,6 +124,12 @@ int main(int argc, char *argv[]){
 					con.updates = !con.updates;
 					im.setGuiMousePos(middle);
 				}
+				if(event.key.code == sf::Keyboard::M){
+					animate = !animate;
+				}
+				if(event.key.code == sf::Keyboard::P){
+					spin = !spin;
+				}
 			}
 		}
 
@@ -133,12 +142,6 @@ int main(int argc, char *argv[]){
 			if(currentFrame < mesh.numFrames){
 				currentFrame++;
 			}
-		}
-		if(im.isKeyDown(sf::Keyboard::M)){
-			animate = !animate;
-		}
-		if(im.isKeyDown(sf::Keyboard::P)){
-			spin = !spin;
 		}
 		
 		//Do camera stuff
