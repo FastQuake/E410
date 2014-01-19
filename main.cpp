@@ -143,7 +143,8 @@ int main(int argc, char *argv[]){
 		
 		//Do camera stuff
 		sf::Vector2i pos = im.getMousePos() - middle;
-		cam.turn(glm::vec2(pos.x,pos.y));
+		cam.turn(glm::vec2(pos.x*dt.asSeconds()*sensitivity
+					,pos.y*dt.asSeconds()*sensitivity));
 		im.setMousePos(middle);
 		if(im.isKeyDown(sf::Keyboard::W)){
 			cam.move(speed*dt.asSeconds());

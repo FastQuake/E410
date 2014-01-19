@@ -11,6 +11,7 @@ class FPSCamera{
 		glm::vec3 right;
 		glm::vec3 lookat;
 		glm::vec3 up;
+		glm::vec3 angle;
 
 	public:
 		FPSCamera(float x, float y, float z);
