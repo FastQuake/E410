@@ -30,15 +30,15 @@ void FPSCamera::strafe(float amount){
 
 void FPSCamera::turn(glm::vec2 amount){
 	angle += glm::vec3(amount,0.0);
-	if(angle.y >= 180){
-		angle.y = 180-1;
-	} else if(angle.y <= 0){
-		angle.y = 0+1;
+	if(angle.y >= 179){
+		angle.y = 179;
+	} else if(angle.y <= 1){
+		angle.y = 1;
 	}
 	if(angle.x > 360){
-		angle.x = 0;
+		angle.x = abs(angle.x)-360.0;
 	} else if(angle.x < -360){
-		angle.x = 0;
+		angle.x = -(abs(angle.x)-360.0);
 	}
 	lookat.x = sin(toRad(angle.y)) * cos(toRad(angle.x));
 	lookat.y = cos(toRad(angle.y));
