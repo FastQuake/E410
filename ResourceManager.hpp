@@ -4,9 +4,8 @@
 #include "model.hpp"
 #include <map>
 
-std::string dataDir = "data/";
-std::string modelDir = dataDir+"models/";
-
+extern std::string dataDir;
+extern std::string modelDir;
 class ResourceManager{
 private:
 	std::map<std::string,Model> models;

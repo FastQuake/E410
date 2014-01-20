@@ -1,6 +1,9 @@
 #include "ResourceManager.hpp"
-
 using namespace std;
+
+string dataDir = "data/";
+string modelDir = dataDir+"models/";
+
 
 /**
  * @param name Name of model, .iqm suffix currently required
