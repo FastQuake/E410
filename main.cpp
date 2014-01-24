@@ -175,7 +175,7 @@ int main(int argc, char *argv[]){
 			glm::rotate(glm::mat4(1.0f), angle*2.0f, glm::vec3(0, 1, 0)) *  // Y axis
 			glm::rotate(glm::mat4(1.0f), angle*4.0f, glm::vec3(0, 0, 1));   // Z axis
 
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 0.0));
+		glm::mat4 model = glm::rotate(glm::mat4(1.0),-90.0f,glm::vec3(1.0,0.0,0.0))*glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 0.0));
 
 		glm::mat4 projection;
 		if(!ortho)
