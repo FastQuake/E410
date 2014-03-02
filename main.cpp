@@ -69,7 +69,9 @@ int main(int argc, char *argv[]){
 	prg.setUniform("bonemats");
 	prg.setUniform("texture");
 
-	Model mesh = *resman.loadModel("mrfixit.iqm");
+	//Model mesh = *resman.loadModel("mrfixit.iqm");
+	GameObject mesh;
+	mesh.model = resman.loadModel("mrfixit.iqm");
 	float currentFrame = 0;
 
 	glEnable(GL_BLEND);
@@ -139,7 +141,7 @@ int main(int argc, char *argv[]){
 			}
 		}
 		if(im.isKeyDown(sf::Keyboard::Right)){
-			if(currentFrame < mesh.numFrames){
+			if(currentFrame < mesh.model->numFrames){
 				currentFrame++;
 			}
 		}
@@ -165,10 +167,10 @@ int main(int argc, char *argv[]){
 		//Uncomment this to play the animation normally
 		if(animate){
 				float timey = time.getElapsedTime().asMilliseconds();
-				currentFrame = (timey / 1000.0 * mesh.anims[0].framerate);
-				currentFrame = fmod(currentFrame,mesh.numFrames);
+				currentFrame = (timey / 1000.0 * mesh.model->anims[0].framerate);
+				currentFrame = fmod(currentFrame,mesh.model->numFrames);
 		}
-		mesh.animate(currentFrame);
+		mesh.model->animate(currentFrame);
 		float angle = time.getElapsedTime().asMilliseconds() / 1000.0 * 15;  // base 15° per second
 		glm::mat4 anim = \
 			glm::rotate(glm::mat4(1.0f), angle*3.0f, glm::vec3(1, 0, 0)) *  // X axis
@@ -194,7 +196,7 @@ int main(int argc, char *argv[]){
 		glUseProgram(prg.getID());
 		glUniformMatrix4fv(prg.getUniform(0),1,GL_FALSE,glm::value_ptr(mvp));
 
-		mesh.draw(&prg);
+		mesh.model->draw(&prg);
 
 		//Do sfml drawing here
 		gui.draw(&window);
