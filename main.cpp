@@ -19,6 +19,8 @@
 using namespace std;
 
 Console *global_con;
+ResourceManager resman;
+RenderManager rendman;
 FPSCamera cam(0,0,0);
 
 int width, height;
@@ -42,8 +44,6 @@ int main(int argc, char *argv[]){
 	sf::Event event;
 
 	InputManager im(&window);
-	ResourceManager resman;
-	RenderManager rendman;
 
 	Console con(l,sf::Vector2f(0,0),
 			sf::Color(50,50,50),sf::Color::White);
@@ -65,13 +65,24 @@ int main(int argc, char *argv[]){
 	prg.setAttribute("texcoord");
 	prg.setAttribute("vweight");
 	prg.setAttribute("vbones");
-	prg.setUniform("mvp");
+	prg.setUniform("viewProjection");
 	prg.setUniform("bonemats");
 	prg.setUniform("texture");
+	prg.setUniform("modelMat");
 
-	//Model mesh = *resman.loadModel("mrfixit.iqm");
-	GameObject mesh;
-	mesh.model = resman.loadModel("mrfixit.iqm");
+	//Load main lua file and then call init function
+	int status = luaL_dofile(l, "./data/scripts/main.lua");
+	if(status){
+		cerr << "Could not load file " << lua_tostring(l,-1) << endl; 
+		return EXIT_FAILURE;
+	}
+	status = luaL_dostring(l,"init()");
+	if(status){
+		cerr << "Could not find init funtion " << lua_tostring(l,-1)
+			<< endl;
+		return EXIT_FAILURE;
+	}
+
 	float currentFrame = 0;
 
 	glEnable(GL_BLEND);
@@ -140,11 +151,6 @@ int main(int argc, char *argv[]){
 				currentFrame--;
 			}
 		}
-		if(im.isKeyDown(sf::Keyboard::Right)){
-			if(currentFrame < mesh.model->numFrames){
-				currentFrame++;
-			}
-		}
 		
 		//Do camera stuff
 		sf::Vector2i pos = im.getMousePos() - middle;
@@ -164,28 +170,13 @@ int main(int argc, char *argv[]){
 			cam.strafe(speed*dt.asSeconds());
 		}
 
-		//Uncomment this to play the animation normally
-		if(animate){
-				float timey = time.getElapsedTime().asMilliseconds();
-				currentFrame = (timey / 1000.0 * mesh.model->anims[0].framerate);
-				currentFrame = fmod(currentFrame,mesh.model->numFrames);
-		}
-		mesh.model->animate(currentFrame);
-		float angle = time.getElapsedTime().asMilliseconds() / 1000.0 * 15;  // base 15° per second
-		glm::mat4 anim = \
-			glm::rotate(glm::mat4(1.0f), angle*3.0f, glm::vec3(1, 0, 0)) *  // X axis
-			glm::rotate(glm::mat4(1.0f), angle*2.0f, glm::vec3(0, 1, 0)) *  // Y axis
-			glm::rotate(glm::mat4(1.0f), angle*4.0f, glm::vec3(0, 0, 1));   // Z axis
-
-		glm::mat4 model = glm::rotate(glm::mat4(1.0),-90.0f,glm::vec3(1.0,0.0,0.0))*glm::translate(glm::mat4(1.0f), glm::vec3(0.0, 0.0, 0.0));
-
 		glm::mat4 projection;
 		if(!ortho)
 			projection = glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
 		else
 			projection = glm::ortho<float>(-10.0,10.0,-10.0,10.0,-10,40);
-		glm::mat4 mvp = projection * cam.view() * model; //* anim;
-		if(spin) mvp *= anim;
+
+		glm::mat4 viewProjection = projection * cam.view();
 
 		//Updating code
 		gui.update();
@@ -194,9 +185,10 @@ int main(int argc, char *argv[]){
 
 		//Do all drawing here
 		glUseProgram(prg.getID());
-		glUniformMatrix4fv(prg.getUniform(0),1,GL_FALSE,glm::value_ptr(mvp));
+		glUniformMatrix4fv(prg.getUniform(0),1,GL_FALSE,glm::value_ptr(viewProjection));
 
-		mesh.model->draw(&prg);
+		//mesh.model->draw(&prg);
+		rendman.render(&prg);
 
 		//Do sfml drawing here
 		gui.draw(&window);

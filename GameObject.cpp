@@ -1,9 +1,9 @@
-/*
- * GameObject.cpp
- *
- *  Created on: 2013-12-23
- *      Author: john
- */
+#include "GameObject.hpp"
+
+GameObject::GameObject():
+position(0,0,0), rotation(0,0,0), scale(1,1,1){
+
+}
 
 
 

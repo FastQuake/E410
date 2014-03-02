@@ -13,6 +13,8 @@ public:
 	glm::vec3 scale;
 
 	bool visible;
+
+	GameObject();
 };
 
 #endif

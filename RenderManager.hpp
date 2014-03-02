@@ -6,10 +6,11 @@
 #include <map>
 
 class RenderManager{
-private:
-	std::vector<GameObject> drawList;
 public:
-	void render();
+	void render(ShaderProgram *prg);
+	std::vector<GameObject*> drawList;
+
+	~RenderManager();
 };
 
 

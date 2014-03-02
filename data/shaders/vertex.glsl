@@ -12,9 +12,11 @@ out float depth;
 
 uniform mat3x4 bonemats[80];
 
-uniform mat4 mvp;
+uniform mat4 viewProjection;
+uniform mat4 modelMat;
 
 void main(){
+	mat4 mvp = viewProjection*modelMat;
 	mat3x4 m = bonemats[int(vbones.x)] * vweight.x;
 	m += bonemats[int(vbones.y)] * vweight.y;
 	m += bonemats[int(vbones.z)] * vweight.z;
