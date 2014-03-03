@@ -1,6 +1,6 @@
 fixit = "hello"
 function init()
-	fixit = createGameObject("mrfixit.iqm")
+	fixit = createGameObject("mr_fixit.iqm")
 end
 
 function update(dt)

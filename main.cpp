@@ -100,7 +100,7 @@ int main(int argc, char *argv[]){
 	sf::Time dt;
 
 	sf::Vector2i middle(width/2,height/2);
-	float sensitivity = 50.0;
+	float sensitivity = 20.0;
 	float speed = 10;
 
 	window.setActive(true);
@@ -187,8 +187,13 @@ int main(int argc, char *argv[]){
 		glUseProgram(prg.getID());
 		glUniformMatrix4fv(prg.getUniform(0),1,GL_FALSE,glm::value_ptr(viewProjection));
 
+		float timey = 0.0f;
+
+		if(animate)
+			timey = time.getElapsedTime().asMilliseconds();
+
 		//mesh.model->draw(&prg);
-		rendman.render(&prg);
+		rendman.render(&prg,timey);
 
 		//Do sfml drawing here
 		gui.draw(&window);

@@ -7,7 +7,7 @@
 
 class RenderManager{
 public:
-	void render(ShaderProgram *prg);
+	void render(ShaderProgram *prg, float curTime);
 	std::vector<GameObject*> drawList;
 
 	~RenderManager();

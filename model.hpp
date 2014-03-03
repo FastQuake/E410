@@ -34,6 +34,7 @@ class Model {
 		std::vector<glm::mat4> baseframe;
 		std::vector<glm::mat4> inversebaseframe;
 		std::vector<iqmanim> anims;
+		std::vector<std::string> animNames;
 		std::vector<iqmpose> poses;
 		std::vector<glm::mat4> frames;
 		std::vector<glm::mat4> outframe;
@@ -44,7 +45,7 @@ class Model {
 		void setTEXID(GLuint id);
 
 		void draw(ShaderProgram *prg);
-		void animate(float currentframe);
+		void animate(std::string animName, float currentframe);
 };
 
 bool loadIQM(std::string filename, Model &target);

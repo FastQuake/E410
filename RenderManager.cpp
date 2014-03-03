@@ -6,8 +6,11 @@ RenderManager::~RenderManager(){
 	}
 }
 
-void RenderManager::render(ShaderProgram *prg){
+void RenderManager::render(ShaderProgram *prg, float curTime){
+
 	for(int i=0;i<this->drawList.size();i++){
+		drawList[i]->model->animate("Taunt",curTime);
+
 		glm::mat4 scale = glm::scale(glm::mat4(1),drawList[i]->scale);
 		glm::mat4 rot = \
 			glm::rotate(glm::mat4(1),drawList[i]->rotation.x-90,glm::vec3(1.0,0,0)) *

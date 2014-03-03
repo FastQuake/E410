@@ -226,6 +226,8 @@ bool loadIQMAnim(string filename, iqmheader header,Model &target, unsigned char 
 		iqmanim &a = anims[i];
 		cout << "Loaded animation: " << &str[a.name] << endl;
 		target.anims.push_back(a);
+		string animName = &str[a.name];
+		target.animNames.push_back(animName);
 	}
 
 	return true;
@@ -279,15 +281,36 @@ void Model::setTEXID(GLuint id){
 	this->textureID = id;
 }
 
-void Model::animate(float currentframe){
+/**
+ * Sets animation matrixes for model
+ * @param animName Name of the animation to run
+ * @param curTime Current elapsed frame time
+ */
+void Model::animate(string animName, float curTime){
+	bool foundAnim = false;
+	iqmanim anim;
+	for(int i=0;i<anims.size();i++)
+		if(animNames[i] == animName){
+			anim = anims[i];
+			foundAnim = true;
+		}
+	if(!foundAnim){
+		cout << "No such animation: " << animName << endl;
+		return;
+	}
+
+	float currentframe = (curTime / 1000.0 * anim.framerate);
+	currentframe = fmod(currentframe,anim.num_frames); //Wrap currentframe to length of anim
+
 	if(frames.size() <= 0) return;
 	int frame1 = (int)floor(currentframe);
 	int frame2 = frame1 + 1;
 
 	float frameoffset = currentframe - frame1;
-	
-	frame1 %= frames.size();
-	frame2 %= frames.size();
+	frame1 += anim.first_frame; //Offset frame1 to current anim
+
+	frame2 %= anim.num_frames; //Wrap frame2 to length of anim (in case it was incremented over it)
+	frame2 += anim.first_frame; //Offset frame2 to current anim
 
 	glm::mat4 *mat1 = &frames[frame1 * joints.size()];
 	glm::mat4 *mat2 = &frames[frame2 * joints.size()];
