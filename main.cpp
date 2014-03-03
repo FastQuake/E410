@@ -193,7 +193,7 @@ int main(int argc, char *argv[]){
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//Do all drawing here
+		//I already did this!
 		glUseProgram(prg.getID());
 		glUniformMatrix4fv(prg.getUniform(0),1,GL_FALSE,glm::value_ptr(viewProjection));
 
