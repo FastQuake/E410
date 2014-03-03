@@ -19,6 +19,7 @@
 using namespace std;
 
 Console *global_con;
+InputManager *im;
 ResourceManager resman;
 RenderManager rendman;
 FPSCamera cam(0,0,0);
@@ -43,14 +44,15 @@ int main(int argc, char *argv[]){
 	window.setVerticalSyncEnabled(true);
 	sf::Event event;
 
-	InputManager im(&window);
+	InputManager ime(&window);
+	im = &ime;
 
 	Console con(l,sf::Vector2f(0,0),
 			sf::Color(50,50,50),sf::Color::White);
 
 	global_con = &con;
 	
-	GuiManager gui(&im);
+	GuiManager gui(im);
 	gui.add(&con);
 
 	GLenum glewStatus = glewInit();
@@ -123,21 +125,21 @@ int main(int argc, char *argv[]){
 				glViewport(0,0,width,height);
 			}
 			if(event.type == sf::Event::GainedFocus){
-				im.setFocus(true);
+				im->setFocus(true);
 			}
 			if(event.type == sf::Event::LostFocus){
-				im.setFocus(false);
+				im->setFocus(false);
 			}
 			if(event.type == sf::Event::TextEntered){
-				im.addInput(sf::String(event.text.unicode));
+				im->addInput(sf::String(event.text.unicode));
 			}
 			if(event.type == sf::Event::KeyPressed){
 				//Toggle console is user hits f1
 				if(event.key.code == sf::Keyboard::F1){
-					im.getString();
+					im->getString();
 					con.visible = !con.visible;
 					con.updates = !con.updates;
-					im.setGuiMousePos(middle);
+					im->setGuiMousePos(middle);
 				}
 				if(event.key.code == sf::Keyboard::M){
 					animate = !animate;
@@ -148,27 +150,27 @@ int main(int argc, char *argv[]){
 			}
 		}
 
-		if(im.isKeyDown(sf::Keyboard::Left)){
+		if(im->isKeyDown(sf::Keyboard::Left)){
 			if(currentFrame>0){
 				currentFrame--;
 			}
 		}
 		
 		//Do camera stuff
-		sf::Vector2i pos = im.getMousePos() - middle;
+		sf::Vector2i pos = im->getMousePos() - middle;
 		cam.turn(glm::vec2(pos.x*dt.asSeconds()*sensitivity
 					,pos.y*dt.asSeconds()*sensitivity));
-		im.setMousePos(middle);
-		if(im.isKeyDown(sf::Keyboard::W)){
+		im->setMousePos(middle);
+		if(im->isKeyDown(sf::Keyboard::W)){
 			cam.move(speed*dt.asSeconds());
 		}
-		if(im.isKeyDown(sf::Keyboard::S)){
+		if(im->isKeyDown(sf::Keyboard::S)){
 			cam.move(-speed*dt.asSeconds());
 		}
-		if(im.isKeyDown(sf::Keyboard::A)){
+		if(im->isKeyDown(sf::Keyboard::A)){
 			cam.strafe(-speed*dt.asSeconds());
 		}
-		if(im.isKeyDown(sf::Keyboard::D)){
+		if(im->isKeyDown(sf::Keyboard::D)){
 			cam.strafe(speed*dt.asSeconds());
 		}
 

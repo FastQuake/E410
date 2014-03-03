@@ -8,6 +8,7 @@
 #define PI 3.14159265359 
 
 extern Console *global_con;
+extern InputManager *im;
 extern ResourceManager resman;
 extern RenderManager rendman;
 

@@ -1,6 +1,7 @@
 #include "../globals.hpp"
 #include "luabinding.hpp"
 #include "GameObjectBinding.hpp"
+#include "InputBinding.hpp"
 using namespace std;
 
 //TODO make this less ugly, break it up, etc
@@ -11,6 +12,15 @@ void bindFunctions(lua_State *l){
 	//create Gameobject register
 	luaL_newlib(l, GO_funcs);
 	lua_setglobal(l, "GO");
+
+	//create inputmanager register
+	luaL_newlib(l, Input_funcs);
+	lua_setglobal(l, "input");
+
+	//add key constants
+	lua_newtable(l);
+	registerKeys(l);
+	lua_setglobal(l,"keys");
 }
 
 int lua_print(lua_State *l){
