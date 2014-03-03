@@ -10,5 +10,6 @@ position(0,0,0), rotation(0,0,0), scale(1,1,1){
 
 void GameObject::setModel(Model *model){
 		this->model = model;
+		outframe.resize(model->joints.size());
 		currentAnimation = model->animNames[0];
 }

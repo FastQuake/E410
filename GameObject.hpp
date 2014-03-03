@@ -12,6 +12,7 @@ public:
 	glm::vec3 rotation;
 	glm::vec3 scale;
 	std::string currentAnimation;
+	std::vector<glm::mat4> outframe;
 	float aTime;
 
 	bool visible, animate;

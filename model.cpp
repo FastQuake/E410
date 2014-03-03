@@ -221,7 +221,6 @@ bool loadIQMAnim(string filename, iqmheader header,Model &target, unsigned char 
 	target.numFrames = header.num_frames-1;
 
 	target.frames = frames;
-	target.outframe.resize(header.num_joints);
 	for(int i=0;i<(int)header.num_anims;i++){
 		iqmanim &a = anims[i];
 		cout << "Loaded animation: " << &str[a.name] << endl;
@@ -286,7 +285,7 @@ void Model::setTEXID(GLuint id){
  * @param animName Name of the animation to run
  * @param curTime Current elapsed frame time
  */
-void Model::animate(string animName, float curTime){
+void Model::animate(string animName, float curTime, std::vector<glm::mat4> *outframe){
 	bool foundAnim = false;
 	iqmanim anim;
 	for(int i=0;i<anims.size();i++)
@@ -318,17 +317,13 @@ void Model::animate(string animName, float curTime){
 	for(int i=0;i<joints.size();i++){
 		glm::mat4 mat = (1-frameoffset)*mat1[i] + frameoffset*mat2[i];
 		if(joints[i].parent >= 0)
-			outframe[i] = mat * outframe[joints[i].parent];
+			(*outframe)[i] = mat * (*outframe)[joints[i].parent];
 		else
-			outframe[i] = mat;
+			(*outframe)[i] = mat;
 	}
 }
 
-void Model::draw(ShaderProgram *prg){
-	//shadow shit
-	//GLuint scoord3d = glGetAttribLocation(depthShader,"coord3d");
-	//GLuint scoord3d = glGetAttribLocation(depthShader,"coord3d");
-
+void Model::draw(ShaderProgram *prg, vector<glm::mat4> outframe){
 	glUseProgram(prg->getID());
 	glm::mat3x4 outframe3x4[outframe.size()];
 	for(int i=0;i<outframe.size();i++)
