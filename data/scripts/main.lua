@@ -1,6 +1,5 @@
-fixit = "hello"
 function init()
-	fixit = createGameObject("mr_fixit.iqm")
+	fixit = GO.createIQM("mr_fixit.iqm")
 end
 
 function update(dt)

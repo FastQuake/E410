@@ -76,7 +76,9 @@ int main(int argc, char *argv[]){
 		cerr << "Could not load file " << lua_tostring(l,-1) << endl; 
 		return EXIT_FAILURE;
 	}
-	status = luaL_dostring(l,"init()");
+	//status = luaL_dostring(l,"init()");
+	lua_getglobal(l, "init");
+	status = lua_pcall(l,0,0,0);
 	if(status){
 		cerr << "Could not find init funtion " << lua_tostring(l,-1)
 			<< endl;
@@ -168,6 +170,14 @@ int main(int argc, char *argv[]){
 		}
 		if(im.isKeyDown(sf::Keyboard::D)){
 			cam.strafe(speed*dt.asSeconds());
+		}
+
+		//call lua update
+		lua_getglobal(l,"update");
+		lua_pushnumber(l,dt.asSeconds());
+		if(lua_pcall(l,1,0,0)){
+			cerr << "Could not find update function " << 
+				lua_tostring(l,-1) << endl;
 		}
 
 		glm::mat4 projection;
