@@ -3,7 +3,7 @@ using namespace std;
 
 Console::Console(lua_State *l,sf::Vector2f pos, sf::Color bg, sf::Color fg) :
 out(pos,sf::Vector2i(80,24),fg),
-in(sf::Vector2f(pos.x,pos.y+(23*14)),80,fg),
+in(sf::Vector2f(pos.x,pos.y+(24*14)),80,fg),
 bg(sf::Vector2f(81*7,24*14)){
 	
 		this->pos = pos;
@@ -48,13 +48,15 @@ void Console::update(InputManager *im){
 }
 
 void Console::draw(sf::RenderWindow *screen){
+	//set background for output box
 	bg.setSize(sf::Vector2f((size.x+1)*7,size.y*14));
 	bg.setPosition(pos.x,pos.y);
 	bg.setFillColor(bgColour);
 	screen->draw(bg);
 
+	//set background for input box
 	bg.setSize(sf::Vector2f((size.x+1)*7,14));
-	bg.setPosition(pos.x,pos.y+(size.y-1)*14);
+	bg.setPosition(pos.x,pos.y+(size.y)*14);
 	bg.setFillColor(sf::Color(bgColour.r-30,bgColour.g-30,bgColour.b-30));
 	screen->draw(bg);
 	out.draw(screen);
