@@ -3,5 +3,4 @@ function init()
 end
 
 function update(dt)
-	print("dt is " .. dt);
 end
