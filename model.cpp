@@ -299,7 +299,7 @@ void Model::animate(string animName, float curTime){
 		return;
 	}
 
-	float currentframe = (curTime / 1000.0 * anim.framerate);
+	float currentframe = (curTime * anim.framerate);
 	currentframe = fmod(currentframe,anim.num_frames); //Wrap currentframe to length of anim
 
 	if(frames.size() <= 0) return;

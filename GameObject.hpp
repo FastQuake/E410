@@ -11,10 +11,14 @@ public:
 	glm::vec3 position;
 	glm::vec3 rotation;
 	glm::vec3 scale;
+	std::string currentAnimation;
+	float aTime;
 
-	bool visible;
+	bool visible, animate;
 
 	GameObject();
+
+	void setModel(Model *model);
 };
 
 #endif

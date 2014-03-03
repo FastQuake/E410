@@ -6,10 +6,14 @@ RenderManager::~RenderManager(){
 	}
 }
 
-void RenderManager::render(ShaderProgram *prg, float curTime){
+void RenderManager::render(ShaderProgram *prg, float dt){
 
 	for(int i=0;i<this->drawList.size();i++){
-		drawList[i]->model->animate("Taunt",curTime);
+		if(drawList[i]->animate){
+			drawList[i]->aTime += dt; 
+			drawList[i]->model->animate(drawList[i]->currentAnimation,
+					drawList[i]->aTime);
+		}
 
 		glm::mat4 scale = glm::scale(glm::mat4(1),drawList[i]->scale);
 		glm::mat4 rot = \

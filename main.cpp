@@ -197,13 +197,11 @@ int main(int argc, char *argv[]){
 		glUseProgram(prg.getID());
 		glUniformMatrix4fv(prg.getUniform(0),1,GL_FALSE,glm::value_ptr(viewProjection));
 
-		float timey = 0.0f;
 
-		if(animate)
-			timey = time.getElapsedTime().asMilliseconds();
+		//float timey = time.getElapsedTime().asMilliseconds();
 
 		//mesh.model->draw(&prg);
-		rendman.render(&prg,timey);
+		rendman.render(&prg,dt.asSeconds());
 
 		//Do sfml drawing here
 		gui.draw(&window);
