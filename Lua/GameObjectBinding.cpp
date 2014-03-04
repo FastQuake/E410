@@ -127,6 +127,10 @@ int l_setAnim(lua_State *l){
 	} else
 		return 0; 
 
+	if(animate && !obj->hasAnimation){
+		cout << "Object contains no animation" << endl;
+		return 0;
+	}
 	obj->animate = animate;
 	return 0;
 }
