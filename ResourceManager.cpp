@@ -16,7 +16,9 @@ Model *ResourceManager::loadModel(string name){
 	//If model is not loaded, load it
 	if(it == models.end()){
 		Model model;
-		loadIQM(modelDir+name,model);
+		if(loadIQM(modelDir+name,model) == false){
+			return NULL;
+		};
 		models[name] = model;
 		return &models[name];
 	}else{
