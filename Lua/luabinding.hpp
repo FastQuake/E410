@@ -7,7 +7,7 @@
 void bindFunctions(lua_State *l);
 
 //Data converting and error handling functions
-int l_toNumber(lua_State *l, int pos);
+float l_toNumber(lua_State *l, int pos);
 bool l_toBool(lua_State *l, int pos);
 std::string l_toString(lua_State *l, int pos);
 

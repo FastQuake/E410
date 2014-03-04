@@ -27,7 +27,7 @@ void bindFunctions(lua_State *l){
 	lua_setglobal(l,"mouse");
 }
 
-int l_toNumber(lua_State *l, int pos){
+float l_toNumber(lua_State *l, int pos){
 	if(lua_isnumber(l,pos)){
 		return lua_tonumber(l,pos);
 	} else {
