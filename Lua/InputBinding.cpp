@@ -1,5 +1,6 @@
 #include <iostream>
 #include "../globals.hpp"
+#include "luabinding.hpp"
 #include "InputBinding.hpp"
 using namespace std;
 
@@ -119,9 +120,7 @@ string mice[] = {
 
 int l_isKeyDown(lua_State *l){
 	int key;
-	if(lua_isnumber(l,1)){
-		key = lua_tonumber(l,1);
-	}else return 0;
+	key = l_toNumber(l, 1);
 
 	bool state = im->isKeyDown((sf::Keyboard::Key)key);
 	
@@ -130,9 +129,7 @@ int l_isKeyDown(lua_State *l){
 }
 int l_isMouseDown(lua_State *l){
 	int but;
-	if(lua_isnumber(l,1)){
-		but = lua_tonumber(l,1);
-	} else return 0;
+	but = l_toNumber(l, 1);
 
 	bool state = im->isMouseDown((sf::Mouse::Button)but);
 
@@ -147,12 +144,8 @@ int l_getMousePos(lua_State *l){
 }
 int l_setMousePos(lua_State *l){
 	int x,y;
-	if(lua_isnumber(l,1)){
-		x = lua_tonumber(l,1);
-	} else return 0;
-	if(lua_isnumber(l,2)){
-		y = lua_tonumber(l,2);
-	} else return 0;
+	x = l_toNumber(l, 1);
+	y = l_toNumber(l, 2);
 
 	im->setMousePos(sf::Vector2i(x,y));
 
@@ -162,9 +155,7 @@ int l_setMousePos(lua_State *l){
 //Gui inputs
 int l_isGuiKeyDown(lua_State *l){
 	int key;
-	if(lua_isnumber(l,1)){
-		key = lua_tonumber(l,1);
-	}else return 0;
+	key = l_toNumber(l, 1);
 
 	bool state = im->isGuiKeyDown((sf::Keyboard::Key)key);
 	
@@ -173,9 +164,7 @@ int l_isGuiKeyDown(lua_State *l){
 }
 int l_isGuiMouseDown(lua_State *l){
 	int but;
-	if(lua_isnumber(l,1)){
-		but = lua_tonumber(l,1);
-	} else return 0;
+	but = l_toNumber(l, 1);
 
 	bool state = im->isGuiMouseDown((sf::Mouse::Button)but);
 
@@ -190,12 +179,8 @@ int l_getGuiMousePos(lua_State *l){
 }
 int l_setGuiMousePos(lua_State *l){
 	int x,y;
-	if(lua_isnumber(l,1)){
-		x = lua_tonumber(l,1);
-	} else return 0;
-	if(lua_isnumber(l,2)){
-		y = lua_tonumber(l,2);
-	} else return 0;
+	x = l_toNumber(l, 1);
+	y = l_toNumber(l, 2);
 
 	im->setGuiMousePos(sf::Vector2i(x,y));
 
