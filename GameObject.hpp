@@ -15,7 +15,7 @@ public:
 	std::vector<glm::mat4> outframe;
 	float aTime;
 
-	bool visible, animate;
+	bool visible, animate, hasAnimation;
 
 	GameObject();
 
