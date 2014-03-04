@@ -106,6 +106,15 @@ string keys[] = {"A",
   "Pause"
 };
 
+string mice[] = {
+  "Left",
+  "Right",
+  "Middle",
+  "XButton1",
+  "XButton2",
+  "ButtonCount"
+};
+
 //TODO better error handling
 
 int l_isKeyDown(lua_State *l){
@@ -150,11 +159,64 @@ int l_setMousePos(lua_State *l){
 	return 0;
 }
 
+//Gui inputs
+int l_isGuiKeyDown(lua_State *l){
+	int key;
+	if(lua_isnumber(l,1)){
+		key = lua_tonumber(l,1);
+	}else return 0;
+
+	bool state = im->isGuiKeyDown((sf::Keyboard::Key)key);
+	
+	lua_pushboolean(l, state);
+	return 1;
+}
+int l_isGuiMouseDown(lua_State *l){
+	int but;
+	if(lua_isnumber(l,1)){
+		but = lua_tonumber(l,1);
+	} else return 0;
+
+	bool state = im->isGuiMouseDown((sf::Mouse::Button)but);
+
+	lua_pushboolean(l, state);
+	return 1;
+}
+int l_getGuiMousePos(lua_State *l){
+	sf::Vector2i pos = im->getGuiMousePos();
+	lua_pushnumber(l,pos.x);
+	lua_pushnumber(l,pos.y);
+	return 2;
+}
+int l_setGuiMousePos(lua_State *l){
+	int x,y;
+	if(lua_isnumber(l,1)){
+		x = lua_tonumber(l,1);
+	} else return 0;
+	if(lua_isnumber(l,2)){
+		y = lua_tonumber(l,2);
+	} else return 0;
+
+	im->setGuiMousePos(sf::Vector2i(x,y));
+
+	return 0;
+}
+
 void registerKeys(lua_State *l){
 	int keyLength = sizeof(keys)/sizeof(keys[0]);
 	for(int i=0;i<keyLength;i++){
 		const char* key = keys[i].c_str();
 		lua_pushstring(l,key);
+		lua_pushnumber(l,i);
+		lua_settable(l, -3);
+	}
+}
+
+void registerMice(lua_State *l){
+	int miceLength = sizeof(mice)/sizeof(mice[0]);
+	for(int i=0;i<miceLength;i++){
+		const char* mouse = mice[i].c_str();
+		lua_pushstring(l,mouse);
 		lua_pushnumber(l,i);
 		lua_settable(l, -3);
 	}

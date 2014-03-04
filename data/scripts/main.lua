@@ -3,8 +3,8 @@ function init()
 end
 
 function update(dt)
-	aDown = input.isKeyDown(keys.Up)
-	if aDown == true then
-		print("A DOWN!")
+	down = input.isGuiMouseDown(mouse.Left)
+	if down == true then
+		print("DOWN DOWN DOWN")
 	end
 end

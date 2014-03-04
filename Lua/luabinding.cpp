@@ -21,6 +21,10 @@ void bindFunctions(lua_State *l){
 	lua_newtable(l);
 	registerKeys(l);
 	lua_setglobal(l,"keys");
+
+	lua_newtable(l);
+	registerMice(l);
+	lua_setglobal(l,"mouse");
 }
 
 int lua_print(lua_State *l){
