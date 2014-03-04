@@ -27,6 +27,39 @@ void bindFunctions(lua_State *l){
 	lua_setglobal(l,"mouse");
 }
 
+int l_toNumber(lua_State *l, int pos){
+	if(lua_isnumber(l,pos)){
+		return lua_tonumber(l,pos);
+	} else {
+		lua_pushstring(l, "Argument is not a number");
+		lua_error(l);
+	}
+
+	return 0;
+}
+
+bool l_toBool(lua_State *l, int pos){
+	if(lua_isboolean(l,pos)){
+		return lua_toboolean(l, pos);
+	} else {
+		lua_pushstring(l, "Argument is not a boolean");
+		lua_error(l);
+	}
+
+	return false;
+}
+
+string l_toString(lua_State *l, int pos){
+	if(lua_isstring(l, pos)){
+		return lua_tostring(l, pos);
+	} else {
+		lua_pushstring(l, "Arugment is not a string");
+		lua_error(l);
+	}
+
+	return "";
+}
+
 int lua_print(lua_State *l){
 	string value = "";
 	if(lua_isstring(l,1)){
