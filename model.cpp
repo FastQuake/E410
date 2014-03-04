@@ -324,6 +324,7 @@ void Model::animate(string animName, float curTime, std::vector<glm::mat4> *outf
 }
 
 void Model::draw(ShaderProgram *prg, vector<glm::mat4> outframe){
+	bool skin = true;
 	glUseProgram(prg->getID());
 	glm::mat3x4 outframe3x4[outframe.size()];
 	for(int i=0;i<outframe.size();i++)
@@ -332,6 +333,10 @@ void Model::draw(ShaderProgram *prg, vector<glm::mat4> outframe){
 	GLsizei arrsize = outframe.size(); //OpenGL will complain if I feed it a size_t
 	if(frames.size() > 0)
 		glUniformMatrix3x4fv(prg->getUniform(1), arrsize, GL_FALSE, glm::value_ptr(outframe3x4[0]));
+	else
+		skin = false;
+
+	glUniform1i(prg->getUniform(4),skin);
 
 	glBindBuffer(GL_ARRAY_BUFFER,verts_vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tris_ebo);

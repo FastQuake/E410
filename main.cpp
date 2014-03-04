@@ -71,6 +71,7 @@ int main(int argc, char *argv[]){
 	prg.setUniform("bonemats");
 	prg.setUniform("texture");
 	prg.setUniform("modelMat");
+	prg.setUniform("skin");
 
 	//Load main lua file and then call init function
 	int status = luaL_dofile(l, "./data/scripts/main.lua");
