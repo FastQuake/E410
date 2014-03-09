@@ -2,6 +2,7 @@
 #include <cstring>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <SFML/Graphics.hpp>
 #include "model.hpp"
 using namespace std;
@@ -189,7 +190,7 @@ bool loadIQMAnim(string filename, iqmheader header,Model &target, unsigned char 
 	iqmpose *poses = (iqmpose*)&buf[header.ofs_poses];
 
 	vector<glm::mat4> frames(header.num_frames * header.num_poses);
-	unsigned short *framedata = (ushort*)&buf[header.ofs_frames];
+	unsigned short *framedata = (uint16_t*)&buf[header.ofs_frames];
 
 	for(int i=0; i < (int)header.num_frames;i++){
 		for(int j=0; j < (int)header.num_poses;j++){
