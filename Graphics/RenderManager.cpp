@@ -15,6 +15,9 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 					drawList[i]->aTime,&drawList[i]->outframe);
 		}
 
+		glm::mat4 view = currentCam->view();
+		glUniformMatrix4fv(prg->getUniform(5), 1, GL_FALSE, glm::value_ptr(view));
+
 		glm::mat4 scale = glm::scale(glm::mat4(1),drawList[i]->scale);
 		glm::mat4 rot = \
 			glm::rotate(glm::mat4(1),drawList[i]->rotation.x,glm::vec3(1.0,0,0)) *

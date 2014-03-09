@@ -65,13 +65,18 @@ int main(int argc, char *argv[]){
 	prg.setAttribute("texcoord");
 	prg.setAttribute("vweight");
 	prg.setAttribute("vbones");
-	prg.setUniform("viewProjection");
+	prg.setUniform("projection");
 	prg.setUniform("bonemats");
 	prg.setUniform("texture");
 	prg.setUniform("modelMat");
 	prg.setUniform("skin");
+	prg.setUniform("view");
 
 	//Load main lua file and then call init function
+	lua_pushnumber(l, width);
+	lua_setglobal(l, "width");
+	lua_pushnumber(l, height);
+	lua_setglobal(l, "height");
 	int status = luaL_dofile(l, "./data/scripts/main.lua");
 	if(status){
 		cerr << "Could not load file " << lua_tostring(l,-1) << endl; 
@@ -122,6 +127,11 @@ int main(int argc, char *argv[]){
 				height = event.size.height;
 				middle = sf::Vector2i(width/2,height/2);
 				glViewport(0,0,width,height);
+
+				lua_pushnumber(l, width);
+				lua_setglobal(l, "width");
+				lua_pushnumber(l, height);
+				lua_setglobal(l, "height");
 			}
 			if(event.type == sf::Event::GainedFocus){
 				im->setFocus(true);
@@ -155,24 +165,6 @@ int main(int argc, char *argv[]){
 			}
 		}
 		
-		//Do camera stuff
-		/*sf::Vector2i pos = im->getMousePos() - middle;
-		cam.turn(glm::vec2(pos.x*dt.asSeconds()*sensitivity
-					,pos.y*dt.asSeconds()*sensitivity));
-		im->setMousePos(middle);
-		if(im->isKeyDown(sf::Keyboard::W)){
-			cam.move(speed*dt.asSeconds());
-		}
-		if(im->isKeyDown(sf::Keyboard::S)){
-			cam.move(-speed*dt.asSeconds());
-		}
-		if(im->isKeyDown(sf::Keyboard::A)){
-			cam.strafe(-speed*dt.asSeconds());
-		}
-		if(im->isKeyDown(sf::Keyboard::D)){
-			cam.strafe(speed*dt.asSeconds());
-		}*/
-
 		//call lua update
 		lua_getglobal(l,"update");
 		lua_pushnumber(l,dt.asSeconds());

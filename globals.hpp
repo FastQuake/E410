@@ -15,5 +15,4 @@ extern RenderManager rendman;
 extern int width;
 extern int height;
 
-
 #endif
