@@ -128,6 +128,11 @@ int main(int argc, char *argv[]){
 				middle = sf::Vector2i(width/2,height/2);
 				glViewport(0,0,width,height);
 
+				sf::View view = window.getView();
+				view.setSize(width,height);
+				view.setCenter(width/2, height/2);
+				window.setView(view);
+
 				lua_pushnumber(l, width);
 				lua_setglobal(l, "width");
 				lua_pushnumber(l, height);
