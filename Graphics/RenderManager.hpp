@@ -2,7 +2,7 @@
 #define RENDERMANAGER_HPP_
 
 #include "model.hpp"
-#include "GameObject.hpp"
+#include "../GameObject.hpp"
 #include <map>
 
 class RenderManager{

@@ -1,7 +1,7 @@
 #ifndef GLOBALS_HPP
 #define GLOBALS_HPP
 
-#include "RenderManager.hpp"
+#include "Graphics/RenderManager.hpp"
 #include "ResourceManager.hpp"
 #include "GUI/Console.hpp"
 

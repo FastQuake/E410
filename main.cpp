@@ -8,12 +8,11 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <lua.hpp>
 #include "globals.hpp"
-#include "GraphicsUtils.hpp"
-#include "FPSCamera.hpp"
-#include "model.hpp"
+#include "Graphics/GraphicsUtils.hpp"
+#include "Graphics/model.hpp"
 #include "InputManager.hpp"
 #include "ResourceManager.hpp"
-#include "RenderManager.hpp"
+#include "Graphics/RenderManager.hpp"
 #include "GUI/Console.hpp"
 #include "Lua/luabinding.hpp"
 using namespace std;
@@ -22,7 +21,6 @@ Console *global_con;
 InputManager *im;
 ResourceManager resman;
 RenderManager rendman;
-FPSCamera cam(0,0,0);
 
 int width, height;
 
@@ -79,7 +77,7 @@ int main(int argc, char *argv[]){
 		cerr << "Could not load file " << lua_tostring(l,-1) << endl; 
 		return EXIT_FAILURE;
 	}
-	//status = luaL_dostring(l,"init()");
+
 	lua_getglobal(l, "init");
 	status = lua_pcall(l,0,0,0);
 	if(status){
@@ -158,7 +156,7 @@ int main(int argc, char *argv[]){
 		}
 		
 		//Do camera stuff
-		sf::Vector2i pos = im->getMousePos() - middle;
+		/*sf::Vector2i pos = im->getMousePos() - middle;
 		cam.turn(glm::vec2(pos.x*dt.asSeconds()*sensitivity
 					,pos.y*dt.asSeconds()*sensitivity));
 		im->setMousePos(middle);
@@ -173,7 +171,7 @@ int main(int argc, char *argv[]){
 		}
 		if(im->isKeyDown(sf::Keyboard::D)){
 			cam.strafe(speed*dt.asSeconds());
-		}
+		}*/
 
 		//call lua update
 		lua_getglobal(l,"update");
@@ -189,7 +187,7 @@ int main(int argc, char *argv[]){
 		else
 			projection = glm::ortho<float>(-10.0,10.0,-10.0,10.0,-10,40);
 
-		glm::mat4 viewProjection = projection * cam.view();
+		glm::mat4 viewProjection = projection; //* cam.view();
 
 		//Updating code
 		gui.update();
@@ -199,9 +197,6 @@ int main(int argc, char *argv[]){
 		//Do all drawing here
 		glUseProgram(prg.getID());
 		glUniformMatrix4fv(prg.getUniform(0),1,GL_FALSE,glm::value_ptr(viewProjection));
-
-
-		//float timey = time.getElapsedTime().asMilliseconds();
 
 		//mesh.model->draw(&prg);
 		rendman.render(&prg,dt.asSeconds());

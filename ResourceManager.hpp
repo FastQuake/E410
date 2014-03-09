@@ -1,7 +1,7 @@
 #ifndef RESOURCEMANAGER_HPP_
 #define RESOURCEMANAGER_HPP_
 
-#include "model.hpp"
+#include "Graphics/model.hpp"
 #include <map>
 
 extern std::string dataDir;

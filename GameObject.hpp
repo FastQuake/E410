@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <glm/glm.hpp>
-#include "model.hpp"
+#include "Graphics/model.hpp"
 
 class GameObject{
 public:
