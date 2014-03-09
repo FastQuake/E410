@@ -29,6 +29,7 @@ int main(int argc, char *argv[]){
 	lua_State *l = luaL_newstate();
 	bindFunctions(l);
 
+	//Create sfml window with opengl context
 	sf::ContextSettings cs;
 	cs.majorVersion = 3;
 	cs.minorVersion = 0;
@@ -91,8 +92,7 @@ int main(int argc, char *argv[]){
 		return EXIT_FAILURE;
 	}
 
-	float currentFrame = 0;
-
+	//Set opengl flags
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
@@ -100,22 +100,11 @@ int main(int argc, char *argv[]){
 
 	glClearColor(0.0,0.0,0.0,1.0);
 
-	sf::Clock time;
-	time.restart();
-
 	sf::Clock dtTimer;
 	dtTimer.restart();
 	sf::Time dt;
 
-	sf::Vector2i middle(width/2,height/2);
-	float sensitivity = 20.0;
-	float speed = 10;
-
 	window.setActive(true);
-
-	bool animate = false;
-	bool spin = false;
-	bool ortho = false;
 
 	while(window.isOpen()){
 		while(window.pollEvent(event)){
@@ -125,7 +114,6 @@ int main(int argc, char *argv[]){
 			if(event.type == sf::Event::Resized){
 				width = event.size.width;
 				height = event.size.height;
-				middle = sf::Vector2i(width/2,height/2);
 				glViewport(0,0,width,height);
 
 				sf::View view = window.getView();
@@ -153,20 +141,8 @@ int main(int argc, char *argv[]){
 					im->getString();
 					con.visible = !con.visible;
 					con.updates = !con.updates;
-					im->setGuiMousePos(middle);
+					im->setGuiMousePos(sf::Vector2i(width/2,height/2));
 				}
-				if(event.key.code == sf::Keyboard::M){
-					animate = !animate;
-				}
-				if(event.key.code == sf::Keyboard::P){
-					spin = !spin;
-				}
-			}
-		}
-
-		if(im->isKeyDown(sf::Keyboard::Left)){
-			if(currentFrame>0){
-				currentFrame--;
 			}
 		}
 		
@@ -178,13 +154,7 @@ int main(int argc, char *argv[]){
 				lua_tostring(l,-1) << endl;
 		}
 
-		glm::mat4 projection;
-		if(!ortho)
-			projection = glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
-		else
-			projection = glm::ortho<float>(-10.0,10.0,-10.0,10.0,-10,40);
-
-		glm::mat4 viewProjection = projection; //* cam.view();
+		glm::mat4 projection = glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
 
 		//Updating code
 		gui.update();
@@ -193,9 +163,8 @@ int main(int argc, char *argv[]){
 
 		//Do all drawing here
 		glUseProgram(prg.getID());
-		glUniformMatrix4fv(prg.getUniform(0),1,GL_FALSE,glm::value_ptr(viewProjection));
+		glUniformMatrix4fv(prg.getUniform(0),1,GL_FALSE,glm::value_ptr(projection));
 
-		//mesh.model->draw(&prg);
 		rendman.render(&prg,dt.asSeconds());
 
 		//Do sfml drawing here
