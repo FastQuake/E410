@@ -22,6 +22,8 @@ bg(sf::Vector2f(81*7,24*14)){
 		alive = true;
 		locks = true;
 
+		currentPos = -1;
+
 		inputTimer.restart();
 }
 
@@ -39,6 +41,44 @@ void Console::update(InputManager *im){
 			cerr << error << endl;
 		}
 		out.print("\n");
+		inputTimer.restart();
+
+		currentPos = -1;
+		history.push_back(luaString);
+		if(history.size() > MAX_HISTORY){
+			history.erase(history.begin());
+		}
+	}
+
+	//Move up and down through history
+	if(im->isGuiKeyDown(sf::Keyboard::Up) &&
+			inputTimer.getElapsedTime().asMilliseconds() > 100){
+
+		if(currentPos < (int)history.size()-1){
+			currentPos++;
+			int pos = history.size() - 1 - currentPos;
+			in.getString(); //clear textbox
+			in.updateString(history.at(pos));
+		}
+
+		inputTimer.restart();
+	}
+	if(im->isGuiKeyDown(sf::Keyboard::Down)&&
+			inputTimer.getElapsedTime().asMilliseconds() > 100){
+
+		if(currentPos > -1){
+			currentPos--;
+		}
+
+		if(currentPos == -1){
+			in.getString(); //clear textbox
+			in.updateString("");
+		} else {
+			int pos = history.size() - 1 - currentPos;
+			in.getString();
+			in.updateString(history.at(pos));
+		}
+
 		inputTimer.restart();
 	}
 	

@@ -17,11 +17,11 @@ class TextBox : public GuiElement {
 		int length;
 		int textPos;
 
-		void updateString(std::string input);
 	public:
 		TextBox(sf::Vector2f pos, int length, sf::Color colour);
 
 		std::string getString();
+		void updateString(std::string input);
 
 		void update(InputManager *im);
 		void draw(sf::RenderWindow *screen);
