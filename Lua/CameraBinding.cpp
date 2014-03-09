@@ -3,11 +3,13 @@
 
 FPSCamera *l_toCam(lua_State *l, int pos){
 	if(lua_isuserdata(l, pos)){
-		return (FPSCamera*)lua_touserdata(l, pos);
-	} else {
-		lua_pushstring(l, "Arugment in not a Camera");
-		lua_error(l);
+		FPSCamera *out =(FPSCamera*)lua_touserdata(l, pos);  
+		if(out->magic == CAMMAGIC)
+			return out;
 	}
+		
+	lua_pushstring(l, "Argument in not a Camera");
+	lua_error(l);
 
 	return NULL;
 }

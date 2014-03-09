@@ -5,8 +5,11 @@
 #include <glm/glm.hpp>
 #include "Graphics/model.hpp"
 
+#define GOMAGIC "Game"
+
 class GameObject{
 public:
+	std::string magic;
 	Model *model;
 	glm::vec3 position;
 	glm::vec3 rotation;

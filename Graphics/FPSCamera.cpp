@@ -13,6 +13,7 @@ float toRad(float degrees){
 }
 
 FPSCamera::FPSCamera(float x, float y, float z){
+	magic = CAMMAGIC;
 	pos = glm::vec3(x,y,z);
 	right = glm::vec3(1.0, 0.0, 0.0);
 	lookat = glm::vec3(0.0, 0.0, -1.0);

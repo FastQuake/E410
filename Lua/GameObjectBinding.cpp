@@ -6,11 +6,13 @@ using namespace std;
 
 GameObject *l_toGO(lua_State *l, int pos){
 	if(lua_isuserdata(l,pos)){
-		 return (GameObject*)lua_touserdata(l,pos);
-	} else {
-		lua_pushstring(l,"Argument is not a GameObject");
-		lua_error(l);
+		 GameObject *out = (GameObject*)lua_touserdata(l,pos);
+		 if(out->magic == GOMAGIC)
+			 return out;
 	}
+
+	lua_pushstring(l,"Argument is not a GameObject");
+	lua_error(l);
 
 	return NULL;
 }
