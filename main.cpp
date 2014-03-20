@@ -133,7 +133,10 @@ int main(int argc, char *argv[]){
 				im->setFocus(false);
 			}
 			if(event.type == sf::Event::TextEntered){
-				im->addInput(sf::String(event.text.unicode));
+				if((event.text.unicode == '\b') ||
+					(event.text.unicode == '\t') ||
+					(event.text.unicode >= 32 && event.text.unicode <= 126))
+						im->addInput(sf::String(event.text.unicode));
 			}
 			if(event.type == sf::Event::KeyPressed){
 				//Toggle console is user hits f1
