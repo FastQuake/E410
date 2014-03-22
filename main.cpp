@@ -21,6 +21,7 @@ Console *global_con;
 InputManager *im;
 ResourceManager resman;
 RenderManager rendman;
+GuiManager *gui;
 
 int width, height;
 
@@ -51,8 +52,9 @@ int main(int argc, char *argv[]){
 
 	global_con = &con;
 	
-	GuiManager gui(im);
-	gui.add(&con);
+	GuiManager guie(im);
+	guie.add(&con);
+	gui = &guie;
 
 	GLenum glewStatus = glewInit();
 	if(glewStatus != GLEW_OK){
@@ -160,7 +162,7 @@ int main(int argc, char *argv[]){
 		glm::mat4 projection = glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
 
 		//Updating code
-		gui.update();
+		gui->update();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -171,7 +173,7 @@ int main(int argc, char *argv[]){
 		rendman.render(&prg,dt.asSeconds());
 
 		//Do sfml drawing here
-		gui.draw(&window);
+		gui->draw(&window);
 
 		window.display();
 		dt = dtTimer.restart();

@@ -3,6 +3,7 @@ using namespace std;
 
 string dataDir = "data/";
 string modelDir = dataDir+"models/";
+string fontDir = dataDir+"fonts/";
 
 
 /**
@@ -22,6 +23,21 @@ Model *ResourceManager::loadModel(string name){
 		models[name] = model;
 		return &models[name];
 	}else{
+		return &it->second;
+	}
+}
+
+sf::Font *ResourceManager::loadFont(string name){
+	map<string, sf::Font>::iterator it = fonts.find(name);
+
+	if(it == fonts.end()){
+		sf::Font f;
+		if(f.loadFromFile(fontDir+name) == false){
+			return NULL;
+		}
+		fonts[name] = f;
+		return &fonts[name];
+	} else {
 		return &it->second;
 	}
 }

@@ -11,6 +11,7 @@ extern Console *global_con;
 extern InputManager *im;
 extern ResourceManager resman;
 extern RenderManager rendman;
+extern GuiManager *gui;
 
 extern int width;
 extern int height;

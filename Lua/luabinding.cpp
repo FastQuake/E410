@@ -3,6 +3,7 @@
 #include "GameObjectBinding.hpp"
 #include "InputBinding.hpp"
 #include "CameraBinding.hpp"
+#include "GuiBinding.hpp"
 using namespace std;
 
 //TODO make this less ugly, break it up, etc
@@ -23,12 +24,16 @@ void bindFunctions(lua_State *l){
 	registerKeys(l);
 	lua_setglobal(l,"keys");
 
+	//add mouse conatants
 	lua_newtable(l);
 	registerMice(l);
 	lua_setglobal(l,"mouse");
 
 	luaL_newlib(l, cam_funcs);
 	lua_setglobal(l, "camera");
+
+	luaL_newlib(l, GUI_funcs);
+	lua_setglobal(l, "GUI");
 }
 
 float l_toNumber(lua_State *l, int pos){
