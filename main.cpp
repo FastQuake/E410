@@ -68,10 +68,23 @@ int main(int argc, char *argv[]){
 	prg.setAttribute("vbones");
 	prg.setUniform("projection");
 	prg.setUniform("bonemats");
-	prg.setUniform("texture");
+	prg.setUniform("inTexture");
 	prg.setUniform("modelMat");
 	prg.setUniform("skin");
 	prg.setUniform("view");
+	prg.setUniform("depthMVP");
+	prg.setUniform("shadowMap");
+
+	ShaderProgram depthPrg("./data/shaders/depthv.glsl",
+			"./data/shaders/depthf.glsl");
+	depthPrg.setAttribute("coord3d");
+	depthPrg.setAttribute("vweight");
+	depthPrg.setAttribute("vbones");
+	depthPrg.setUniform("skin");
+	depthPrg.setUniform("bonemats");
+	depthPrg.setUniform("pv");
+	depthPrg.setUniform("modelMat");
+	
 
 	//Load main lua file and then call init function
 	lua_pushnumber(l, width);
@@ -94,10 +107,13 @@ int main(int argc, char *argv[]){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+
 
 	glFramebufferTexture2D(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, rendman.depthTexture,0);
-
 	glDrawBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
 		cerr << "Bad buffer" << endl;
@@ -115,7 +131,6 @@ int main(int argc, char *argv[]){
 	//Set opengl flags
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
-//	glEnable(GL_SCISSOR_TEST);
 	glDepthFunc(GL_LESS);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
@@ -126,6 +141,8 @@ int main(int argc, char *argv[]){
 	sf::Time dt;
 
 	window.setActive(true);
+
+	rendman.currentCam->pos = glm::vec3(-4, 6, -4); 
 
 	while(window.isOpen()){
 		while(window.pollEvent(event)){
@@ -178,22 +195,33 @@ int main(int argc, char *argv[]){
 				lua_tostring(l,-1) << endl;
 		}
 
-		glm::mat4 projection = //glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
-		glm::ortho<float>(-10.0f,10.0f,-10.0f,10.0f,-10.0f,20.0f);
+		glm::mat4 projection = glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
 
 		//Updating code
 		gui.update();
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		//Do all drawing here
+		glUseProgram(depthPrg.getID());
+		rendman.renderDepth(&depthPrg, dt.asSeconds());
+
 		glUseProgram(prg.getID());
-		glUniformMatrix4fv(prg.getUniform(0),1,GL_FALSE,glm::value_ptr(projection));
+		glUniformMatrix4fv(prg.getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
 
 		rendman.render(&prg,dt.asSeconds());
 
 		//Do sfml drawing here
 		gui.draw(&window);
+
+		window.pushGLStates();
+
+		sf::Texture g;
+		g.loadFromImage(rendman.depthimg);
+		sf::Sprite thing;
+		thing.setTexture(g);
+		thing.setScale(0.2, 0.2);
+
+		window.draw(thing);
+		window.popGLStates();
 
 		window.display();
 		dt = dtTimer.restart();
