@@ -14,6 +14,7 @@ int l_camSetRot(lua_State *l);
 int l_camTurn(lua_State *l);
 int l_camMove(lua_State *l);
 int l_camStrafe(lua_State *l);
+int l_camDelete(lua_State *l);
 
 static const struct luaL_Reg cam_funcs[] = {
 	{"createCam", l_createCam},
@@ -23,6 +24,7 @@ static const struct luaL_Reg cam_funcs[] = {
 	{"turn", l_camTurn},
 	{"move", l_camMove},
 	{"strafe", l_camStrafe},
+	{"delete", l_camDelete},
 	{NULL, NULL}
 };
 
