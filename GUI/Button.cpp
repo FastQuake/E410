@@ -21,6 +21,8 @@ Button::Button(lua_State *l){
 	colBox.width += padding;
 	colBox.height += padding;
 
+	bTimer.restart();
+
 	visible = true;
 	updates = true;
 	alive = true;
@@ -43,7 +45,8 @@ void Button::update(InputManager *im){
 	if(im->isGuiMouseDown(sf::Mouse::Left)){
 		sf::Vector2i pos = im->getGuiMousePos();
 		if(colBox.contains(pos.x, pos.y)){
-			if(hasCallback){
+			if(hasCallback && bTimer.getElapsedTime().asMilliseconds() > 300){
+				bTimer.restart();
 				lua_rawgeti(l, LUA_REGISTRYINDEX, luaCallback);
 				lua_pushvalue(l, -1);
 				if(lua_pcall(l, 0, 0, 0)){

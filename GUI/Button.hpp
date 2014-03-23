@@ -24,6 +24,7 @@ class Button : public GuiElement {
 		void draw(sf::RenderWindow *screen);
 	private:
 		sf::FloatRect colBox;
+		sf::Clock bTimer;
 		lua_State *l;
 };
 

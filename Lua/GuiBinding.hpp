@@ -55,6 +55,7 @@ static const struct luaL_Reg GUI_methods[] = {
 	{"setBGColour", l_GuisetBGColour},
 	{"setCallback", l_Guisetcallback},
 	{"setPadding", l_GuisetPadding},
+	{"remove", l_Guidelete},
 	{NULL, NULL}
 };
 

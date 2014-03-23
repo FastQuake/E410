@@ -22,6 +22,7 @@ static const struct luaL_Reg GO_methods[] = {
 	{"setScale", l_setScale},
 	{"setCurAnim", l_setCurAnim},
 	{"animate", l_setAnim},
+	{"remove", l_delete},
 	{NULL,NULL}
 };
 
