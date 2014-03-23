@@ -30,6 +30,7 @@ int l_GuisetImg(lua_State *l);
 int l_GuicreateButton(lua_State *l);
 int l_GuisetBGColour(lua_State *l);
 int l_Guisetcallback(lua_State *l);
+int l_GuisetPadding(lua_State *l);
 
 static const struct luaL_Reg GUI_funcs[] = {
 	{"setPos",l_GuisetPos},
@@ -45,6 +46,7 @@ static const struct luaL_Reg GUI_funcs[] = {
 	{"createButton", l_GuicreateButton},
 	{"setBGColour", l_GuisetBGColour},
 	{"setCallback", l_Guisetcallback},
+	{"setPadding", l_GuisetPadding},
 	{NULL, NULL}
 };
 

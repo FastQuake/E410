@@ -31,10 +31,10 @@ Button::Button(lua_State *l){
 
 void Button::updateShape(){
 	colBox = text.getGlobalBounds();
-	colBox.left -= padding;
-	colBox.top -= padding;
-	colBox.width += padding;
-	colBox.height += padding;
+	colBox.left -= (padding/2);
+	colBox.top -= (padding/2);
+	colBox.width += (padding);
+	colBox.height += (padding);
 }
 
 

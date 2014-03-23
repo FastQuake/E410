@@ -112,7 +112,6 @@ int l_GuisetString(lua_State *l){
 	if(last == 'B'){
 		Button *b = (Button*)e;
 		b->text.setString(text);
-		b->updateShape();
 	}
 	//If it is a textbox
 	else if(last == 'T'){
@@ -134,7 +133,6 @@ int l_GuisetCharSize(lua_State *l){
 	if(lastChar(e->magic) == 'B'){
 		Button *b = (Button*)e;
 		b->text.setCharacterSize(size);
-		b->updateShape();
 	}
 	//If it is a textbox
 	else if(lastChar(e->magic) == 'T'){
@@ -160,7 +158,6 @@ int l_GuisetFont(lua_State *l){
 	if(lastChar(e->magic) == 'B'){
 		Button *b = (Button*)e;
 		b->text.setFont(*f);
-		b->updateShape();
 	}
 	//If it is a textbox
 	else if(lastChar(e->magic) == 'T'){
@@ -225,5 +222,12 @@ int l_Guisetcallback(lua_State *l){
 
 	b->hasCallback = true;
 	b->luaCallback = luaL_ref(l, LUA_REGISTRYINDEX);
+	return 0;
+}
+int l_GuisetPadding(lua_State *l){
+	Button *b = l_toGuiButton(l, 1);
+	float pad = l_toNumber(l, 2);
+
+	b->padding = pad;
 	return 0;
 }
