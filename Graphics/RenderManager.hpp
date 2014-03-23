@@ -9,6 +9,7 @@
 class RenderManager{
 public:
 	GLuint framebuffer;
+	GLuint depthTexture;
 	void render(ShaderProgram *prg, float curTime);
 	std::vector<GameObject*> drawList;
 	std::vector<FPSCamera*> cameras;

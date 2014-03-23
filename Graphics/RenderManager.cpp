@@ -11,34 +11,11 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 	glViewport(0,0,1024,1024);
 	//glScissor(0,0,2048,2048);
 
-	GLuint madetex;
-	glGenTextures(1,&madetex);
-	glBindTexture(GL_TEXTURE_2D,madetex);
-
-	//glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,800,600,0,GL_RGB,GL_FLOAT,0);
-	glTexImage2D(GL_TEXTURE_2D,0,GL_DEPTH_COMPONENT24,1024,1024,0,GL_DEPTH_COMPONENT,GL_FLOAT,0);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-
-	glBindTexture(GL_TEXTURE_2D,0);
 	//glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,madetex,0);
-	//glBindFramebuffer(GL_FRAMEBUFFER,framebuffer);
-	glFramebufferTexture2D(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D,madetex,0);
+	glBindFramebuffer(GL_FRAMEBUFFER,framebuffer);
+	glFramebufferTexture2D(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, depthTexture,0);
 
 
-	/*GLuint dummybuffer;
-	glGenRenderbuffers(1,&dummybuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, dummybuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER,GL_RGBA,1024,1024);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_RENDERBUFFER,dummybuffer);*/
-
-	//GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
-	//glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_BACK);
 
@@ -81,8 +58,7 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 										ceil((double)(pixels[i]*255.0f)),
 										ceil((double)(pixels[i]*255.0f)),255));
 	}
-	image.saveToFile("asdf.tga");
+	image.saveToFile("asdf.png");
 
-	glDeleteTextures(1,&madetex);
 	delete[] pixels;
 }
