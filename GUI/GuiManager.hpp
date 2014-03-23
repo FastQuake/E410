@@ -19,6 +19,7 @@ class GuiElement{
 		sf::Vector2f pos;
 		sf::Vector2i size;
 		sf::Vector2f scale;
+		int zindex;
 
 		GuiElement();
 
@@ -35,6 +36,7 @@ class GuiManager{
 		GuiManager(InputManager *im);
 
 		void add(GuiElement *element);
+		void sortElem();
 
 		void update();
 		void draw(sf::RenderWindow *screen);

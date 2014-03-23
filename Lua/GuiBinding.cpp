@@ -69,6 +69,14 @@ int l_GuisetVisible(lua_State *l){
 
 	return 0;
 }
+int l_GuisetZ(lua_State *l){
+	GuiElement *e = l_toGuiElement(l, 1);
+	int index = l_toNumber(l, 2);
+
+	e->zindex = index;
+	gui->sortElem();
+	return 0;
+}
 //Text related functions
 int l_GuiCreateText(lua_State *l){
 	ScrollText *t = new ScrollText(sf::Vector2f(0,0), sf::Vector2i(1000,10),

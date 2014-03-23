@@ -17,6 +17,7 @@ bg(sf::Vector2f(81*7,24*14)){
 
 		size = sf::Vector2i(80,24);
 
+		zindex = 1000;
 		visible = false;
 		updates = false;
 		alive = true;

@@ -1,9 +1,11 @@
+#include <algorithm>
 #include "GuiManager.hpp"
 using namespace std;
 
 GuiElement::GuiElement(){
 	magic = GUIELEM_MAGIC;
 	scale = sf::Vector2f(1,1);
+	zindex = 0;
 }
 
 GuiManager::GuiManager(InputManager *im){
@@ -12,6 +14,14 @@ GuiManager::GuiManager(InputManager *im){
 
 void GuiManager::add(GuiElement *element){
 	elements.push_back(element);
+	sortElem();
+}
+
+bool sortByZ(const GuiElement *lhs, const GuiElement *rhs) {
+	return lhs->zindex < rhs->zindex;
+}
+void GuiManager::sortElem(){
+	sort(elements.begin(), elements.end(), sortByZ);
 }
 
 void GuiManager::update(){

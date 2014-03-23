@@ -12,6 +12,7 @@ Image *l_toGuiImage(lua_State *l, int pos);
 int l_GuisetPos(lua_State *l);
 int l_GuisetScale(lua_State *l);
 int l_GuisetVisible(lua_State *l);
+int l_GuisetZ(lua_State *l);
 
 //Text related functions
 int l_GuiCreateText(lua_State *l);
@@ -27,6 +28,7 @@ static const struct luaL_Reg GUI_funcs[] = {
 	{"setPos",l_GuisetPos},
 	{"setScale",l_GuisetScale},
 	{"setVisible",l_GuisetVisible},
+	{"setZ",l_GuisetZ},
 	{"createText", l_GuiCreateText},
 	{"setString", l_GuisetString},
 	{"setCharSize", l_GuisetCharSize},
