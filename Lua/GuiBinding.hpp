@@ -35,22 +35,26 @@ int l_Guisetcallback(lua_State *l);
 int l_GuisetPadding(lua_State *l);
 
 static const struct luaL_Reg GUI_funcs[] = {
+	{"createText", l_GuiCreateText},
+	{"createButton", l_GuicreateButton},
+	{"createImg", l_GuicreateImg},
+	{NULL, NULL}
+};
+
+static const struct luaL_Reg GUI_methods[] = {
+	{"__gc", l_Guidelete},
 	{"setPos",l_GuisetPos},
 	{"setScale",l_GuisetScale},
 	{"setVisible",l_GuisetVisible},
 	{"setZ",l_GuisetZ},
-	{"createText", l_GuiCreateText},
 	{"setString", l_GuisetString},
 	{"setCharSize", l_GuisetCharSize},
 	{"setFont", l_GuisetFont},
 	{"setColour", l_GuisetColour},
-	{"createImg", l_GuicreateImg},
 	{"setImg", l_GuisetImg},
-	{"createButton", l_GuicreateButton},
 	{"setBGColour", l_GuisetBGColour},
 	{"setCallback", l_Guisetcallback},
 	{"setPadding", l_GuisetPadding},
-	{"delete", l_Guidelete},
 	{NULL, NULL}
 };
 

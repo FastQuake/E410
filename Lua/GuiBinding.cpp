@@ -95,18 +95,19 @@ int l_Guidelete(lua_State *l){
 	GuiElement *e = l_toGuiElement(l, 1);
 	
 	gui->remove(e);
-	delete e;
 
 	return 0;
 }
 //Text related functions
 int l_GuiCreateText(lua_State *l){
-	ScrollText *t = new ScrollText(sf::Vector2f(0,0), sf::Vector2i(1000,10),
+	ScrollText *t = new (lua_newuserdata(l, sizeof(ScrollText))) 
+		ScrollText(sf::Vector2f(0,0), sf::Vector2i(1000,10),
 			sf::Color::White);
 
 	gui->add(t);
 
-	lua_pushlightuserdata(l, t);
+	luaL_getmetatable(l,"MetaGUI");
+	lua_setmetatable(l, -2);
 	return 1;
 }
 char lastChar(string str){
@@ -204,11 +205,12 @@ int l_GuisetColour(lua_State *l){
 }
 //Image related functions
 int l_GuicreateImg(lua_State *l){
-	Image *i = new Image();
+	Image *i = new (lua_newuserdata(l, sizeof(Image))) Image();
 
 	gui->add(i);
 
-	lua_pushlightuserdata(l, i);
+	luaL_getmetatable(l, "MetaGUI");
+	lua_setmetatable(l, -2);
 
 	return 1;
 }
@@ -227,11 +229,12 @@ int l_GuisetImg(lua_State *l){
 }
 //Button related functions
 int l_GuicreateButton(lua_State *l){
-	Button *b = new Button(l);
+	Button *b = new (lua_newuserdata(l, sizeof(Button))) Button(l);
 
 	gui->add(b);
 
-	lua_pushlightuserdata(l,b);
+	luaL_getmetatable(l, "MetaGUI");
+	lua_setmetatable(l, -2);
 	return 1;
 }
 int l_GuisetBGColour(lua_State *l){
@@ -246,13 +249,16 @@ int l_GuisetBGColour(lua_State *l){
 }
 int l_Guisetcallback(lua_State *l){
 	Button *b = l_toGuiButton(l, 1);
-	if(lua_isfunction(l, 2) == false){
+	if(lua_isfunction(l, -1) == false){
 		lua_pushstring(l,"Argument is not a function");
 		lua_error(l);
 	}
 
 	b->hasCallback = true;
 	b->luaCallback = luaL_ref(l, LUA_REGISTRYINDEX);
+	if(b->luaCallback == LUA_REFNIL){
+		cerr << "Could not create call back" << endl;
+	}
 	return 0;
 }
 int l_GuisetPadding(lua_State *l){

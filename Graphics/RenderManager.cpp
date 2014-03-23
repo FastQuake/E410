@@ -1,11 +1,5 @@
 #include "RenderManager.hpp"
 
-RenderManager::~RenderManager(){
-	for(int i=0;i<this->drawList.size();i++){
-		delete drawList[i];
-	}
-}
-
 void RenderManager::render(ShaderProgram *prg, float dt){
 
 	for(int i=0;i<this->drawList.size();i++){

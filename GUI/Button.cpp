@@ -45,9 +45,10 @@ void Button::update(InputManager *im){
 		if(colBox.contains(pos.x, pos.y)){
 			if(hasCallback){
 				lua_rawgeti(l, LUA_REGISTRYINDEX, luaCallback);
-				lua_pushvalue(l, 1);
+				lua_pushvalue(l, -1);
 				if(lua_pcall(l, 0, 0, 0)){
-					cerr << "Could not find callback function " << endl;
+					cerr << "Could not find callback function " << endl
+						<< lua_tostring(l, -1) << endl;
 				}
 			}
 		}

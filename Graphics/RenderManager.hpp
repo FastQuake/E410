@@ -12,8 +12,6 @@ public:
 	std::vector<GameObject*> drawList;
 	std::vector<FPSCamera*> cameras;
 
-	~RenderManager();
-
 	void render(ShaderProgram *prg, float curTime);
 	void remove(GameObject* obj);
 };

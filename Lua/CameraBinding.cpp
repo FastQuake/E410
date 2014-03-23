@@ -15,8 +15,10 @@ FPSCamera *l_toCam(lua_State *l, int pos){
 }
 
 int l_createCam(lua_State *l){
-	rendman.cameras.push_back(new FPSCamera(0,0,0));
-	lua_pushlightuserdata(l, rendman.cameras.back());
+	FPSCamera *out = new (lua_newuserdata(l, sizeof(FPSCamera))) FPSCamera(0,0,0);
+	rendman.cameras.push_back(out);
+	luaL_getmetatable(l, "MetaCam");
+	lua_setmetatable(l, -2);
 	return 1;
 }
 int l_setCam(lua_State *l){
@@ -72,9 +74,8 @@ int l_camStrafe(lua_State *l){
 	return 0;
 }
 int l_camDelete(lua_State *l){
-	lua_pushlightuserdata(l, NULL);
 	FPSCamera *cam = l_toCam(l,1);
-
-	delete cam;
+	if(cam == rendman.currentCam)
+		rendman.currentCam = NULL;
 	return 0;
 }

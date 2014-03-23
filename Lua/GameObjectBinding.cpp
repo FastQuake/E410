@@ -27,10 +27,12 @@ int l_createIQM(lua_State *l){
 		lua_pushstring(l,("Could not load model "+model).c_str());
 		lua_error(l);
 	}
-	rendman.drawList.push_back(new GameObject());
-	rendman.drawList.back()->setModel(mod);
 
-	lua_pushlightuserdata(l, rendman.drawList.back());
+	GameObject *out = new (lua_newuserdata(l, sizeof(GameObject))) GameObject;
+	out->setModel(mod);
+	rendman.drawList.push_back(out);
+	luaL_getmetatable(l, "MetaGO");
+	lua_setmetatable(l, -2);
 
 	return 1;
 }
@@ -99,6 +101,5 @@ int l_delete(lua_State *l){
 	GameObject *obj = l_toGO(l, 1);
 
 	rendman.remove(obj);
-	delete obj;
 	return 0;
 }

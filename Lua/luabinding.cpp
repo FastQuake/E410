@@ -12,8 +12,14 @@ void bindFunctions(lua_State *l){
 	lua_register(l,"print",lua_print);
 
 	//create Gameobject register
-	luaL_newlib(l, GO_funcs);
+	luaL_newmetatable(l, "MetaGO");
+	luaL_setfuncs(l, GO_methods, 0);
+	lua_pushvalue(l, -1);
+	lua_setfield(l, -1,"__index");
+
+	luaL_newlib(l,GO_funcs);
 	lua_setglobal(l, "GO");
+
 
 	//create inputmanager register
 	luaL_newlib(l, Input_funcs);
@@ -29,10 +35,22 @@ void bindFunctions(lua_State *l){
 	registerMice(l);
 	lua_setglobal(l,"mouse");
 
-	luaL_newlib(l, cam_funcs);
+	//create camera register
+	luaL_newmetatable(l, "MetaCam");
+	luaL_setfuncs(l, cam_methods, 0);
+	lua_pushvalue(l, -1);
+	lua_setfield(l, -1,"__index");
+
+	luaL_newlib(l,cam_funcs);
 	lua_setglobal(l, "camera");
 
-	luaL_newlib(l, GUI_funcs);
+	//create GUI register
+	luaL_newmetatable(l, "MetaGUI");
+	luaL_setfuncs(l, GUI_methods, 0);
+	lua_pushvalue(l, -1);
+	lua_setfield(l, -1,"__index");
+
+	luaL_newlib(l,GUI_funcs);
 	lua_setglobal(l, "GUI");
 }
 
