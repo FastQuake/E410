@@ -258,7 +258,7 @@ bool loadIQM(string filename, Model &target){
 
 		loadIQMMesh(filename, header, target, buf);
 		loadIQMAnim(filename, header, target, buf);
-		delete buf;
+		delete[] buf;
 
 		return true;
 	}else{
