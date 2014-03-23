@@ -31,5 +31,5 @@ void main(){
 	gl_Position = mvp * mpos;
 	f_texcoord = texcoord;
 
-	shadowCoord = depthMVP * mpos;
+	shadowCoord = (depthMVP*modelMat) * mpos;
 }
