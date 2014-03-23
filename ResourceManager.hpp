@@ -9,6 +9,7 @@ extern std::string dataDir;
 extern std::string modelDir;
 extern std::string fontDir;
 extern std::string imgDir;
+extern std::string defaultFont;
 class ResourceManager{
 private:
 	std::map<std::string,Model> models;

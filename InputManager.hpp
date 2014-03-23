@@ -18,6 +18,7 @@ class InputManager {
 
 		void setWindow(sf::Window *window);
 
+		bool isGuiLocked();
 		void lockToGui(bool yes);
 		void setFocus(bool yes);
 

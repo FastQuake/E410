@@ -6,6 +6,8 @@ string modelDir = dataDir+"models/";
 string fontDir = dataDir+"fonts/";
 string imgDir = dataDir+"textures/";
 
+string defaultFont = "DejaVuSansMono.ttf";
+
 
 /**
  * @param name Name of model, .iqm suffix currently required

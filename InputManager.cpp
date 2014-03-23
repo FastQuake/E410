@@ -21,6 +21,10 @@ void InputManager::setWindow(sf::Window *window){
 	this->window = window;
 }
 
+bool InputManager::isGuiLocked(){
+	return isLocked;
+}
+
 void InputManager::lockToGui(bool yes){
 	isLocked = yes;
 }

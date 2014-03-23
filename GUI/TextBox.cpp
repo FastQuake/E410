@@ -13,7 +13,7 @@ rect(sf::Vector2f(7,14)){
 	textPos = 0;
 	textString = "";
 
-	text.setFont(*resman.loadFont("DejaVuSansMono.ttf"));
+	text.setFont(*resman.loadFont(defaultFont));
 	text.setCharacterSize(12);
 	text.setStyle(sf::Text::Regular);
 	text.setColor(colour);
@@ -109,7 +109,7 @@ ScrollText::ScrollText(sf::Vector2f pos, sf::Vector2i size,
 	lines.push_back("");
 	history = 500;
 
-	text.setFont(*resman.loadFont("DejaVuSansMono.ttf"));
+	text.setFont(*resman.loadFont(defaultFont));
 	text.setCharacterSize(12);
 	text.setStyle(sf::Text::Regular);
 	text.setColor(colour);

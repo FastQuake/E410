@@ -39,7 +39,20 @@ Image *l_toGuiImage(lua_State *l, int pos){
 		}
 	}
 
-	lua_pushstring(l,"Argument is not an image");
+	lua_pushstring(l,"Argument is not a image");
+	lua_error(l);
+
+	return NULL;
+}
+Button *l_toGuiButton(lua_State *l, int pos){
+	if(lua_isuserdata(l, pos)){
+		Button *b = (Button*)lua_touserdata(l,pos);
+		if(b->magic == GUIBUTTON_MAGIC){
+			return b;
+		}
+	}
+
+	lua_pushstring(l, "Argument is not a button");
 	lua_error(l);
 
 	return NULL;
@@ -87,33 +100,78 @@ int l_GuiCreateText(lua_State *l){
 	lua_pushlightuserdata(l, t);
 	return 1;
 }
+char lastChar(string str){
+	return str.at(str.length() - 1);
+}
 int l_GuisetString(lua_State *l){
-	ScrollText *t = l_toGuiText(l,1);
+	GuiElement *e = l_toGuiElement(l, 1);
 	string text = l_toString(l, 2);
 
-	t->clear();
-	t->print(text);
+	char last = lastChar(e->magic);
+	//If it is a button
+	if(last == 'B'){
+		Button *b = (Button*)e;
+		b->text.setString(text);
+		b->updateShape();
+	}
+	//If it is a textbox
+	else if(last == 'T'){
+		ScrollText *t = (ScrollText*)e;
+		t->clear();
+		t->print(text);
+
+	}else {
+		lua_pushstring(l, "Argument does not contain text");
+		lua_error(l);
+	}
+
 	return 0;
 }
 int l_GuisetCharSize(lua_State *l){
-	ScrollText *t = l_toGuiText(l,1);
+	GuiElement *e = l_toGuiElement(l, 1);
 	int size = l_toNumber(l,2);
+	//If it is a button
+	if(lastChar(e->magic) == 'B'){
+		Button *b = (Button*)e;
+		b->text.setCharacterSize(size);
+		b->updateShape();
+	}
+	//If it is a textbox
+	else if(lastChar(e->magic) == 'T'){
+		ScrollText *t = (ScrollText*)e;
+		t->text.setCharacterSize(size);
 
-	t->text.setCharacterSize(size);
+	}else {
+		lua_pushstring(l, "Argument does not contain text");
+		lua_error(l);
+	}
 
 	return 0;
 }
 int l_GuisetFont(lua_State *l){
-	ScrollText *t = l_toGuiText(l, 1);
+	GuiElement *e = l_toGuiElement(l, 1);
 	string font = l_toString(l, 2);
-
 	sf::Font *f = resman.loadFont(font);
 	if(f == NULL){
 		lua_pushstring(l,"Font cannot be found");
 		lua_error(l);
 	}
+	//If it is a button
+	if(lastChar(e->magic) == 'B'){
+		Button *b = (Button*)e;
+		b->text.setFont(*f);
+		b->updateShape();
+	}
+	//If it is a textbox
+	else if(lastChar(e->magic) == 'T'){
+		ScrollText *t = (ScrollText*)e;
+		t->text.setFont(*f);
 
-	t->text.setFont(*f);
+	}else {
+		lua_pushstring(l, "Argument does not contain text");
+		lua_error(l);
+	}
+
 	return 0;
 }
 //Image related functions
@@ -137,5 +195,35 @@ int l_GuisetImg(lua_State *l){
 	}
 
 	i->img.loadFromImage(*i2);
+	return 0;
+}
+//Button related functions
+int l_GuicreateButton(lua_State *l){
+	Button *b = new Button(l);
+
+	gui->add(b);
+
+	lua_pushlightuserdata(l,b);
+	return 1;
+}
+int l_GuisetBGColour(lua_State *l){
+	Button *bb = l_toGuiButton(l, 1);
+	int r = l_toNumber(l, 2);
+	int g = l_toNumber(l, 3);
+	int b = l_toNumber(l, 4);
+	int a = l_toNumber(l, 5);
+
+	bb->bgColour = sf::Color(r,g,b,a);
+	return 0;
+}
+int l_Guisetcallback(lua_State *l){
+	Button *b = l_toGuiButton(l, 1);
+	if(lua_isfunction(l, 2) == false){
+		lua_pushstring(l,"Argument is not a function");
+		lua_error(l);
+	}
+
+	b->hasCallback = true;
+	b->luaCallback = luaL_ref(l, LUA_REGISTRYINDEX);
 	return 0;
 }

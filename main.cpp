@@ -151,6 +151,13 @@ int main(int argc, char *argv[]){
 			}
 		}
 		
+		//Check if gui is locked and show cursor
+		if(im->isGuiLocked()){
+			window.setMouseCursorVisible(true);
+		} else {
+			window.setMouseCursorVisible(false);
+		}
+
 		//call lua update
 		lua_getglobal(l,"update");
 		lua_pushnumber(l,dt.asSeconds());
