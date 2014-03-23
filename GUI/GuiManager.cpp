@@ -17,6 +17,14 @@ void GuiManager::add(GuiElement *element){
 	sortElem();
 }
 
+void GuiManager::remove(GuiElement *element){
+	for(int i=0;i<elements.size();i++){
+		if(element == elements[i]){
+			elements.erase(elements.begin() + i);
+		}
+	}
+}
+
 bool sortByZ(const GuiElement *lhs, const GuiElement *rhs) {
 	return lhs->zindex < rhs->zindex;
 }

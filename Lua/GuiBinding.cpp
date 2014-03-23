@@ -90,6 +90,14 @@ int l_GuisetZ(lua_State *l){
 	gui->sortElem();
 	return 0;
 }
+int l_Guidelete(lua_State *l){
+	GuiElement *e = l_toGuiElement(l, 1);
+	
+	gui->remove(e);
+	delete e;
+
+	return 0;
+}
 //Text related functions
 int l_GuiCreateText(lua_State *l){
 	ScrollText *t = new ScrollText(sf::Vector2f(0,0), sf::Vector2i(1000,10),
@@ -164,6 +172,28 @@ int l_GuisetFont(lua_State *l){
 		ScrollText *t = (ScrollText*)e;
 		t->text.setFont(*f);
 
+	}else {
+		lua_pushstring(l, "Argument does not contain text");
+		lua_error(l);
+	}
+
+	return 0;
+}
+int l_GuisetColour(lua_State *l){
+	GuiElement *e = l_toGuiElement(l, 1);
+	int r = l_toNumber(l, 2);
+	int g = l_toNumber(l, 3);
+	int b = l_toNumber(l, 4);
+	int a = l_toNumber(l, 5);
+	//If it is a button
+	if(lastChar(e->magic) == 'B'){
+		Button *bb = (Button*)e;
+		bb->text.setColor(sf::Color(r,g,b,a));
+	}
+	//If it is a textbox
+	else if(lastChar(e->magic) == 'T'){
+		ScrollText *t = (ScrollText*)e;
+		t->text.setColor(sf::Color(r,g,b,a));
 	}else {
 		lua_pushstring(l, "Argument does not contain text");
 		lua_error(l);

@@ -22,6 +22,7 @@ class GuiElement{
 		int zindex;
 
 		GuiElement();
+		virtual ~GuiElement(){};
 
 		virtual void update(InputManager *im){};
 		virtual void draw(sf::RenderWindow *screen){};
@@ -36,6 +37,7 @@ class GuiManager{
 		GuiManager(InputManager *im);
 
 		void add(GuiElement *element);
+		void remove(GuiElement *element);
 		void sortElem();
 
 		void update();

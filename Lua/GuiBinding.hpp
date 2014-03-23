@@ -15,12 +15,14 @@ int l_GuisetPos(lua_State *l);
 int l_GuisetScale(lua_State *l);
 int l_GuisetVisible(lua_State *l);
 int l_GuisetZ(lua_State *l);
+int l_Guidelete(lua_State *l);
 
 //Text related functions
 int l_GuiCreateText(lua_State *l);
 int l_GuisetString(lua_State *l);
 int l_GuisetCharSize(lua_State *l);
 int l_GuisetFont(lua_State *l);
+int l_GuisetColour(lua_State *l);
 
 //Image related functions
 int l_GuicreateImg(lua_State *l);
@@ -41,12 +43,14 @@ static const struct luaL_Reg GUI_funcs[] = {
 	{"setString", l_GuisetString},
 	{"setCharSize", l_GuisetCharSize},
 	{"setFont", l_GuisetFont},
+	{"setColour", l_GuisetColour},
 	{"createImg", l_GuicreateImg},
 	{"setImg", l_GuisetImg},
 	{"createButton", l_GuicreateButton},
 	{"setBGColour", l_GuisetBGColour},
 	{"setCallback", l_Guisetcallback},
 	{"setPadding", l_GuisetPadding},
+	{"delete", l_Guidelete},
 	{NULL, NULL}
 };
 
