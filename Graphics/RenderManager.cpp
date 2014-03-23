@@ -30,3 +30,11 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 		drawList[i]->model->draw(prg,drawList[i]->outframe);
 	}
 }
+
+void RenderManager::remove(GameObject *obj){
+	for(int i=0;i<drawList.size();i++){
+		if(obj == drawList[i]){
+			drawList.erase(drawList.begin() + i);
+		}
+	}
+}

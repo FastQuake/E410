@@ -8,6 +8,7 @@ int l_setRot(lua_State *l);
 int l_setScale(lua_State *l);
 int l_setCurAnim(lua_State *l);
 int l_setAnim(lua_State *l);
+int l_delete(lua_State *l);
 
 static const struct luaL_Reg GO_funcs[] = {
 	{"createIQM", l_createIQM},
@@ -16,6 +17,7 @@ static const struct luaL_Reg GO_funcs[] = {
 	{"setScale", l_setScale},
 	{"setCurAnim", l_setCurAnim},
 	{"setAnim", l_setAnim},
+	{"delete", l_delete},
 	{NULL,NULL}
 };
 

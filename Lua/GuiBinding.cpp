@@ -91,6 +91,7 @@ int l_GuisetZ(lua_State *l){
 	return 0;
 }
 int l_Guidelete(lua_State *l){
+	lua_pushlightuserdata(l, NULL);
 	GuiElement *e = l_toGuiElement(l, 1);
 	
 	gui->remove(e);

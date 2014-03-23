@@ -8,13 +8,14 @@
 
 class RenderManager{
 public:
-	void render(ShaderProgram *prg, float curTime);
+	FPSCamera *currentCam;
 	std::vector<GameObject*> drawList;
 	std::vector<FPSCamera*> cameras;
 
-	FPSCamera *currentCam;
-
 	~RenderManager();
+
+	void render(ShaderProgram *prg, float curTime);
+	void remove(GameObject* obj);
 };
 
 
