@@ -3,6 +3,7 @@ using namespace std;
 
 GuiElement::GuiElement(){
 	magic = GUIELEM_MAGIC;
+	scale = sf::Vector2f(1,1);
 }
 
 GuiManager::GuiManager(InputManager *im){

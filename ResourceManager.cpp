@@ -4,6 +4,7 @@ using namespace std;
 string dataDir = "data/";
 string modelDir = dataDir+"models/";
 string fontDir = dataDir+"fonts/";
+string imgDir = dataDir+"textures/";
 
 
 /**
@@ -37,6 +38,20 @@ sf::Font *ResourceManager::loadFont(string name){
 		}
 		fonts[name] = f;
 		return &fonts[name];
+	} else {
+		return &it->second;
+	}
+}
+
+sf::Image *ResourceManager::loadImage(string name){
+	map<string, sf::Image>::iterator it = images.find(name);
+	if(it == images.end()){
+		sf::Image i;
+		if(i.loadFromFile(imgDir+name) == false){
+			return NULL;
+		}
+		images[name] = i;
+		return &images[name];
 	} else {
 		return &it->second;
 	}

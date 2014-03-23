@@ -18,6 +18,7 @@ class GuiElement{
 
 		sf::Vector2f pos;
 		sf::Vector2i size;
+		sf::Vector2f scale;
 
 		GuiElement();
 

@@ -13,7 +13,6 @@ class TextBox : public GuiElement {
 		sf::Clock blinkTimer;
 		bool drawCursor;
 
-		sf::Vector2f pos;
 		std::string textString;
 		int length;
 		int textPos;
