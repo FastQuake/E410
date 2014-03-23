@@ -30,5 +30,5 @@ void main(){
 	gl_Position = mvp * mpos;
 	f_texcoord = texcoord;
 	lightD = 1.0/pow(distance(lightPos,mpos),2.0)*60.0;
-	depth = 10.0/distance(lightPos,gl_Position);
+	depth = gl_Position.z;
 }

@@ -33,7 +33,7 @@ int main(int argc, char *argv[]){
 	sf::ContextSettings cs;
 	cs.majorVersion = 3;
 	cs.minorVersion = 0;
-	cs.depthBits = 24;
+	cs.depthBits = 32;
 	cs.stencilBits = 8;
 	cs.antialiasingLevel = 4;
 	width = 800;
@@ -84,6 +84,8 @@ int main(int argc, char *argv[]){
 		return EXIT_FAILURE;
 	}
 
+	glGenFramebuffers(1,&rendman.framebuffer);
+
 	lua_getglobal(l, "init");
 	status = lua_pcall(l,0,0,0);
 	if(status){
@@ -95,6 +97,7 @@ int main(int argc, char *argv[]){
 	//Set opengl flags
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
+//	glEnable(GL_SCISSOR_TEST);
 	glDepthFunc(GL_LESS);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 
@@ -157,7 +160,8 @@ int main(int argc, char *argv[]){
 				lua_tostring(l,-1) << endl;
 		}
 
-		glm::mat4 projection = glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
+		glm::mat4 projection = //glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
+		glm::ortho<float>(-10.0f,10.0f,-10.0f,10.0f,-10.0f,20.0f);
 
 		//Updating code
 		gui.update();
