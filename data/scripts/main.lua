@@ -2,6 +2,11 @@ sensitvity = 10
 speed = 10
 
 function init()
+	--Create stuff for GUI
+	fpsCounter = GUI.createText()
+	GUI.setCharSize(fpsCounter, 26)
+	GUI.setString(fpsCounter, "FPS: ".. 0)
+	--Create stuff for scene
 	cam = camera.createCam()
 	camera.setPos(cam, 0, 0, 0)
 	camera.setCam(cam)
@@ -14,7 +19,17 @@ function init()
 	GO.setPos(shit,5,1.1,0)
 end
 
+time = 0
+frames = 0;
+
 function update(dt)
+	time = time + dt
+	frames = frames + 1
+	if time > 1.0 then
+		GUI.setString(fpsCounter, "FPS: " .. frames)
+		frames = 0
+		time = 0
+	end
 	--Move camera with standard FPS controls
 	local mousex, mousey = input.getMousePos()
 	mousex = mousex - (width/2)
