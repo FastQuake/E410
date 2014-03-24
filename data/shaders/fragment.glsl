@@ -35,8 +35,8 @@ float random(vec3 seed, int i){
 }
 
 void main(){
-	float n = normalize(normalCam);
-	float l = normalize(lightDir);
+	vec3 n = normalize(normalCam);
+	vec3 l = normalize(lightDir);
 	float cosTheta = clamp(dot(n,l),0,0.1);
 	float bias = 0.005*tan(acos(cosTheta));
 	bias = clamp(bias,0,0.01);
