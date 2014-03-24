@@ -9,7 +9,6 @@ RenderManager::~RenderManager(){
 }
 
 void RenderManager::renderDepth(ShaderProgram *prg, float dt){
-	glDrawBuffer(GL_NONE);
 	glm::mat4 view = glm::lookAt(glm::vec3(-4, 6, -4), glm::vec3(0,0,0), 
 			glm::vec3(0, 1, 0));
 	glm::mat4 proj = glm::ortho<float>(-10.0f,10.0f,-10.0f,10.0f,-10.0f,20.0f);
@@ -21,7 +20,6 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt){
 	glBindFramebuffer(GL_FRAMEBUFFER,framebuffer);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 
 	for(int i=0;i<this->drawList.size();i++){
 		if(drawList[i]->animate){
@@ -43,7 +41,6 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt){
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glDrawBuffer(GL_BACK);
 	glViewport(0,0,width,height);
 }
 
