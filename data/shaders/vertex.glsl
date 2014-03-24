@@ -1,6 +1,7 @@
 #version 130
 
 in vec3 coord3d;
+in vec3 normal;
 in vec2 texcoord;
 in vec4 vweight;
 in vec4 vbones;
@@ -18,6 +19,9 @@ uniform mat4 modelMat;
 uniform mat4 depthMVP;
 out vec4 shadowCoord;
 
+out vec3 lightDir;
+out vec3 normalCam;
+
 void main(){
 	mat4 mvp = projection*view*modelMat;
 	mat3x4 m = mat3x4(1.0);
@@ -32,4 +36,7 @@ void main(){
 	f_texcoord = texcoord;
 
 	shadowCoord = (depthMVP*modelMat) * mpos;
+	vec3 lightPos = vec3(-4,6,-4);//TODO make light not hardcoded
+	lightDir = vec4(view*vec4(lightPos,0)).xyz;
+	normalCam = vec4(view*modelMat*vec4(normal,0)).xyz;
 }

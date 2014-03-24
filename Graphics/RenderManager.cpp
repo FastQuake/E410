@@ -41,21 +41,6 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt){
 		drawList[i]->model->draw(prg,drawList[i]->outframe, false);
 	}
 
-	GLfloat *pixels = new GLfloat[1024*1024];
-	glReadPixels(0,0,1024,1024,GL_DEPTH_COMPONENT,GL_FLOAT,pixels);
-
-	depthimg.create(1024,1024,sf::Color::Black);
-	for(unsigned int i=0,x=0,y=0;i<1024*1024;i++){
-		x = i%1024;
-		if(x == 0 && i>0)
-		y++;
-		depthimg.setPixel(x,y,sf::Color(ceil((double)(pixels[i]*255.0f)),
-		ceil((double)(pixels[i]*255.0f)),
-		ceil((double)(pixels[i]*255.0f)),255));
-	}
-
-	delete[] pixels;	
-
 	glDrawBuffer(GL_BACK);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0,0,width,height);
