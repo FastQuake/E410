@@ -7,7 +7,7 @@ in vec4 vweight;
 in vec4 vbones;
 
 out vec2 f_texcoord;
-uniform vec4 lightPos = vec4(0.0,10.0,8.0,1.0);
+uniform vec4 lightPos = vec4(-4,6,-4, 0);
 
 uniform int skin;
 uniform mat3x4 bonemats[80];
@@ -36,7 +36,6 @@ void main(){
 	f_texcoord = texcoord;
 
 	shadowCoord = (depthMVP*modelMat) * mpos;
-	vec3 lightPos = vec3(-4,6,-4);//TODO make light not hardcoded
-	lightDir = vec4(view*vec4(lightPos,0)).xyz;
+	lightDir = vec4(view*lightPos).xyz;
 	normalCam = vec4(view*modelMat*vec4(normal,0)).xyz;
 }

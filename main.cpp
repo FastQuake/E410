@@ -134,7 +134,8 @@ int main(int argc, char *argv[]){
 	glDepthFunc(GL_LESS);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_CULL_FACE);
-	glCullFace(GL_FRONT);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CW);
 
 	glClearColor(0.0,0.0,0.0,1.0);
 

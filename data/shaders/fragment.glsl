@@ -37,9 +37,9 @@ float random(vec3 seed, int i){
 void main(){
 	vec3 n = normalize(normalCam);
 	vec3 l = normalize(lightDir);
-	float cosTheta = clamp(dot(n,l),0,0.1);
+	float cosTheta = clamp(dot(n,l),0, 0.05);
 	float bias = 0.005*tan(acos(cosTheta));
-	bias = clamp(bias,0,0.01);
+	bias = clamp(bias,0, 0.005);
 	float visibility = 1.0f;
 	for(int i=0;i<4;i++){
 		int index = i; //Banded anti-aliasing

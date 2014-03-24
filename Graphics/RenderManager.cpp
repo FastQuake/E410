@@ -9,16 +9,17 @@ RenderManager::~RenderManager(){
 }
 
 void RenderManager::renderDepth(ShaderProgram *prg, float dt){
-	glDrawBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER,framebuffer);
+	glViewport(0,0,1024,1024);
+
+	glCullFace(GL_BACK);
+
 	glm::mat4 view = glm::lookAt(glm::vec3(-4, 6, -4), glm::vec3(0,0,0), 
 			glm::vec3(0, 1, 0));
 	glm::mat4 proj = glm::ortho<float>(-10.0f,10.0f,-10.0f,10.0f,-10.0f,20.0f);
 
 	glm::mat4 depthMVP = proj*view;
 	glUniformMatrix4fv(prg->getUniform("pv"), 1, GL_FALSE, glm::value_ptr(depthMVP));
-
-	glViewport(0,0,1024,1024);
-	glBindFramebuffer(GL_FRAMEBUFFER,framebuffer);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -48,6 +49,7 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt){
 }
 
 void RenderManager::render(ShaderProgram *prg, float dt){
+	glCullFace(GL_BACK);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glActiveTexture(GL_TEXTURE1);
