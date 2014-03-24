@@ -357,6 +357,13 @@ void Model::draw(ShaderProgram *prg, vector<glm::mat4> outframe, bool texture){
 				GL_FALSE,
 				sizeof(vertex),
 				&vert->texcoord);
+		glVertexAttribPointer(
+				prg->getAttribute("normal"),
+				3,
+				GL_FLOAT,
+				GL_FALSE,
+				sizeof(vertex),
+				&vert->normal);
 	}
 	if(frames.size() > 0){
 		glVertexAttribPointer(

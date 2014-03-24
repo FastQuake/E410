@@ -133,6 +133,8 @@ int main(int argc, char *argv[]){
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
 
 	glClearColor(0.0,0.0,0.0,1.0);
 
@@ -211,17 +213,6 @@ int main(int argc, char *argv[]){
 
 		//Do sfml drawing here
 		gui.draw(&window);
-
-		window.pushGLStates();
-
-		sf::Texture g;
-		g.loadFromImage(rendman.depthimg);
-		sf::Sprite thing;
-		thing.setTexture(g);
-		thing.setScale(0.2, 0.2);
-
-		window.draw(thing);
-		window.popGLStates();
 
 		window.display();
 		dt = dtTimer.restart();
