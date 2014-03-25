@@ -7,6 +7,7 @@ in vec3 lightDir;
 uniform sampler2D inTexture;
 uniform sampler2DShadow shadowMap; 
 out vec4 outColour;
+out float dummy;
 
 
 vec2 poissonDisk[16] = vec2[](
@@ -44,9 +45,7 @@ void main(){
 	for(int i=0;i<4;i++){
 		int index = i; //Banded anti-aliasing
 		//int index = int(16.0*random(gl_FragCoord.xyy, i))%16; //Noise anti-aliasing
-		visibility -= 0.2*(1.0-texture(shadowMap,
-					vec3(shadowCoord.xy + poissonDisk[index]/700.0,
-						(shadowCoord.z-bias)/shadowCoord.w)));
+		visibility -= 0.2*(1.0-texture(shadowMap,vec3(shadowCoord.xy + poissonDisk[index]/700.0,shadowCoord.z-bias)));
 	}
 	vec3 texColour = texture2D(inTexture,f_texcoord).rgb;
 	outColour = vec4(visibility*texColour,1);

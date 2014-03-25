@@ -384,6 +384,7 @@ void Model::draw(ShaderProgram *prg, vector<glm::mat4> outframe, bool texture){
 	glEnableVertexAttribArray(prg->getAttribute("coord3d"));
 	if(texture){
 		glEnableVertexAttribArray(prg->getAttribute("texcoord"));
+		glEnableVertexAttribArray(prg->getAttribute("normal"));
 	}
 	glEnableVertexAttribArray(prg->getAttribute("vweight"));
 	glEnableVertexAttribArray(prg->getAttribute("vbones"));
@@ -402,6 +403,7 @@ void Model::draw(ShaderProgram *prg, vector<glm::mat4> outframe, bool texture){
 	glDisableVertexAttribArray(prg->getAttribute("coord3d"));
 	if(texture){
 		glDisableVertexAttribArray(prg->getAttribute("texcoord"));
+		glDisableVertexAttribArray(prg->getAttribute("normal"));
 	}
 	glDisableVertexAttribArray(prg->getAttribute("vweight"));
 	glDisableVertexAttribArray(prg->getAttribute("vbones"));
