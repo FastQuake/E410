@@ -10,7 +10,7 @@ solution("E410")
 				links({"sfml-system","sfml-window","sfml-graphics","glew32","opengl32","lua52"})
 			elseif os.is("linux") then
 				buildoptions({"`pkg-config --cflags lua5.2`"})
-				linkoptions({"`pkg-config --libs lua5.2`"})
+				linkoptions({"-Bstatic `pkg-config --libs lua5.2` -Bdynamic"})
 				links({"sfml-system","sfml-window","sfml-graphics","GLEW","GL"})
 			end
 			location("./build")
