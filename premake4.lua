@@ -11,7 +11,7 @@ solution("E410")
 			elseif os.is("linux") then
 				buildoptions({"`pkg-config --cflags lua5.2`"})
 				linkoptions({"`pkg-config --libs lua5.2`","-Wl,-rpath=./libs "})
-				links({"sfml-system","sfml-window","sfml-graphics","GL","GLEW","lua"})
+				links({"sfml-system","sfml-window","sfml-graphics","GL","GLEW"})
 			end
 			location("./build")
 
