@@ -43,7 +43,7 @@ void main(){
 	for(int i=0;i<4;i++){
 		int index = i; //Banded anti-aliasing
 		//int index = int(16.0*random(gl_FragCoord.xyy, i))%16; //Noise anti-aliasing
-		visibility -= 0.2*(1.0-shadow2D(shadowMap,vec3(shadowCoord.xy + poissonDisk[index]/700.0,shadowCoord.z-bias)));
+		visibility -= 0.2*(1.0-(shadow2D(shadowMap,vec3(shadowCoord.xy + poissonDisk[index]/700.0,shadowCoord.z-bias))).z );
 	}
 	vec3 texColour = texture2D(inTexture,f_texcoord).rgb;
 	gl_FragColor = vec4(visibility*texColour,1);
