@@ -31,8 +31,8 @@ int main(int argc, char *argv[]){
 
 	//Create sfml window with opengl context
 	sf::ContextSettings cs;
-	cs.majorVersion = 3;
-	cs.minorVersion = 0;
+	cs.majorVersion = 2;
+	cs.minorVersion = 1;
 	cs.depthBits = 32;
 	cs.stencilBits = 8;
 	cs.antialiasingLevel = 4;
@@ -57,6 +57,11 @@ int main(int argc, char *argv[]){
 	GLenum glewStatus = glewInit();
 	if(glewStatus != GLEW_OK){
 		cerr << "Error: " << glewGetErrorString(glewStatus) << endl;
+		return EXIT_FAILURE;
+	}
+
+	if(GLEW_VERSION_2_1 == false){
+		cerr << "Opengl 2.1 not supported!" << endl;
 		return EXIT_FAILURE;
 	}
 

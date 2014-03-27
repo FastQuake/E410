@@ -1,26 +1,24 @@
-#version 130
+#version 120
 
-in vec3 coord3d;
-in vec3 normal;
-in vec2 texcoord;
-in vec4 vweight;
-in vec4 vbones;
+attribute vec3 coord3d;
+attribute vec3 normal;
+attribute vec2 texcoord;
+attribute vec4 vweight;
+attribute vec4 vbones;
 
-out vec2 f_texcoord;
+varying vec2 f_texcoord;
+varying vec4 shadowCoord;
+varying vec3 lightDir;
+varying vec3 normalCam;
+
+
 uniform vec4 lightPos = vec4(-4,6,-4, 0);
-
 uniform int skin;
 uniform mat3x4 bonemats[80];
-
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 modelMat;
-
 uniform mat4 depthMVP;
-out vec4 shadowCoord;
-
-out vec3 lightDir;
-out vec3 normalCam;
 
 void main(){
 	mat4 mvp = projection*view*modelMat;
