@@ -119,6 +119,8 @@ int main(int argc, char *argv[]){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 
+	GLenum buffers[] = {GL_COLOR_ATTACHMENT0};
+	glDrawBuffers(1, buffers);
 
 	glFramebufferTexture2DEXT(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, rendman.depthTexture,0);
 	glBindFramebufferEXT(GL_FRAMEBUFFER, 0);

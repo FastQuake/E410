@@ -12,7 +12,6 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt){
 	glBindFramebufferEXT(GL_FRAMEBUFFER,framebuffer);
 	glViewport(0,0,1024,1024);
 
-	glCullFace(GL_BACK);
 
 	glm::mat4 view = glm::lookAt(glm::vec3(-4, 6, -4), glm::vec3(0,0,0), 
 			glm::vec3(0, 1, 0));
@@ -47,7 +46,6 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt){
 }
 
 void RenderManager::render(ShaderProgram *prg, float dt){
-	glCullFace(GL_BACK);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glActiveTexture(GL_TEXTURE1);
