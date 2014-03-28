@@ -61,6 +61,10 @@ int main(int argc, char *argv[]){
 	}
 
 	if(GLEW_VERSION_2_1 == false){
+		if(GL_EXT_framebuffer_object == false){
+			cerr << "EXT_framebuffer_object not found!" << endl;
+			return EXIT_FAILURE;
+		}
 		cerr << "Opengl 2.1 not supported!" << endl;
 		return EXIT_FAILURE;
 	}
@@ -102,8 +106,8 @@ int main(int argc, char *argv[]){
 		return EXIT_FAILURE;
 	}
 
-	glGenFramebuffers(1,&rendman.framebuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, rendman.framebuffer);
+	glGenFramebuffersEXT(1,&rendman.framebuffer);
+	glBindFramebufferEXT(GL_FRAMEBUFFER, rendman.framebuffer);
 
 	glGenTextures(1, &rendman.depthTexture);
 	glBindTexture(GL_TEXTURE_2D, rendman.depthTexture);
@@ -116,10 +120,10 @@ int main(int argc, char *argv[]){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 
 
-	glFramebufferTexture2D(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, rendman.depthTexture,0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glFramebufferTexture2DEXT(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, rendman.depthTexture,0);
+	glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
 
-	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
+	if(glCheckFramebufferStatusEXT(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
 		cerr << "Bad buffer" << endl;
 		return EXIT_FAILURE;
 	}

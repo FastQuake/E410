@@ -9,7 +9,7 @@ RenderManager::~RenderManager(){
 }
 
 void RenderManager::renderDepth(ShaderProgram *prg, float dt){
-	glBindFramebuffer(GL_FRAMEBUFFER,framebuffer);
+	glBindFramebufferEXT(GL_FRAMEBUFFER,framebuffer);
 	glViewport(0,0,1024,1024);
 
 	glCullFace(GL_BACK);
@@ -42,7 +42,7 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt){
 		drawList[i]->model->draw(prg,drawList[i]->outframe, false);
 	}
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
 	glViewport(0,0,width,height);
 }
 
