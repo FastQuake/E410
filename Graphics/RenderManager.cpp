@@ -20,7 +20,7 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt){
 	glm::mat4 depthMVP = proj*view;
 	glUniformMatrix4fv(prg->getUniform("pv"), 1, GL_FALSE, glm::value_ptr(depthMVP));
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_DEPTH_BUFFER_BIT);
 
 	for(int i=0;i<this->drawList.size();i++){
 		if(drawList[i]->animate){

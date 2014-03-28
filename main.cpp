@@ -111,16 +111,18 @@ int main(int argc, char *argv[]){
 
 	glGenTextures(1, &rendman.depthTexture);
 	glBindTexture(GL_TEXTURE_2D, rendman.depthTexture);
-	glTexImage2D(GL_TEXTURE_2D,0,GL_DEPTH_COMPONENT24,1024,1024,0,
-			GL_DEPTH_COMPONENT,GL_FLOAT,0);
+	glTexImage2D(GL_TEXTURE_2D,0,GL_DEPTH_COMPONENT,1024,1024,0,
+			GL_DEPTH_COMPONENT,GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 
-	GLenum buffers[] = {GL_COLOR_ATTACHMENT0};
-	glDrawBuffers(1, buffers);
+#ifdef WINDOWS
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+#endif
 
 	glFramebufferTexture2DEXT(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, rendman.depthTexture,0);
 	glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
