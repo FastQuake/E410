@@ -8,16 +8,12 @@ RenderManager::~RenderManager(){
 	}
 }
 
+
 void RenderManager::renderDepth(ShaderProgram *prg, float dt){
 	glBindFramebufferEXT(GL_FRAMEBUFFER,framebuffer);
 	glViewport(0,0,1024,1024);
 
-
-	glm::mat4 view = glm::lookAt(glm::vec3(-4, 6, -4), glm::vec3(0,0,0), 
-			glm::vec3(0, 1, 0));
-	glm::mat4 proj = glm::ortho<float>(-10.0f,10.0f,-10.0f,10.0f,-10.0f,20.0f);
-
-	glm::mat4 depthMVP = proj*view;
+	glm::mat4 depthMVP = light.mvp();
 	glUniformMatrix4fv(prg->getUniform("pv"), 1, GL_FALSE, glm::value_ptr(depthMVP));
 
 	glClear(GL_DEPTH_BUFFER_BIT);
@@ -52,11 +48,6 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 	glBindTexture(GL_TEXTURE_2D, depthTexture);
 	glUniform1i(prg->getUniform("shadowMap"), 1);
 
-	glm::mat4 view = glm::lookAt(glm::vec3(-4, 6, -4), glm::vec3(0,0,0), 
-			glm::vec3(0, 1, 0));
-	glm::mat4 proj = glm::ortho<float>(-10.0f,10.0f,-10.0f,10.0f,-10.0f,20.0f);
-
-
 	glm::mat4 bias(
 			0.5, 0.0, 0.0, 0.0,
 			0.0, 0.5, 0.0, 0.0,
@@ -64,7 +55,7 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 			0.5, 0.5, 0.5, 1.0
 	);
 
-	glm::mat4 mv = proj*view;
+	glm::mat4 mv = light.mvp();
 	glm::mat4 depthMVP = bias*mv;
 	glUniformMatrix4fv(prg->getUniform("depthMVP"), 1, GL_FALSE, glm::value_ptr(depthMVP));
 	
@@ -76,6 +67,8 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 		}
 
 		glm::mat4 view = currentCam->view();
+		std::cout << currentCam->pos.x << "," << currentCam->pos.y << "," << currentCam->pos.z << std::endl;
+		std::cout << currentCam->angle.x << "," << currentCam->angle.y << "," << currentCam->angle.z << std::endl;
 		glUniformMatrix4fv(prg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
 
 		glm::mat4 scale = glm::scale(glm::mat4(1),drawList[i]->scale);

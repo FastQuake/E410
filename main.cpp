@@ -94,6 +94,8 @@ int main(int argc, char *argv[]){
 	depthPrg.setUniform("pv");
 	depthPrg.setUniform("modelMat");
 	
+	ShaderProgram shadowPrg("./data/shaders/shadowv.glsl","./data/shaders/shadowf.glsl");
+
 
 	//Load main lua file and then call init function
 	lua_pushnumber(l, width);
@@ -158,6 +160,9 @@ int main(int argc, char *argv[]){
 	window.setActive(true);
 
 	rendman.currentCam->pos = glm::vec3(-4, 6, -4); 
+	//TODO: Move this to main.lua and all that that implies
+	rendman.light.pos = glm::vec3(-18, 12, -11);
+	rendman.light.rot = glm::vec3(33,117,0);
 
 	while(window.isOpen()){
 		while(window.pollEvent(event)){
