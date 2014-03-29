@@ -8,10 +8,13 @@ function init()
 	fixit = GO.createIQM("mr_fixit.iqm")
 	floor = GO.createIQM("cube.iqm")
 	shit = GO.createIQM("monkey.iqm")
+	cube = GO.createIQM("cube.iqm")
 
 	GO.setScale(floor,10,0.1,10)
 	GO.setPos(floor,0,-0.5,0)
 	GO.setPos(shit,5,1.1,0)
+	GO.setScale(cube,1.5,1.5,1.5)
+	GO.setPos(cube,-3,1,2)
 end
 
 function update(dt)
