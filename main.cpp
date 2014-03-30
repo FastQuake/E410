@@ -81,7 +81,7 @@ int main(int argc, char *argv[]){
 	prg.setUniform("modelMat");
 	prg.setUniform("skin");
 	prg.setUniform("view");
-	prg.setUniform("depthMVP");
+	prg.setUniform("shadowMVP");
 	prg.setUniform("shadowMap");
 
 	ShaderProgram depthPrg("./data/shaders/depthv.glsl",
@@ -95,7 +95,18 @@ int main(int argc, char *argv[]){
 	depthPrg.setUniform("modelMat");
 	
 	ShaderProgram shadowPrg("./data/shaders/shadowv.glsl","./data/shaders/shadowf.glsl");
-
+	shadowPrg.setAttribute("coord3d");
+	shadowPrg.setAttribute("vweight");
+	shadowPrg.setAttribute("vbones");
+	shadowPrg.setUniform("skin");
+	shadowPrg.setUniform("bonemats");
+	shadowPrg.setUniform("modelMat");
+	shadowPrg.setUniform("lightMat");
+	shadowPrg.setUniform("cameraMat");
+	shadowPrg.setUniform("lastpass");
+	shadowPrg.setUniform("shadowTexture");
+	shadowPrg.setUniform("depthTexture");
+	shadowPrg.setUniform("projection");
 
 	//Load main lua file and then call init function
 	lua_pushnumber(l, width);
@@ -120,13 +131,23 @@ int main(int argc, char *argv[]){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glGenTextures(1, &rendman.shadowTexture);
+	glBindTexture(GL_TEXTURE_2D, rendman.shadowTexture);
+	glTexImage2D(GL_TEXTURE_2D,0,GL_R32F,width,height,0,GL_RED,GL_FLOAT,NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 #ifdef WINDOWS
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 #endif
 
-	glFramebufferTexture2DEXT(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, rendman.depthTexture,0);
 	glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
 
 	if(glCheckFramebufferStatusEXT(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
@@ -222,11 +243,29 @@ int main(int argc, char *argv[]){
 
 		//Do all drawing here
 		glUseProgram(depthPrg.getID());
+		glBindFramebufferEXT(GL_FRAMEBUFFER,rendman.framebuffer);
+		glFramebufferTexture2DEXT(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, rendman.depthTexture,0);
+		#ifdef WINDOWS
+			glDrawBuffer(GL_NONE);
+			glReadBuffer(GL_NONE);
+		#endif
 		rendman.renderDepth(&depthPrg, dt.asSeconds());
+		glFramebufferTexture2DEXT(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, 0,0);
 
+		checkGLError();
+		glGetError();
+		glUseProgram(shadowPrg.getID());
+		glUniformMatrix4fv(shadowPrg.getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
+		glFramebufferTexture2DEXT(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D, rendman.shadowTexture,0);
+
+		//glDrawBuffer(GL_FRONT);
+		//glReadBuffer(GL_FRONT);
+		rendman.renderShadow(&shadowPrg,dt.asSeconds());
+		glFramebufferTexture2DEXT(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D, 0,0);
+
+		glBindFramebufferEXT(GL_FRAMEBUFFER,0);
 		glUseProgram(prg.getID());
 		glUniformMatrix4fv(prg.getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
-
 		rendman.render(&prg,dt.asSeconds());
 
 		//Do sfml drawing here

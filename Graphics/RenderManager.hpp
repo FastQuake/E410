@@ -14,8 +14,9 @@ public:
 	GLuint framebuffer;
 	//std::vector<GLuint> depthTextures;
 	GLuint depthTexture;
+	GLuint shadowTexture;
 	void renderDepth(ShaderProgram *prg, float dt);
-	void renderShadow(ShaderProgram *prg);
+	void renderShadow(ShaderProgram *prg, float dt);
 	void render(ShaderProgram *prg, float dt);
 	std::vector<GameObject*> drawList;
 	std::vector<FPSCamera*> cameras;
