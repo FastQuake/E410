@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <lua.hpp>
 #include "server.hpp"
 #include "../Lua/luabinding.hpp"
@@ -8,6 +9,30 @@ sf::Thread *serverThread;
 int serverPort = 1255;
 bool serverRunning = false;
 RenderManager serverRendMan;
+vector<ENetPeer*> peers;
+
+int peerIndex(ENetPeer *checkPeer){
+	for(int i=0;i<peers.size();i++){
+		if(peers[i]->address.host == checkPeer->address.host &&
+				peers[i]->address.port == peers[i]->address.port){
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+void removePeerByIndex(ENetPeer *checkPeer){
+	int index = peerIndex(checkPeer);
+	if(index != -1){
+		peers.erase(peers.begin()+index);
+	}
+	else{
+		cerr << "Could not find peer at " << checkPeer->address.host
+			<< ":" << checkPeer->address.port << endl;
+	}
+
+}
 
 void serverMain(){
 	serverRunning = true;
@@ -56,10 +81,27 @@ void serverMain(){
 		while(enet_host_service(server, &event, 10) > 0){
 			switch(event.type){
 				case ENET_EVENT_TYPE_CONNECT:
-					//TODO client joining here
+					enet_peer_timeout(event.peer, ENET_PEER_TIMEOUT_LIMIT,
+											ENET_PEER_TIMEOUT_MINIMUM,
+											ENET_PEER_TIMEOUT_MAXIMUM);
+					peers.push_back(event.peer);
+					lua_getglobal(l, "onPeerConnect");
+					lua_pushnumber(l, event.peer->address.host);
+					lua_pushnumber(l, event.peer->address.port);
+					if(lua_pcall(l, 2, 0, 0)){
+						cerr << "[SERVER] Could not find peer connect function " <<
+							lua_tostring(l, -1) << endl;
+					}
 					break;
 				case ENET_EVENT_TYPE_DISCONNECT:
-					//TODO handle client disconnecting
+					lua_getglobal(l, "onPeerDisconnect");
+					lua_pushnumber(l, event.peer->address.host);
+					lua_pushnumber(l, event.peer->address.port);
+					if(lua_pcall(l, 2, 0, 0)){
+						cerr << "[SERVER] Could not find peer disconnect function " <<
+							lua_tostring(l, -1) << endl;
+					}
+					removePeerByIndex(event.peer);
 					break;
 				case ENET_EVENT_TYPE_RECEIVE:
 					//TODO input packet handling here
@@ -75,7 +117,7 @@ void serverMain(){
 		lua_getglobal(l,"update");
 		lua_pushnumber(l, dt.asSeconds());
 		if(lua_pcall(l,1,0,0)){
-			cerr << "Could not find update function " <<
+			cerr << "[SERVER] Could not find update function " <<
 				lua_tostring(l, -1) << endl;
 		}
 

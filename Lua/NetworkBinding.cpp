@@ -79,6 +79,8 @@ int l_connectTo(lua_State *l){
 	serverPeer = enet_host_connect(client, &addr, 2, 0);
 	if(serverPeer == NULL){
 		serverAddr = "Could not create peer for " + serverAddr;
+		enet_host_destroy(client);
+		client = NULL;
 		lua_pushstring(l, serverAddr.c_str());
 		lua_error(l);
 	}
@@ -91,6 +93,7 @@ int l_connectTo(lua_State *l){
 		enet_host_flush(client);
 		serverPeer = NULL;
 		enet_host_destroy(client);
+		client = NULL;
 		serverAddr = "Connection to "+serverAddr+" failed";
 		lua_pushstring(l, serverAddr.c_str());
 		lua_error(l);
@@ -102,5 +105,6 @@ int l_reset(lua_State *l){
 	enet_host_flush(client);
 	serverPeer = NULL;
 	enet_host_destroy(client);
+	client = NULL;
 	return 0;
 }

@@ -39,6 +39,7 @@ int main(int argc, char *argv[]){
 		return EXIT_FAILURE;
 	}
 	atexit(enet_deinitialize);
+	ENetEvent enetEvent;
 
 	//Create sfml window with opengl context
 	sf::ContextSettings cs;
@@ -165,6 +166,14 @@ int main(int argc, char *argv[]){
 				}
 			}
 		}
+		//Handle input packets
+		if(client != NULL){
+			while(enet_host_service(client, &enetEvent, 0) >0){
+				if(enetEvent.type == ENET_EVENT_TYPE_RECEIVE){
+					//handle packets here
+				}
+			}
+		}
 		
 		//Check if gui is locked and show cursor
 		if(im->isGuiLocked()){
@@ -181,10 +190,10 @@ int main(int argc, char *argv[]){
 				lua_tostring(l,-1) << endl;
 		}
 
-		glm::mat4 projection = glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
-
-		//Updating code
 		gui->update();
+
+		//Create projection matrix for main render
+		glm::mat4 projection = glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
