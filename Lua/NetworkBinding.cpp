@@ -87,7 +87,7 @@ int l_connectTo(lua_State *l){
 	if((enet_host_service(client, &event, 5000) > 0) &&
 			event.type == ENET_EVENT_TYPE_CONNECT){
 		string line = "\nConnection to "+serverAddr+" succeeded";
-		global_con->out.println(line);
+		global_con->out.print(line);
 	}else {
 		enet_peer_reset(serverPeer);
 		enet_host_flush(client);
@@ -98,6 +98,16 @@ int l_connectTo(lua_State *l){
 		lua_pushstring(l, serverAddr.c_str());
 		lua_error(l);
 	}
+	return 0;
+}
+int l_sendPacket(lua_State *l){
+	string data = l_toString(l, 1);
+	if(client == NULL){
+		lua_pushstring(l,"Not connected to a server");
+		lua_error(l);
+	}
+
+	packetList.push_back(data);
 	return 0;
 }
 int l_reset(lua_State *l){

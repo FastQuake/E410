@@ -1,6 +1,8 @@
 #ifndef GLOBALS_HPP
 #define GLOBALS_HPP
 
+#include <iostream>
+#include <vector>
 #include "Graphics/RenderManager.hpp"
 #include "ResourceManager.hpp"
 #include "GUI/Console.hpp"
@@ -12,8 +14,16 @@ extern InputManager *im;
 extern ResourceManager resman;
 extern RenderManager rendman;
 extern GuiManager *gui;
+extern std::vector<std::string> packetList;
 
 extern int width;
 extern int height;
+
+struct Packet {
+	int addr;
+	int port;
+	std::string data;
+};
+
 
 #endif

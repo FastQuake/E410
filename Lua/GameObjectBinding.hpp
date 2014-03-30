@@ -9,6 +9,7 @@ int l_setRot(lua_State *l);
 int l_setScale(lua_State *l);
 int l_setCurAnim(lua_State *l);
 int l_setAnim(lua_State *l);
+int l_setTag(lua_State *l);
 int l_delete(lua_State *l);
 int l_serverDelete(lua_State *l);
 
@@ -25,6 +26,7 @@ static struct luaL_Reg GO_methods[] = {
 	{"setScale", l_setScale},
 	{"setCurAnim", l_setCurAnim},
 	{"animate", l_setAnim},
+	{"tag", l_setTag},
 	{NULL,NULL}
 };
 

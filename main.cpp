@@ -25,6 +25,7 @@ RenderManager rendman;
 GuiManager *gui;
 ENetPeer *serverPeer;
 ENetHost *client;
+vector<string> packetList;
 
 int width, height;
 
@@ -166,13 +167,23 @@ int main(int argc, char *argv[]){
 				}
 			}
 		}
-		//Handle input packets
+		//Handle input packets and send buffered packets
 		if(client != NULL){
 			while(enet_host_service(client, &enetEvent, 0) >0){
 				if(enetEvent.type == ENET_EVENT_TYPE_RECEIVE){
 					//handle packets here
 				}
 			}
+			//send buffered packets
+			for(int i=0;i<packetList.size();i++){
+				ENetPacket *packet = enet_packet_create(
+						packetList[i].c_str(),
+						packetList[i].length(),
+						ENET_PACKET_FLAG_RELIABLE);
+				enet_peer_send(serverPeer, 0, packet);
+				enet_host_flush(client);
+			}
+			packetList.clear();
 		}
 		
 		//Check if gui is locked and show cursor

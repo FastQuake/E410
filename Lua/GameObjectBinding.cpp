@@ -106,6 +106,13 @@ int l_setAnim(lua_State *l){
 	obj->animate = animate;
 	return 0;
 }
+int l_setTag(lua_State *l){
+	GameObject *obj = l_toGO(l, 1);
+	string tag = l_toString(l, 2);
+
+	obj->tag = tag;
+	return 0;
+}
 int l_delete(lua_State *l){
 	lua_pushnil(l);
 	GameObject *obj = l_toGO(l, 1);

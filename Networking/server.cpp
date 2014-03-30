@@ -1,5 +1,4 @@
-#include <iostream>
-#include <vector>
+#include <sstream>
 #include <lua.hpp>
 #include "server.hpp"
 #include "../Lua/luabinding.hpp"
@@ -10,6 +9,7 @@ int serverPort = 1255;
 bool serverRunning = false;
 RenderManager serverRendMan;
 vector<ENetPeer*> peers;
+vector<Packet> serverPacketList;
 
 int peerIndex(ENetPeer *checkPeer){
 	for(int i=0;i<peers.size();i++){
@@ -32,6 +32,36 @@ void removePeerByIndex(ENetPeer *checkPeer){
 			<< ":" << checkPeer->address.port << endl;
 	}
 
+}
+
+vector<string> breakString(string input){
+	vector<string> out;
+	stringstream ss;
+	ss << input;
+	string part = "";
+	while(ss.good()){
+		ss >> part;
+		out.push_back(part);
+	}
+
+	return out;
+}
+
+void l_pushStringVector(lua_State *l,vector<string> vec){
+	lua_newtable(l);
+	for(int i=0;i<vec.size();i++){
+		lua_pushstring(l,vec[i].c_str());
+		lua_rawseti(l,-2,i+1);
+	}
+}
+
+void sendPacketToAllClients(ENetHost *host,string data){
+	for(int i=0;i<peers.size();i++){
+		ENetPacket *packet = enet_packet_create(data.c_str(),
+				data.length(), ENET_PACKET_FLAG_RELIABLE);
+		enet_peer_send(peers[i], 0, packet);
+	}
+	enet_host_flush(host);
 }
 
 void serverMain(){
@@ -79,6 +109,8 @@ void serverMain(){
 	while(serverRunning){
 		//Handle networking packets
 		while(enet_host_service(server, &event, 10) > 0){
+			string packetData = "";
+			vector<string> splitPacket;
 			switch(event.type){
 				case ENET_EVENT_TYPE_CONNECT:
 					enet_peer_timeout(event.peer, ENET_PEER_TIMEOUT_LIMIT,
@@ -106,12 +138,41 @@ void serverMain(){
 				case ENET_EVENT_TYPE_RECEIVE:
 					//TODO input packet handling here
 					//Send to lua etc
+					packetData = (char*)(event.packet->data);
+					splitPacket = breakString(packetData);
+					lua_getglobal(l, "onReceivePacket");
+					lua_pushnumber(l,event.peer->address.host);
+					lua_pushnumber(l,event.peer->address.port);
+					l_pushStringVector(l, splitPacket);	
+					if(lua_pcall(l,3,0,0)){
+						cerr << "[SERVER] Could not find receive packet function" <<
+							lua_tostring(l, -1) << endl;
+					}
+					enet_packet_destroy(event.packet);
 					break;
 				case ENET_EVENT_TYPE_NONE:
 					//Do nothing here i guess
 					break;
 			}
 		}
+		//Send all buffered packets
+		for(int i=0;i<serverPacketList.size();i++){
+			if(serverPacketList[i].addr == -1){
+				sendPacketToAllClients(server, serverPacketList[i].data);
+			}else {
+				ENetPeer peer;
+				peer.address.host = serverPacketList[i].addr;
+				peer.address.port = serverPacketList[i].port;
+				int index = peerIndex(&peer);
+				if(index != -1){
+					ENetPacket *packet = enet_packet_create(serverPacketList[i].data.c_str(),
+							serverPacketList[i].data.length(), ENET_PACKET_FLAG_RELIABLE);
+					enet_peer_send(peers[index], 0, packet);
+					enet_host_flush(server);
+				}
+			}
+		}
+		serverPacketList.clear();
 
 		//Do luaside updating
 		lua_getglobal(l,"update");
