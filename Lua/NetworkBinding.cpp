@@ -101,7 +101,7 @@ int l_connectTo(lua_State *l){
 	return 0;
 }
 int l_reset(lua_State *l){
-	enet_peer_reset(serverPeer);
+	enet_peer_disconnect(serverPeer, 0);
 	enet_host_flush(client);
 	serverPeer = NULL;
 	enet_host_destroy(client);
