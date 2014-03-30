@@ -4,6 +4,7 @@
 #include "InputBinding.hpp"
 #include "CameraBinding.hpp"
 #include "GuiBinding.hpp"
+#include "NetworkBinding.hpp"
 using namespace std;
 
 //TODO make this less ugly, break it up, etc
@@ -52,6 +53,28 @@ void bindFunctions(lua_State *l){
 
 	luaL_newlib(l,GUI_funcs);
 	lua_setglobal(l, "GUI");
+
+	//Bind networking functions
+	luaL_newlib(l, Network_fucs);
+	lua_setglobal(l, "network");
+}
+
+void serverBindFunctions(lua_State *l){
+	lua_register(l,"print",lua_print);
+
+	//create GO binding
+	//Remap some functions to their server version
+	GO_methods[0].func = l_serverDelete;
+	GO_methods[1].func = l_serverDelete;
+	GO_funcs[0].func = l_serverLoadIQM;
+	GO_funcs[0].func = l_serverLoadIQM;
+	luaL_newmetatable(l, "MetaGO");
+	luaL_setfuncs(l, GO_methods, 0);
+	lua_pushvalue(l, -1);
+	lua_setfield(l, -1,"__index");
+
+	luaL_newlib(l,GO_funcs);
+	lua_setglobal(l, "GO");
 }
 
 float l_toNumber(lua_State *l, int pos){

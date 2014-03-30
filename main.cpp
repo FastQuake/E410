@@ -15,6 +15,7 @@
 #include "Graphics/RenderManager.hpp"
 #include "GUI/Console.hpp"
 #include "Lua/luabinding.hpp"
+#include "Networking/server.hpp"
 using namespace std;
 
 Console *global_con;
@@ -26,9 +27,16 @@ GuiManager *gui;
 int width, height;
 
 int main(int argc, char *argv[]){
-	//Create lua vm
+	//Create lua vm and generate bindings
 	lua_State *l = luaL_newstate();
 	bindFunctions(l);
+
+	//Load enet for networking
+	if(enet_initialize() != 0){
+		cerr << "Could not initalize ENet" << endl;
+		return EXIT_FAILURE;
+	}
+	atexit(enet_deinitialize);
 
 	//Create sfml window with opengl context
 	sf::ContextSettings cs;
@@ -102,6 +110,11 @@ int main(int argc, char *argv[]){
 
 	glClearColor(0.0,0.0,0.0,1.0);
 
+	//setfunction for server thread
+	sf::Thread sThread(&serverMain);
+	serverThread = &sThread;
+
+	//Set stuff for main game loop
 	sf::Clock dtTimer;
 	dtTimer.restart();
 	sf::Time dt;
@@ -185,4 +198,7 @@ int main(int argc, char *argv[]){
 		window.display();
 		dt = dtTimer.restart();
 	}
+
+	serverRunning = false;
+	serverThread->wait();
 }

@@ -1,5 +1,6 @@
 #include <iostream>
 #include "../globals.hpp"
+#include "../Networking/server.hpp"
 #include "luabinding.hpp"
 #include "GameObjectBinding.hpp"
 using namespace std;
@@ -17,10 +18,8 @@ GameObject *l_toGO(lua_State *l, int pos){
 	return NULL;
 }
 
-int l_createIQM(lua_State *l){
-	string model = "";
-
-	model = l_toString(l, 1);
+int l_loadIQM(lua_State *l){
+	string model = l_toString(l, 1);
 
 	Model *mod = resman.loadModel(model);
 	if(mod == NULL){
@@ -31,6 +30,17 @@ int l_createIQM(lua_State *l){
 	GameObject *out = new (lua_newuserdata(l, sizeof(GameObject))) GameObject;
 	out->setModel(mod);
 	rendman.drawList.push_back(out);
+	luaL_getmetatable(l, "MetaGO");
+	lua_setmetatable(l, -2);
+
+	return 1;
+}
+int l_serverLoadIQM(lua_State *l){
+	string model = l_toString(l, 1);
+
+	GameObject *out = new (lua_newuserdata(l, sizeof(GameObject))) GameObject;
+	out->modelName = model;
+	serverRendMan.drawList.push_back(out);
 	luaL_getmetatable(l, "MetaGO");
 	lua_setmetatable(l, -2);
 
@@ -97,9 +107,16 @@ int l_setAnim(lua_State *l){
 	return 0;
 }
 int l_delete(lua_State *l){
-	lua_pushlightuserdata(l, NULL);
+	lua_pushnil(l);
 	GameObject *obj = l_toGO(l, 1);
 
 	rendman.remove(obj);
+	return 0;
+}
+int l_serverDelete(lua_State *l){
+	lua_pushnil(l);
+	GameObject *obj = l_toGO(l, 1);
+
+	serverRendMan.remove(obj);
 	return 0;
 }

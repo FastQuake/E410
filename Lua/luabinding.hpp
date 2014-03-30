@@ -5,6 +5,7 @@
 #include <lua.hpp>
 
 void bindFunctions(lua_State *l);
+void serverBindFunctions(lua_State *l);
 
 //Data converting and error handling functions
 float l_toNumber(lua_State *l, int pos);

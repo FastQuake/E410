@@ -10,6 +10,7 @@
 class GameObject{
 public:
 	std::string magic;
+	std::string modelName;
 	Model *model;
 	glm::vec3 position;
 	glm::vec3 rotation;
