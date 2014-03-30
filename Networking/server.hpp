@@ -9,6 +9,8 @@ extern sf::Thread *serverThread;
 extern int serverPort;
 extern bool serverRunning;
 extern RenderManager serverRendMan;
+extern ENetPeer *serverPeer;
+extern ENetHost *client;
 
 void serverMain();
 

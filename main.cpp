@@ -23,6 +23,8 @@ InputManager *im;
 ResourceManager resman;
 RenderManager rendman;
 GuiManager *gui;
+ENetPeer *serverPeer;
+ENetHost *client;
 
 int width, height;
 
@@ -199,6 +201,7 @@ int main(int argc, char *argv[]){
 		dt = dtTimer.restart();
 	}
 
+	enet_host_destroy(client);
 	serverRunning = false;
 	serverThread->wait();
 }
