@@ -15,7 +15,7 @@ uint32_t serverID;
 int peerIndex(ENetPeer *checkPeer){
 	for(int i=0;i<peers.size();i++){
 		if(peers[i]->address.host == checkPeer->address.host &&
-				peers[i]->address.port == peers[i]->address.port){
+				peers[i]->address.port == checkPeer->address.port){
 			return i;
 		}
 	}
@@ -190,6 +190,15 @@ void serverMain(){
 		if(lua_pcall(l,1,0,0)){
 			cerr << "[SERVER] Could not find update function " <<
 				lua_tostring(l, -1) << endl;
+		}
+
+		for(int i=0;i<serverRendMan.drawList.size();i++){
+			if(serverRendMan.drawList[i]->moved == true){
+				ENetPeer p;
+				p.address.host = -1;
+				sendMovePacket(&p,serverRendMan.drawList[i]);
+				serverRendMan.drawList[i]->moved = false;
+			}
 		}
 
 

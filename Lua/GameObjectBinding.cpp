@@ -65,6 +65,7 @@ int l_setPos(lua_State *l){
 	obj->position.x = x;
 	obj->position.y = y;
 	obj->position.z = z;
+	obj->moved = true;
 	return 0;
 }
 

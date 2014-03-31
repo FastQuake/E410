@@ -54,4 +54,7 @@ function update(dt)
 	if input.isKeyDown(keys.D) then
 		cam:strafe(speed*dt)
 	end
+	if input.isKeyDown(keys.J) then
+		network.sendPacket("forward")
+	end
 end

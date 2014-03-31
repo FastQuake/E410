@@ -14,6 +14,7 @@ public:
 	std::string modelName;
 	std::string tag;
 	uint32_t id;	
+	bool moved;
 	Model *model;
 	glm::vec3 position;
 	glm::vec3 rotation;

@@ -217,8 +217,7 @@ int main(int argc, char *argv[]){
 						lua_rawseti(l, -3, out->id);
 
 						//push gameobject to lua createObject so a game script can handle it
-						lua_getglobal(l, "createObject"); //push create objects
-						//lua_getglobal(l, "serverObjects"); //push serverObjects table
+						lua_getglobal(l, "createObject"); //push createObject
 						lua_rawgeti(l, -3, out->id); // get serverObjects[id]
 						if(lua_pcall(l,1,0,0)){ //call createObjects(serverObjects[id])
 							cerr << "error in createObject: " << 
@@ -237,6 +236,8 @@ int main(int argc, char *argv[]){
 						obj->position.y = stringToFloat(pdata[3]);
 						obj->position.z = stringToFloat(pdata[4]);
 					}
+
+					enet_packet_destroy(enetEvent.packet);
 				}else if(enetEvent.type == ENET_EVENT_TYPE_DISCONNECT){
 					//handle server disconnect here
 				}
