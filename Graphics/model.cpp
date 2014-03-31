@@ -398,6 +398,8 @@ void Model::draw(ShaderProgram *prg, vector<glm::mat4> outframe, bool texture){
 			glUniform1i(prg->getUniform("inTexture"),0);
 		}
 		glDrawElements(GL_TRIANGLES, 3*m.num_triangles, GL_UNSIGNED_INT, &tris[m.first_triangle]);
+		if(texture)
+			glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	glDisableVertexAttribArray(prg->getAttribute("coord3d"));
