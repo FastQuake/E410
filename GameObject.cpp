@@ -4,6 +4,7 @@ GameObject::GameObject():
 position(0,0,0), rotation(0,0,0), scale(1,1,1){
 
 	magic = GOMAGIC;
+	id = 0;
 	tag = "None";
 	visible = true;
 	animate = false;

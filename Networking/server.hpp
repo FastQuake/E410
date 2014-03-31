@@ -13,9 +13,12 @@ extern bool serverRunning;
 extern RenderManager serverRendMan;
 extern ENetPeer *serverPeer;
 extern ENetHost *client;
+extern uint32_t serverID;
 
 extern std::vector<Packet> serverPacketList;
 
 void serverMain();
+void sendCreatePacket(ENetPeer *peer, GameObject *obj);
+void sendMovePacket(ENetPeer *peer, GameObject *obj);
 
 #endif

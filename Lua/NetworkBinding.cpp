@@ -33,14 +33,6 @@ int l_setPort(lua_State *l){
 	return 0;
 }
 
-int stringToInt(string input){
-	int out;
-	stringstream ss;
-	ss << input;
-	ss >> out;
-	return out;	
-}
-
 int getPort(string addr){
 	size_t pos = addr.find(":");
 	if(pos != string::npos){

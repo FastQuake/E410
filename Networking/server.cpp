@@ -10,6 +10,7 @@ bool serverRunning = false;
 RenderManager serverRendMan;
 vector<ENetPeer*> peers;
 vector<Packet> serverPacketList;
+uint32_t serverID;
 
 int peerIndex(ENetPeer *checkPeer){
 	for(int i=0;i<peers.size();i++){
@@ -64,7 +65,15 @@ void sendPacketToAllClients(ENetHost *host,string data){
 	enet_host_flush(host);
 }
 
+void sendSpawnPackets(ENetPeer *peer){
+	for(int i=0;i<serverRendMan.drawList.size();i++){
+		sendCreatePacket(peer, serverRendMan.drawList[i]);		
+		sendMovePacket(peer, serverRendMan.drawList[i]);
+	}
+}
+
 void serverMain(){
+	serverID = 1;
 	serverRunning = true;
 	ENetAddress addr;
 	ENetHost *server;
@@ -124,6 +133,7 @@ void serverMain(){
 						cerr << "[SERVER] Could not find peer connect function " <<
 							lua_tostring(l, -1) << endl;
 					}
+					sendSpawnPackets(event.peer);
 					break;
 				case ENET_EVENT_TYPE_DISCONNECT:
 					lua_getglobal(l, "onPeerDisconnect");
@@ -187,5 +197,26 @@ void serverMain(){
 	}
 
 	serverRunning = false;
+	peers.clear();
 	enet_host_destroy(server);
+}
+
+void sendCreatePacket(ENetPeer *peer, GameObject *obj){
+	stringstream ss;
+	ss << "create" << " " << obj->modelName << " " << obj->tag << " " << obj->id;
+	Packet p;
+	p.addr = peer->address.host;
+	p.port = peer->address.port;
+	p.data = ss.str();
+	serverPacketList.push_back(p);
+}
+void sendMovePacket(ENetPeer *peer, GameObject *obj){
+	stringstream ss;
+	ss << "move" << " " << obj->id << " " << obj->position.x << " "
+		<< obj->position.y << " " << obj->position.z;
+	Packet p;
+	p.addr = peer->address.host;
+	p.port = peer->address.port;
+	p.data = ss.str();
+	serverPacketList.push_back(p);
 }

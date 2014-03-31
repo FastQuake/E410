@@ -4,6 +4,7 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include "Graphics/model.hpp"
+#include "stdint.h"
 
 #define GOMAGIC "Game"
 
@@ -12,6 +13,7 @@ public:
 	std::string magic;
 	std::string modelName;
 	std::string tag;
+	uint32_t id;	
 	Model *model;
 	glm::vec3 position;
 	glm::vec3 rotation;

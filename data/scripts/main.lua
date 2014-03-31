@@ -1,6 +1,9 @@
 sensitvity = 10
 speed = 10
 
+function createObject(obj)
+end
+
 function init()
 	--Create stuff for GUI
 	fpsCounter = GUI.createText()

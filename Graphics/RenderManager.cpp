@@ -1,5 +1,14 @@
 #include "RenderManager.hpp"
 
+GameObject *RenderManager::getId(uint32_t id){
+	for(int i=0;i<drawList.size();i++){
+		if(drawList[i]->id == id){
+			return drawList[i];
+		}
+	}
+	return NULL;
+}
+
 void RenderManager::render(ShaderProgram *prg, float dt){
 
 	for(int i=0;i<this->drawList.size();i++){
@@ -32,3 +41,4 @@ void RenderManager::remove(GameObject *obj){
 		}
 	}
 }
+

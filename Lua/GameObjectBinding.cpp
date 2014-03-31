@@ -37,12 +37,20 @@ int l_loadIQM(lua_State *l){
 }
 int l_serverLoadIQM(lua_State *l){
 	string model = l_toString(l, 1);
+	string tag = l_toString(l, 2);
 
 	GameObject *out = new (lua_newuserdata(l, sizeof(GameObject))) GameObject;
 	out->modelName = model;
+	out->id = serverID++;
+	out->tag = tag;
 	serverRendMan.drawList.push_back(out);
 	luaL_getmetatable(l, "MetaGO");
 	lua_setmetatable(l, -2);
+
+	ENetPeer peer;
+	peer.address.host = -1;
+
+	sendCreatePacket(&peer,out);
 
 	return 1;
 }
@@ -104,13 +112,6 @@ int l_setAnim(lua_State *l){
 		lua_error(l);
 	}
 	obj->animate = animate;
-	return 0;
-}
-int l_setTag(lua_State *l){
-	GameObject *obj = l_toGO(l, 1);
-	string tag = l_toString(l, 2);
-
-	obj->tag = tag;
 	return 0;
 }
 int l_delete(lua_State *l){

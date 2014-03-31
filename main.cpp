@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <sstream>
 #include <cmath>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -28,6 +29,21 @@ ENetHost *client;
 vector<string> packetList;
 
 int width, height;
+
+int stringToInt(string input){
+	int out;
+	stringstream ss;
+	ss << input;
+	ss >> out;
+	return out;	
+}
+float stringToFloat(string input){
+	float out;
+	stringstream ss;
+	ss << input;
+	ss >> out;
+	return out;	
+}
 
 int main(int argc, char *argv[]){
 	//Create lua vm and generate bindings
@@ -92,6 +108,8 @@ int main(int argc, char *argv[]){
 	lua_setglobal(l, "width");
 	lua_pushnumber(l, height);
 	lua_setglobal(l, "height");
+	lua_newtable(l);
+	lua_setglobal(l, "serverObjects");
 	int status = luaL_dofile(l, "./data/scripts/main.lua");
 	if(status){
 		cerr << "Could not load file " << lua_tostring(l,-1) << endl; 
@@ -172,6 +190,55 @@ int main(int argc, char *argv[]){
 			while(enet_host_service(client, &enetEvent, 0) >0){
 				if(enetEvent.type == ENET_EVENT_TYPE_RECEIVE){
 					//handle packets here
+					string input = (char*)enetEvent.packet->data;
+					vector<string> pdata = breakString(input);
+					if(pdata[0] == "create"){
+						//Push the object to lua so
+						//lua side code can control it if it wants to
+						string modelName = pdata[1];
+						Model *mod = resman.loadModel(modelName);
+						if(mod == NULL){
+							cerr << "Could not create model " << modelName
+								<< endl;
+							continue;
+						}
+						
+						lua_getglobal(l, "serverObjects");
+						GameObject *out = new (lua_newuserdata(l, sizeof(GameObject))) GameObject;
+						out->setModel(mod);
+						out->magic = GOMAGIC;
+						out->tag = pdata[2];
+						out->id = stringToInt(pdata[3]);
+						rendman.drawList.push_back(out);
+
+						//Push gameobject onto global serverObjects table to keep track of it						
+						luaL_getmetatable(l, "MetaGO");
+						lua_setmetatable(l, -2);
+						lua_rawseti(l, -3, out->id);
+
+						//push gameobject to lua createObject so a game script can handle it
+						lua_getglobal(l, "createObject"); //push create objects
+						//lua_getglobal(l, "serverObjects"); //push serverObjects table
+						lua_rawgeti(l, -3, out->id); // get serverObjects[id]
+						if(lua_pcall(l,1,0,0)){ //call createObjects(serverObjects[id])
+							cerr << "error in createObject: " << 
+								lua_tostring(l, -1) << endl;
+						}
+
+					}
+					else if(pdata[0] == "move"){
+						uint32_t id = stringToInt(pdata[1]);
+						GameObject *obj = rendman.getId(id);
+						if(obj == NULL){
+							cerr << "Could not find object " << id << endl;
+							continue;
+						}
+						obj->position.x = stringToFloat(pdata[2]);
+						obj->position.y = stringToFloat(pdata[3]);
+						obj->position.z = stringToFloat(pdata[4]);
+					}
+				}else if(enetEvent.type == ENET_EVENT_TYPE_DISCONNECT){
+					//handle server disconnect here
 				}
 			}
 			//send buffered packets

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <stdint.h>
 #include "Graphics/RenderManager.hpp"
 #include "ResourceManager.hpp"
 #include "GUI/Console.hpp"
@@ -25,5 +26,7 @@ struct Packet {
 	std::string data;
 };
 
-
+std::vector<std::string> breakString(std::string input);
+int stringToInt(std::string input);
+float stringToFloat(std::string input);
 #endif

@@ -12,6 +12,7 @@ function onPeerDisconnect(address, port)
 end
 
 function init()
+	box = GO.loadIQM("cube.iqm","box")
 end
 
 function update(dt)
