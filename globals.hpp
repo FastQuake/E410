@@ -29,4 +29,6 @@ struct Packet {
 std::vector<std::string> breakString(std::string input);
 int stringToInt(std::string input);
 float stringToFloat(std::string input);
+float toDegrees(float rad);
+float toRad(float degrees);
 #endif

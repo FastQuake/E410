@@ -15,10 +15,14 @@ public:
 	std::string tag;
 	uint32_t id;	
 	bool moved;
+	bool scaled;
+	bool rotated;
 	Model *model;
 	glm::vec3 position;
 	glm::vec3 rotation;
 	glm::vec3 scale;
+	glm::vec3 lookat;
+	glm::vec3 right;
 	std::string currentAnimation;
 	std::vector<glm::mat4> outframe;
 	float aTime;
@@ -28,6 +32,9 @@ public:
 	GameObject();
 
 	void setModel(Model *model);
+	void move(float amount);
+	void strafe(float amount);
+	void turn(glm::vec2 amount);
 };
 
 #endif

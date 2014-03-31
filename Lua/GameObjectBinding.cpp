@@ -79,6 +79,7 @@ int l_setRot(lua_State *l){
 	obj->rotation.x = x;
 	obj->rotation.y = y;
 	obj->rotation.z = z;
+	obj->rotated = true;
 	return 0;
 }
 
@@ -92,9 +93,31 @@ int l_setScale(lua_State *l){
 	obj->scale.x = x;
 	obj->scale.y = y;
 	obj->scale.z = z;
+	obj->scaled = true;
 	return 0;
 }
+int l_move(lua_State *l){
+	GameObject *obj = l_toGO(l, 1);
+	float amount = l_toNumber(l, 2);
 
+	obj->move(amount);
+	return 0;
+}
+int l_strafe(lua_State *l){
+	GameObject *obj = l_toGO(l, 1);
+	float amount = l_toNumber(l, 2);
+
+	obj->strafe(amount);
+	return 0;
+}
+int l_turn(lua_State *l){
+	GameObject *obj = l_toGO(l, 1);
+	float x = l_toNumber(l, 2);
+	float y = l_toNumber(l, 3);
+
+	obj->turn(glm::vec2(x,y));
+	return 0;
+}
 int l_setCurAnim(lua_State *l){
 	GameObject *obj = l_toGO(l, 1);
 	string name = l_toString(l, 2);

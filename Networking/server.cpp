@@ -193,11 +193,19 @@ void serverMain(){
 		}
 
 		for(int i=0;i<serverRendMan.drawList.size();i++){
+			ENetPeer p;
+			p.address.host = -1;
 			if(serverRendMan.drawList[i]->moved == true){
-				ENetPeer p;
-				p.address.host = -1;
 				sendMovePacket(&p,serverRendMan.drawList[i]);
 				serverRendMan.drawList[i]->moved = false;
+			}
+			if(serverRendMan.drawList[i]->rotated == true){
+				sendRotatePacket(&p,serverRendMan.drawList[i]);
+				serverRendMan.drawList[i]->rotated = false;
+			}
+			if(serverRendMan.drawList[i]->scaled == true){
+				sendScalePacket(&p,serverRendMan.drawList[i]);
+				serverRendMan.drawList[i]->scaled = false;
 			}
 		}
 
@@ -223,6 +231,26 @@ void sendMovePacket(ENetPeer *peer, GameObject *obj){
 	stringstream ss;
 	ss << "move" << " " << obj->id << " " << obj->position.x << " "
 		<< obj->position.y << " " << obj->position.z;
+	Packet p;
+	p.addr = peer->address.host;
+	p.port = peer->address.port;
+	p.data = ss.str();
+	serverPacketList.push_back(p);
+}
+void sendRotatePacket(ENetPeer *peer, GameObject *obj){
+	stringstream ss;
+	ss << "rotate" << " " << obj->id << " " << obj->rotation.x << " "
+		<< obj->rotation.y << " " << obj->rotation.z;
+	Packet p;
+	p.addr = peer->address.host;
+	p.port = peer->address.port;
+	p.data = ss.str();
+	serverPacketList.push_back(p);
+}
+void sendScalePacket(ENetPeer *peer, GameObject *obj){
+	stringstream ss;
+	ss << "scale" << " " << obj->id << " " << obj->scale.x << " "
+		<< obj->scale.y << " " << obj->scale.z;
 	Packet p;
 	p.addr = peer->address.host;
 	p.port = peer->address.port;

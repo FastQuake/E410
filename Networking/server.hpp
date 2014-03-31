@@ -20,5 +20,7 @@ extern std::vector<Packet> serverPacketList;
 void serverMain();
 void sendCreatePacket(ENetPeer *peer, GameObject *obj);
 void sendMovePacket(ENetPeer *peer, GameObject *obj);
+void sendRotatePacket(ENetPeer *peer, GameObject *obj);
+void sendScalePacket(ENetPeer *peer, GameObject *obj);
 
 #endif

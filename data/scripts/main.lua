@@ -19,7 +19,7 @@ function init()
 	shit = GO.loadIQM("monkey.iqm")
 
 	floor:setScale(10, 0.1, 10)
-	floor:setPos(0, -0.5, 0)
+	floor:setPos(0, 0, 0)
 	shit:setPos(6, 1.1, 0)
 end
 

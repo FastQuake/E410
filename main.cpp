@@ -236,6 +236,28 @@ int main(int argc, char *argv[]){
 						obj->position.y = stringToFloat(pdata[3]);
 						obj->position.z = stringToFloat(pdata[4]);
 					}
+					else if(pdata[0] == "rotate"){
+						uint32_t id = stringToInt(pdata[1]);
+						GameObject *obj = rendman.getId(id);
+						if(obj == NULL){
+							cerr << "Could not find object " << id << endl;
+							continue;
+						}
+						obj->rotation.x = stringToFloat(pdata[2]);
+						obj->rotation.y = stringToFloat(pdata[3]);
+						obj->rotation.z = stringToFloat(pdata[4]);
+					}
+					else if(pdata[0] == "scale"){
+						uint32_t id = stringToInt(pdata[1]);
+						GameObject *obj = rendman.getId(id);
+						if(obj == NULL){
+							cerr << "Could not find object " << id << endl;
+							continue;
+						}
+						obj->scale.x = stringToFloat(pdata[2]);
+						obj->scale.y = stringToFloat(pdata[3]);
+						obj->scale.z = stringToFloat(pdata[4]);
+					}
 
 					enet_packet_destroy(enetEvent.packet);
 				}else if(enetEvent.type == ENET_EVENT_TYPE_DISCONNECT){
