@@ -57,5 +57,5 @@ void main(){
 		}
 	}
 	vec3 texColour = texture2D(inTexture,texcoord_f).rgb;
-	gl_FragColor = vec4(visibility*texColour,1);
+	gl_FragColor = vec4(clamp(visibility,0.2,1.0)*texColour,1);
 }
