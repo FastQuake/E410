@@ -60,7 +60,7 @@ function update(dt)
 	if input.isKeyDown(keys.H) then
 		network.sendPacket("turn left")
 	end
-	if input.isKeyDown(keys.l) then
+	if input.isKeyDown(keys.L) then
 		network.sendPacket("turn right")
 	end
 end

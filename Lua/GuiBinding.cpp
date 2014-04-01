@@ -1,3 +1,4 @@
+#include <sstream>
 #include "GuiBinding.hpp"
 #include "luabinding.hpp"
 #include "../GUI/Box.hpp"
@@ -13,8 +14,10 @@ GuiElement *l_toGuiElement(lua_State *l, int pos){
 		}
 	}
 
-	lua_pushstring(l, "Argument is not a GUI Element");
-	lua_error(l);
+	stringstream error;
+	error << "Bad argument #" << pos << ", expected gui element got "
+		<< luaL_typename(l, pos);
+	errorTrace(l, error.str());
 
 	return NULL;
 }
@@ -26,8 +29,10 @@ ScrollText *l_toGuiText(lua_State *l, int pos){
 		}
 	}
 
-	lua_pushstring(l,"Argument is not a text box");
-	lua_error(l);
+	stringstream error;
+	error << "Bad argument #" << pos << ", expected gui text got "
+		<< luaL_typename(l, pos);
+	errorTrace(l, error.str());
 
 	return NULL;
 }
@@ -39,8 +44,10 @@ Image *l_toGuiImage(lua_State *l, int pos){
 		}
 	}
 
-	lua_pushstring(l,"Argument is not a image");
-	lua_error(l);
+	stringstream error;
+	error << "Bad argument #" << pos << ", expected gui image got "
+		<< luaL_typename(l, pos);
+	errorTrace(l, error.str());
 
 	return NULL;
 }
@@ -52,8 +59,10 @@ Button *l_toGuiButton(lua_State *l, int pos){
 		}
 	}
 
-	lua_pushstring(l, "Argument is not a button");
-	lua_error(l);
+	stringstream error;
+	error << "Bad argument #" << pos << ", expected gui button got "
+		<< luaL_typename(l, pos);
+	errorTrace(l, error.str());	
 
 	return NULL;
 }

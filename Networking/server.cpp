@@ -149,11 +149,13 @@ void serverMain(){
 					//TODO input packet handling here
 					//Send to lua etc
 					packetData = (char*)(event.packet->data);
+					packetData = packetData.substr(0, event.packet->dataLength);
 					splitPacket = breakString(packetData);
 					lua_getglobal(l, "onReceivePacket");
 					lua_pushnumber(l,event.peer->address.host);
 					lua_pushnumber(l,event.peer->address.port);
 					l_pushStringVector(l, splitPacket);	
+					cout << "Got packet " << packetData << endl;
 					if(lua_pcall(l,3,0,0)){
 						cerr << "[SERVER] Could not find receive packet function" <<
 							lua_tostring(l, -1) << endl;
@@ -188,9 +190,6 @@ void serverMain(){
 		lua_getglobal(l,"update");
 		lua_pushnumber(l, dt.asSeconds());
 		if(lua_pcall(l,1,0,0)){
-			lua_Debug ar;
-			lua_getstack(l,1,&ar);
-			lua_getinfo(l, "nSl",&ar);
 			cerr << "[SERVER] error in update function" <<
 				lua_tostring(l, -1) << endl;
 		}

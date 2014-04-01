@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include "../globals.hpp"
 #include "../Networking/server.hpp"
 #include "luabinding.hpp"
@@ -12,8 +13,10 @@ GameObject *l_toGO(lua_State *l, int pos){
 			 return out;
 	}
 
-	lua_pushstring(l,"Argument is not a GameObject");
-	lua_error(l);
+	stringstream error;
+	error << "Bad argument #" << pos << ", expected gameobject got "
+		<< luaL_typename(l, pos);
+	errorTrace(l, error.str());
 
 	return NULL;
 }

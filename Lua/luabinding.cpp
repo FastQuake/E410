@@ -1,3 +1,4 @@
+#include <sstream>
 #include "../globals.hpp"
 #include "luabinding.hpp"
 #include "GameObjectBinding.hpp"
@@ -81,8 +82,10 @@ float l_toNumber(lua_State *l, int pos){
 	if(lua_isnumber(l,pos)){
 		return lua_tonumber(l,pos);
 	} else {
-		lua_pushstring(l, "Argument is not a number");
-		lua_error(l);
+		stringstream error;
+		error << "Bad argument #" << pos << ", expected number got "
+			<< luaL_typename(l, pos);
+		errorTrace(l, error.str());
 	}
 
 	return 0;
@@ -92,8 +95,10 @@ bool l_toBool(lua_State *l, int pos){
 	if(lua_isboolean(l,pos)){
 		return lua_toboolean(l, pos);
 	} else {
-		lua_pushstring(l, "Argument is not a boolean");
-		lua_error(l);
+		stringstream error;
+		error << "Bad argument #" << pos << ", expected boolean got "
+			<< luaL_typename(l, pos);
+		errorTrace(l, error.str());
 	}
 
 	return false;
@@ -103,8 +108,10 @@ string l_toString(lua_State *l, int pos){
 	if(lua_isstring(l, pos)){
 		return lua_tostring(l, pos);
 	} else {
-		lua_pushstring(l, "Arugment is not a string");
-		lua_error(l);
+		stringstream error;
+		error << "Bad argument #" << pos << ", expected string got "
+			<< luaL_typename(l, pos);
+		errorTrace(l, error.str());
 	}
 
 	return "";
@@ -120,22 +127,9 @@ int l_print(lua_State *l){
 	global_con->out.print("\n"+value);
 	return 0;
 }
-
-int l_trace(lua_State *l){
-	if (!lua_isstring(l, 1))  /* 'message' not a string? */
-	return 1;  /* keep it intact */
-	lua_getfield(l, LUA_REGISTRYINDEX, "debug");
-	if (!lua_istable(l, -1)) {
-	lua_pop(l, 1);
-	return 1;
-	}
-	lua_getfield(l, -1, "traceback");
-	if (!lua_isfunction(l, -1)) {
-	lua_pop(l, 2);
-	return 1;
-	}
-	lua_pushvalue(l, 1);  /* pass error message */
-	lua_pushinteger(l, 2);  /* skip this function and traceback */
-	lua_call(l, 2, 1);  /* call debug.traceback */
-	return 1;
+string typeToString(lua_State *l, int pos){
+}
+void errorTrace(lua_State *l, string error){
+	luaL_traceback(l, l, error.c_str(), 1);
+	lua_error(l);	
 }

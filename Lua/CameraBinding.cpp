@@ -1,5 +1,7 @@
+#include <sstream>
 #include "../globals.hpp"
 #include "CameraBinding.hpp"
+using namespace std;
 
 FPSCamera *l_toCam(lua_State *l, int pos){
 	if(lua_isuserdata(l, pos)){
@@ -8,8 +10,10 @@ FPSCamera *l_toCam(lua_State *l, int pos){
 			return out;
 	}
 		
-	lua_pushstring(l, "Argument in not a Camera");
-	lua_error(l);
+	stringstream error;
+	error << "Bad argument #" << pos << ", expected camera got "
+		<< luaL_typename(l, pos);
+	errorTrace(l, error.str());
 
 	return NULL;
 }
