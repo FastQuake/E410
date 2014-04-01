@@ -81,5 +81,6 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 		drawList[i]->model->draw(prg,drawList[i]->outframe, true);
 	}
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, 0);
+	glActiveTexture(GL_TEXTURE0);
 }

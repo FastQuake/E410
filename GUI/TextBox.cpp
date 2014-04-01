@@ -101,7 +101,7 @@ void TextBox::draw(sf::RenderWindow *screen){
 
 ScrollText::ScrollText(sf::Vector2f pos, sf::Vector2i size, 
 		sf::Color colour){
-	font.loadFromFile("./data/fonts/DejaVuSansMono.ttf");	
+	font.loadFromFile("./data/fonts/DejaVuSansMono.ttf");
 
 	this->pos = pos;
 	this->size = size;
