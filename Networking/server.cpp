@@ -69,6 +69,8 @@ void sendSpawnPackets(ENetPeer *peer){
 	for(int i=0;i<serverRendMan.drawList.size();i++){
 		sendCreatePacket(peer, serverRendMan.drawList[i]);		
 		sendMovePacket(peer, serverRendMan.drawList[i]);
+		sendRotatePacket(peer, serverRendMan.drawList[i]);
+		sendScalePacket(peer, serverRendMan.drawList[i]);
 	}
 }
 
@@ -96,7 +98,7 @@ void serverMain(){
 
 	//load main server lua function
 	if(luaL_dofile(l,"./data/scripts/server.lua")){
-		cerr << "[SERVER] Could not load file" << lua_tostring(l, -1) << endl;
+		cerr << "Could not find server.lua" << endl;
 		serverRunning = false;
 		enet_host_destroy(server);
 		return;
@@ -104,8 +106,9 @@ void serverMain(){
 
 	lua_getglobal(l, "init");
 	if(lua_pcall(l,0,0,0)){
-		cerr << "[SERVER] Could not find init function" << lua_tostring(l, -1)
-			<< endl;
+		string error = "[SERVER] " + string(lua_tostring(l,-1));
+		cout << error << endl;
+		global_con->out.println("[SERVER] "+error);
 		serverRunning = false;
 		enet_host_destroy(server);
 		return;
@@ -130,8 +133,9 @@ void serverMain(){
 					lua_pushnumber(l, event.peer->address.host);
 					lua_pushnumber(l, event.peer->address.port);
 					if(lua_pcall(l, 2, 0, 0)){
-						cerr << "[SERVER] Could not find peer connect function " <<
-							lua_tostring(l, -1) << endl;
+						string error = "[SERVER] " + string(lua_tostring(l,-1));
+						cout << error << endl;
+						global_con->out.println("[SERVER] "+error);
 					}
 					sendSpawnPackets(event.peer);
 					break;
@@ -140,8 +144,9 @@ void serverMain(){
 					lua_pushnumber(l, event.peer->address.host);
 					lua_pushnumber(l, event.peer->address.port);
 					if(lua_pcall(l, 2, 0, 0)){
-						cerr << "[SERVER] Could not find peer disconnect function " <<
-							lua_tostring(l, -1) << endl;
+						string error = "[SERVER] " + string(lua_tostring(l,-1));
+						cout << error << endl;
+						global_con->out.println("[SERVER] "+error);
 					}
 					removePeerByIndex(event.peer);
 					break;
@@ -155,10 +160,10 @@ void serverMain(){
 					lua_pushnumber(l,event.peer->address.host);
 					lua_pushnumber(l,event.peer->address.port);
 					l_pushStringVector(l, splitPacket);	
-					cout << "Got packet " << packetData << endl;
 					if(lua_pcall(l,3,0,0)){
-						cerr << "[SERVER] Could not find receive packet function" <<
-							lua_tostring(l, -1) << endl;
+						string error = "[SERVER] " + string(lua_tostring(l,-1));
+						cout << error << endl;
+						global_con->out.println("[SERVER] "+error);
 					}
 					enet_packet_destroy(event.packet);
 					break;
@@ -190,8 +195,9 @@ void serverMain(){
 		lua_getglobal(l,"update");
 		lua_pushnumber(l, dt.asSeconds());
 		if(lua_pcall(l,1,0,0)){
-			cerr << "[SERVER] error in update function" <<
-				lua_tostring(l, -1) << endl;
+			string error = "[SERVER] " + string(lua_tostring(l,-1));
+			cout << error << endl;
+			global_con->out.println("[SERVER] "+error);
 		}
 
 		for(int i=0;i<serverRendMan.drawList.size();i++){

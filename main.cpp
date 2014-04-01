@@ -119,8 +119,8 @@ int main(int argc, char *argv[]){
 	lua_getglobal(l, "init");
 	status = lua_pcall(l,0,0,0);
 	if(status){
-		cerr << "Could not find init funtion " << lua_tostring(l,-1)
-			<< endl;
+		cout << lua_tostring(l, -1) << endl;
+		global_con->out.println(lua_tostring(l, -1));
 		return EXIT_FAILURE;
 	}
 
@@ -220,8 +220,8 @@ int main(int argc, char *argv[]){
 						lua_getglobal(l, "createObject"); //push createObject
 						lua_rawgeti(l, -3, out->id); // get serverObjects[id]
 						if(lua_pcall(l,1,0,0)){ //call createObjects(serverObjects[id])
-							cerr << "error in createObject: " << 
-								lua_tostring(l, -1) << endl;
+							cout << lua_tostring(l, -1) << endl;
+							global_con->out.println(lua_tostring(l, -1));
 						}
 
 					}
@@ -284,7 +284,6 @@ int main(int argc, char *argv[]){
 		}
 
 		//call lua update
-		//lua_pushcfunction(l, l_trace);
 		lua_getglobal(l,"update");
 		lua_pushnumber(l,dt.asSeconds());
 		if(lua_pcall(l,1,0,0)){
