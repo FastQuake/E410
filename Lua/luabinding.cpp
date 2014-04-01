@@ -10,7 +10,7 @@ using namespace std;
 //TODO make this less ugly, break it up, etc
 
 void bindFunctions(lua_State *l){
-	lua_register(l,"print",lua_print);
+	lua_register(l,"print",l_print);
 
 	//create Gameobject register
 	luaL_newmetatable(l, "MetaGO");
@@ -60,7 +60,7 @@ void bindFunctions(lua_State *l){
 }
 
 void serverBindFunctions(lua_State *l){
-	lua_register(l,"print",lua_print);
+	lua_register(l,"print",l_print);
 
 	//create GO binding
 	//Remap some functions to their server version
@@ -110,7 +110,7 @@ string l_toString(lua_State *l, int pos){
 	return "";
 }
 
-int lua_print(lua_State *l){
+int l_print(lua_State *l){
 	string value = "";
 	if(lua_isstring(l,1)){
 		value = lua_tostring(l,1);
@@ -119,4 +119,23 @@ int lua_print(lua_State *l){
 	cout << value << endl;
 	global_con->out.print("\n"+value);
 	return 0;
+}
+
+int l_trace(lua_State *l){
+	if (!lua_isstring(l, 1))  /* 'message' not a string? */
+	return 1;  /* keep it intact */
+	lua_getfield(l, LUA_REGISTRYINDEX, "debug");
+	if (!lua_istable(l, -1)) {
+	lua_pop(l, 1);
+	return 1;
+	}
+	lua_getfield(l, -1, "traceback");
+	if (!lua_isfunction(l, -1)) {
+	lua_pop(l, 2);
+	return 1;
+	}
+	lua_pushvalue(l, 1);  /* pass error message */
+	lua_pushinteger(l, 2);  /* skip this function and traceback */
+	lua_call(l, 2, 1);  /* call debug.traceback */
+	return 1;
 }

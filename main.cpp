@@ -49,6 +49,7 @@ int main(int argc, char *argv[]){
 	//Create lua vm and generate bindings
 	lua_State *l = luaL_newstate();
 	bindFunctions(l);
+	lua_pushcfunction(l, l_trace);
 
 	//Load enet for networking
 	if(enet_initialize() != 0){
@@ -284,11 +285,23 @@ int main(int argc, char *argv[]){
 		}
 
 		//call lua update
+		//lua_pushcfunction(l, l_trace);
 		lua_getglobal(l,"update");
 		lua_pushnumber(l,dt.asSeconds());
 		if(lua_pcall(l,1,0,0)){
-			cerr << "Could not find update function " << 
-				lua_tostring(l,-1) << endl;
+			/*lua_Debug ar;
+			lua_getglobal(l,"update");
+			int level = 0;
+			while(lua_getstack(l, level, &ar)){
+				lua_getinfo(l, "Sln",&ar);
+				cerr << "Error in update function: " << 
+					ar.short_src << ": " << "stub" <<
+					" line " << ar.currentline <<
+					" error: " << lua_tostring(l,-1) << endl;
+				++level;
+			}*/
+			luaL_traceback(l, l, lua_tostring(l, -1), 0);
+			cout << "ERROR: " << lua_tostring(l, -1) << endl;
 		}
 
 		gui->update();

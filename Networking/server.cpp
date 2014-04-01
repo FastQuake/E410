@@ -188,7 +188,10 @@ void serverMain(){
 		lua_getglobal(l,"update");
 		lua_pushnumber(l, dt.asSeconds());
 		if(lua_pcall(l,1,0,0)){
-			cerr << "[SERVER] Could not find update function " <<
+			lua_Debug ar;
+			lua_getstack(l,1,&ar);
+			lua_getinfo(l, "nSl",&ar);
+			cerr << "[SERVER] error in update function" <<
 				lua_tostring(l, -1) << endl;
 		}
 

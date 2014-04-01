@@ -13,6 +13,7 @@ bool l_toBool(lua_State *l, int pos);
 std::string l_toString(lua_State *l, int pos);
 
 //Bunch 'o' functions
-int lua_print(lua_State *l);
+int l_print(lua_State *l);
+int l_trace(lua_State *l);
 
 #endif

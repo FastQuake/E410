@@ -101,6 +101,7 @@ int l_move(lua_State *l){
 	float amount = l_toNumber(l, 2);
 
 	obj->move(amount);
+	obj->moved = true;
 	return 0;
 }
 int l_strafe(lua_State *l){
@@ -108,6 +109,7 @@ int l_strafe(lua_State *l){
 	float amount = l_toNumber(l, 2);
 
 	obj->strafe(amount);
+	obj->moved = true;
 	return 0;
 }
 int l_turn(lua_State *l){
@@ -116,6 +118,7 @@ int l_turn(lua_State *l){
 	float y = l_toNumber(l, 3);
 
 	obj->turn(glm::vec2(x,y));
+	obj->rotated = true;
 	return 0;
 }
 int l_setCurAnim(lua_State *l){
