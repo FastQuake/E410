@@ -81,8 +81,9 @@ int main(int argc, char *argv[]){
 	prg.setUniform("modelMat");
 	prg.setUniform("skin");
 	prg.setUniform("view");
-	prg.setUniform("depthMVP");
+	prg.setUniform("depthMVPs");
 	prg.setUniform("shadowMap");
+	prg.setUniform("numLights");
 
 	ShaderProgram depthPrg("./data/shaders/depthv.glsl",
 			"./data/shaders/depthf.glsl");
@@ -108,20 +109,17 @@ int main(int argc, char *argv[]){
 	glGenFramebuffersEXT(1,&rendman.framebuffer);
 	glBindFramebufferEXT(GL_FRAMEBUFFER, rendman.framebuffer);
 
-	for(int i=0;i<2;i++){
-		GLuint texture;
-		glGenTextures(1, &texture);
-		rendman.depthTextures.push_back(texture);
-		glBindTexture(GL_TEXTURE_2D, rendman.depthTextures[i]);
-		glTexImage2D(GL_TEXTURE_2D,0,GL_DEPTH_COMPONENT,1024,1024,0,
-				GL_DEPTH_COMPONENT,GL_FLOAT, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
+	glGenTextures(1,&rendman.depthTextures);
+	glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, rendman.depthTextures);
+	//glTexStorage3D(GL_TEXTURE_2D_ARRAY_EXT,1,GL_DEPTH_COMPONENT24,1024,1024,2);
+	glTexImage3D(GL_TEXTURE_2D_ARRAY_EXT,0,GL_DEPTH_COMPONENT,1024,1024,2,0,GL_DEPTH_COMPONENT,GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY_EXT, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY_EXT, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY_EXT, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY_EXT, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+	glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, 0);
+
 
 #ifdef WINDOWS
 	glDrawBuffer(GL_NONE);
@@ -231,7 +229,7 @@ int main(int argc, char *argv[]){
 		glUseProgram(depthPrg.getID());
 		glBindFramebufferEXT(GL_FRAMEBUFFER,rendman.framebuffer);
 		for(int i=0;i<rendman.lights.size();i++){
-			glFramebufferTexture2DEXT(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, rendman.depthTextures[i],0);
+			glFramebufferTextureLayerEXT(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,rendman.depthTextures,0,i);
 			rendman.renderDepth(&depthPrg, dt.asSeconds(),rendman.lights[i]);
 		}
 

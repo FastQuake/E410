@@ -1,12 +1,17 @@
 #version 120
+#extension GL_EXT_texture_array : require
 
-varying vec2 f_texcoord;
-varying vec4 shadowCoord;
+varying vec2 texcoord_f;
 varying vec3 normalCam;
 varying vec3 lightDir; 
+varying vec4 mpos_f;
+varying float numLights_f;
+varying mat4 modelMat_f;
 
+uniform mat4 depthMVPs[5];
 uniform sampler2D inTexture;
-uniform sampler2DShadow shadowMap; 
+uniform sampler2DArrayShadow shadowMap;
+uniform int numLights;
 
 vec2 poissonDisk[16] = vec2[](
 	vec2( -0.94201624, -0.39906216 ),
@@ -34,6 +39,10 @@ float random(vec3 seed, int i){
 }
 
 void main(){
+	vec4 shadowCoords[5];
+	for(int i=0;i<numLights;i++){
+		shadowCoords[i] = (depthMVPs[i]*modelMat_f) * mpos_f;
+	}
 	vec3 n = normalize(normalCam);
 	vec3 l = normalize(lightDir);
 	float cosTheta = clamp(dot(n,l),0, 0.05);
@@ -41,10 +50,12 @@ void main(){
 	bias = clamp(bias,0, 0.005);
 	float visibility = 1.0f;
 	for(int i=0;i<4;i++){
-		int index = i; //Banded anti-aliasing
-		//int index = int(16.0*random(gl_FragCoord.xyy, i))%16; //Noise anti-aliasing
-		visibility -= 0.2*(1.0-(shadow2D(shadowMap,vec3(shadowCoord.xy + poissonDisk[index]/700.0,shadowCoord.z-bias))).z );
+		for(int j=0;j<numLights;j++){
+			int index = i; //Banded anti-aliasing
+			//int index = int(16.0*random(gl_FragCoord.xyy, i))%16; //Noise anti-aliasing
+			visibility -= 0.2*(1.0-(shadow2DArray(shadowMap,vec4(shadowCoords[j].xy + poissonDisk[index]/700.0,j,shadowCoords[j].z-bias))).z);
+		}
 	}
-	vec3 texColour = texture2D(inTexture,f_texcoord).rgb;
+	vec3 texColour = texture2D(inTexture,texcoord_f).rgb;
 	gl_FragColor = vec4(visibility*texColour,1);
 }
