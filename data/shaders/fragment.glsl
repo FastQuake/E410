@@ -1,12 +1,11 @@
 #version 120
 #extension GL_EXT_texture_array : require
 
-varying vec2 texcoord_f;
 varying vec3 normalCam;
 varying vec3 lightDir; 
 varying vec4 mpos_f;
-varying float numLights_f;
 varying mat4 modelMat_f;
+varying vec2 texcoord_f;
 
 uniform mat4 depthMVPs[5];
 uniform sampler2D inTexture;

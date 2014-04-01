@@ -67,9 +67,8 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 		}
 
 		glm::mat4 view = currentCam->view();
-		//std::cout << currentCam->pos.x << "," << currentCam->pos.y << "," << currentCam->pos.z << std::endl;
-		//std::cout << currentCam->angle.x << "," << currentCam->angle.y << "," << currentCam->angle.z << std::endl;
 		glUniformMatrix4fv(prg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
+
 		glm::mat4 scale = glm::scale(glm::mat4(1),drawList[i]->scale);
 		glm::mat4 rot = \
 			glm::rotate(glm::mat4(1),drawList[i]->rotation.x,glm::vec3(1.0,0,0)) *

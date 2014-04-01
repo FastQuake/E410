@@ -8,7 +8,6 @@
 #include "../GameObject.hpp"
 #include "Light.hpp"
 
-//TODO: Multiple depth textures, lights and shadow shader
 class RenderManager{
 public:
 	GLuint framebuffer;
