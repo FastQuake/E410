@@ -144,6 +144,13 @@ int l_setAnim(lua_State *l){
 	obj->animate = animate;
 	return 0;
 }
+int l_setTexture(lua_State *l){
+	GameObject *obj = l_toGO(l, 1);
+	string tex = l_toString(l, 2);
+	
+	obj->model->textureIDS.at(0) = resman.loadTexture(tex);
+	return 0;
+}
 int l_delete(lua_State *l){
 	lua_pushnil(l);
 	GameObject *obj = l_toGO(l, 1);

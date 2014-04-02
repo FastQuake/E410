@@ -15,10 +15,12 @@ private:
 	std::map<std::string,Model> models;
 	std::map<std::string,sf::Font> fonts;
 	std::map<std::string,sf::Image> images;
+	std::map<std::string,GLuint> texs;
 public:
 	Model *loadModel(std::string name);
 	sf::Font *loadFont(std::string name);
 	sf::Image *loadImage(std::string name);
+	GLuint loadTexture(std::string name);
 };
 
 #endif
