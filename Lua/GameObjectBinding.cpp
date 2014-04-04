@@ -153,7 +153,7 @@ int l_setTexture(lua_State *l){
 		cout << "Can't find texture " << tex << endl;
 		id = resman.loadTexture("default.png");
 	}
-	obj->model->textureIDS.at(0) = id;
+	obj->textures.at(0) = id;
 	return 0;
 }
 int l_delete(lua_State *l){

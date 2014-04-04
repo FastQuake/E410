@@ -26,6 +26,7 @@ void GameObject::setModel(Model *model){
 		currentAnimation = model->animNames[0];
 		hasAnimation = true;
 	}
+	textures = model->textureIDS;
 }
 
 void GameObject::move(float amount){

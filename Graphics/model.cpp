@@ -318,7 +318,7 @@ void Model::animate(string animName, float curTime, std::vector<glm::mat4> *outf
 	}
 }
 
-void Model::draw(ShaderProgram *prg, vector<glm::mat4> outframe){
+void Model::draw(ShaderProgram *prg, vector<GLuint> textures,vector<glm::mat4> outframe){
 	bool skin = true;
 	glUseProgram(prg->getID());
 	glm::mat3x4 outframe3x4[outframe.size()];
@@ -374,7 +374,7 @@ void Model::draw(ShaderProgram *prg, vector<glm::mat4> outframe){
 	iqmtriangle *tris = NULL;
 	for(int i=0;i<meshes.size();i++){
 		iqmmesh &m = meshes[i];
-		glBindTexture(GL_TEXTURE_2D, textureIDS[i]);
+		glBindTexture(GL_TEXTURE_2D, textures[i]);
 		glUniform1i(prg->getUniform(2),0);
 		glDrawElements(GL_TRIANGLES, 3*m.num_triangles, GL_UNSIGNED_INT, &tris[m.first_triangle]);
 	}

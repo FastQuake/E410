@@ -2,6 +2,7 @@
 #define GAMEOBJECT_HPP_
 
 #include <iostream>
+#include <vector>
 #include <glm/glm.hpp>
 #include "Graphics/model.hpp"
 #include "stdint.h"
@@ -25,6 +26,7 @@ public:
 	glm::vec3 right;
 	std::string currentAnimation;
 	std::vector<glm::mat4> outframe;
+	std::vector<GLuint> textures;
 	float aTime;
 
 	bool visible, animate, hasAnimation;

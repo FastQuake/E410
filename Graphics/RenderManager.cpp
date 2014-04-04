@@ -30,7 +30,7 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 		glm::mat4 modelMat = trans * rot * scale;
 		modelMat *= glm::rotate(glm::mat4(1),-90.0f,glm::vec3(1.0,0,0)); //Rotate everything -90deg on x axis
 		glUniformMatrix4fv(prg->getUniform(3),1,GL_FALSE,glm::value_ptr(modelMat));
-		drawList[i]->model->draw(prg,drawList[i]->outframe);
+		drawList[i]->model->draw(prg,drawList[i]->textures,drawList[i]->outframe);
 	}
 }
 

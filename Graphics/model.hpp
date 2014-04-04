@@ -43,7 +43,7 @@ class Model {
 		void setVBO(GLuint vbo);
 		void setTEXID(GLuint id);
 
-		void draw(ShaderProgram *prg, std::vector<glm::mat4> outframe);
+		void draw(ShaderProgram *prg, std::vector<GLuint> textures,std::vector<glm::mat4> outframe);
 		void animate(std::string animName, float currentframe, std::vector<glm::mat4> *outframe);
 };
 
