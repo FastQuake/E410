@@ -62,7 +62,10 @@ GLuint ResourceManager::loadTexture(std::string name){
 	map<string, GLuint>::iterator it = texs.find(name);
 	if(it == texs.end()){
 		GLuint i;
-		sf::Image img = *loadImage(name);
+		sf::Image *img = loadImage(name);
+		if(img == NULL){
+			return -1;
+		}
 		glGenTextures(1, &i);
 		glBindTexture(GL_TEXTURE_2D, i);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -70,14 +73,14 @@ GLuint ResourceManager::loadTexture(std::string name){
 		glTexImage2D(GL_TEXTURE_2D,
 				0,
 				GL_RGBA,
-				img.getSize().x,
-				img.getSize().y,
+				img->getSize().x,
+				img->getSize().y,
 				0,
 				GL_RGBA,
 				GL_UNSIGNED_BYTE,
-				img.getPixelsPtr());
+				img->getPixelsPtr());
 		texs[name] = i;
-		cout << "IMAGE X:"<<img.getSize().x << " IMAGE Y:" << img.getSize().y << endl;
+		cout << "IMAGE X:"<<img->getSize().x << " IMAGE Y:" << img->getSize().y << endl;
 		return texs[name];
 	} else {
 		return it->second;

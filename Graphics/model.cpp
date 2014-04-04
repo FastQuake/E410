@@ -92,6 +92,11 @@ bool loadIQMMesh(string filename, iqmheader header, Model &target, unsigned char
 		//string texture = "./data/textures/";
 		string texture = &str[m.material];
 		texid =	resman.loadTexture(texture);
+		
+		if(texid == -1){
+			cout << "Could not find " << texture <<endl;
+			texid = resman.loadTexture("default.png");
+		}
 
 		target.setTEXID(texid);
 		target.textureIDS.push_back(texid);
