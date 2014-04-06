@@ -4,10 +4,19 @@
 #include "GuiManager.hpp"
 
 #define GUITEXT_MAGIC "ELET"
+#define GUIINPUT_MAGIC "ELEI"
 
 class TextBox : public GuiElement {
-	private:
+	public:
 		sf::Text text;
+		TextBox(sf::Vector2f pos, int length, sf::Color colour);
+
+		std::string getString();
+		void updateString(std::string input);
+
+		void update(InputManager *im);
+		void draw(sf::RenderWindow *screen);
+	private:
 		sf::RectangleShape rect;
 		sf::Clock inputTimer;
 		sf::Clock blinkTimer;
@@ -16,15 +25,6 @@ class TextBox : public GuiElement {
 		std::string textString;
 		int length;
 		int textPos;
-
-	public:
-		TextBox(sf::Vector2f pos, int length, sf::Color colour);
-
-		std::string getString();
-		void updateString(std::string input);
-
-		void update(InputManager *im);
-		void draw(sf::RenderWindow *screen);
 }; 
 
 class ScrollText : public GuiElement {

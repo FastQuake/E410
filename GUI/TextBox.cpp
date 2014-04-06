@@ -4,6 +4,7 @@ using namespace std;
 
 TextBox::TextBox(sf::Vector2f pos, int length, sf::Color colour):
 rect(sf::Vector2f(7,14)){
+	this->magic = GUIINPUT_MAGIC;
 	this->length = length;
 	this->pos = pos;
 	inputTimer.restart();
@@ -54,6 +55,8 @@ string TextBox::getString(){
 }
 
 void TextBox::update(InputManager *im){
+	if(global_con->visible == true && this != &global_con->in)
+		return;
 	updateString(im->getString());
 	if(inputTimer.getElapsedTime().asMilliseconds() > 50){
 		if(im->isGuiKeyDown(sf::Keyboard::Left)){
@@ -89,6 +92,7 @@ void TextBox::update(InputManager *im){
 }
 
 void TextBox::draw(sf::RenderWindow *screen){
+	text.setPosition(pos);
 	if(blinkTimer.getElapsedTime().asMilliseconds() > 500){
 		drawCursor = !drawCursor;
 		blinkTimer.restart();
@@ -102,7 +106,7 @@ void TextBox::draw(sf::RenderWindow *screen){
 ScrollText::ScrollText(sf::Vector2f pos, sf::Vector2i size, 
 		sf::Color colour){
 
-	magic = GUITEXT_MAGIC;
+	this->magic = GUITEXT_MAGIC;
 	this->pos = pos;
 	this->size = size;
 	textPos = sf::Vector2i(0,0);

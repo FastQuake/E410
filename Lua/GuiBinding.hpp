@@ -10,6 +10,7 @@ GuiElement *l_toGuiElement(lua_State *l, int pos);
 ScrollText *l_toGuiText(lua_State *l, int pos);
 Image *l_toGuiImage(lua_State *l, int pos);
 Button *l_toGuiButton(lua_State *l, int pos);
+TextBox *l_toGuiInput(lua_State *l, int pos);
 
 int l_GuisetPos(lua_State *l);
 int l_GuisetScale(lua_State *l);
@@ -23,6 +24,10 @@ int l_GuisetString(lua_State *l);
 int l_GuisetCharSize(lua_State *l);
 int l_GuisetFont(lua_State *l);
 int l_GuisetColour(lua_State *l);
+
+//Input box
+int l_GuiCreateInput(lua_State *l);
+int l_GuiGetInput(lua_State *l);
 
 //Image related functions
 int l_GuicreateImg(lua_State *l);
@@ -38,6 +43,7 @@ static const struct luaL_Reg GUI_funcs[] = {
 	{"createText", l_GuiCreateText},
 	{"createButton", l_GuicreateButton},
 	{"createImg", l_GuicreateImg},
+	{"createInput", l_GuiCreateInput},
 	{NULL, NULL}
 };
 
@@ -55,6 +61,7 @@ static const struct luaL_Reg GUI_methods[] = {
 	{"setBGColour", l_GuisetBGColour},
 	{"setCallback", l_Guisetcallback},
 	{"setPadding", l_GuisetPadding},
+	{"getInput", l_GuiGetInput},
 	{"remove", l_Guidelete},
 	{NULL, NULL}
 };

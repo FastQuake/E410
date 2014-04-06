@@ -66,6 +66,21 @@ Button *l_toGuiButton(lua_State *l, int pos){
 
 	return NULL;
 }
+TextBox *l_toGuiInput(lua_State *l, int pos){
+	if(lua_isuserdata(l, pos)){
+		TextBox *t = (TextBox*)lua_touserdata(l,pos);
+		if(t->magic == GUIINPUT_MAGIC){
+			return t;
+		}
+	}
+
+	stringstream error;
+	error << "Bad argument #" << pos << ", expected gui input got "
+		<< luaL_typename(l, pos);
+	errorTrace(l, error.str());	
+
+	return NULL;
+}
 
 int l_GuisetPos(lua_State *l){
 	GuiElement *e = l_toGuiElement(l, 1);
@@ -158,7 +173,11 @@ int l_GuisetCharSize(lua_State *l){
 		ScrollText *t = (ScrollText*)e;
 		t->text.setCharacterSize(size);
 
-	}else {
+	}
+	else if(lastChar(e->magic) == 'I'){
+		TextBox *t = (TextBox*)e;
+		t->text.setCharacterSize(size);
+	} else {
 		lua_pushstring(l, "Argument does not contain text");
 		lua_error(l);
 	}
@@ -183,7 +202,11 @@ int l_GuisetFont(lua_State *l){
 		ScrollText *t = (ScrollText*)e;
 		t->text.setFont(*f);
 
-	}else {
+	}
+	else if(lastChar(e->magic) == 'I'){
+		TextBox *t = (TextBox*)e;
+		t->text.setFont(*f);
+	} else {
 		lua_pushstring(l, "Argument does not contain text");
 		lua_error(l);
 	}
@@ -205,12 +228,33 @@ int l_GuisetColour(lua_State *l){
 	else if(lastChar(e->magic) == 'T'){
 		ScrollText *t = (ScrollText*)e;
 		t->text.setColor(sf::Color(r,g,b,a));
-	}else {
+	}
+	else if(lastChar(e->magic) == 'I'){
+		TextBox *t = (TextBox*)e;
+		t->text.setColor(sf::Color(r,g,b,a));
+	} else {
 		lua_pushstring(l, "Argument does not contain text");
 		lua_error(l);
 	}
 
 	return 0;
+}
+//Input related functions
+int l_GuiCreateInput(lua_State *l){
+	TextBox *t = new (lua_newuserdata(l, sizeof(TextBox))) 
+		TextBox(sf::Vector2f(0,0), 80,
+			sf::Color::White);
+
+	gui->add(t);
+
+	luaL_getmetatable(l,"MetaGUI");
+	lua_setmetatable(l, -2);
+	return 1;
+}
+int l_GuiGetInput(lua_State *l){
+	TextBox *t = l_toGuiInput(l, 1);
+	lua_pushstring(l, t->getString().c_str());
+	return 1;
 }
 //Image related functions
 int l_GuicreateImg(lua_State *l){
