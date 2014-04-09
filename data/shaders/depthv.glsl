@@ -1,8 +1,8 @@
-#version 120
+#version 130
 
-attribute vec3 coord3d;
-attribute vec4 vweight;
-attribute vec4 vbones;
+in vec3 coord3d;
+in vec4 vweight;
+in vec4 vbones;
 
 uniform int skin;
 uniform mat3x4 bonemats[80];

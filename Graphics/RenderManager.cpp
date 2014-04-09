@@ -41,7 +41,7 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, depthTextures);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, depthTextures);
 	glUniform1i(prg->getUniform("shadowMap"), 1);
 
 	glm::mat4 bias(
@@ -81,6 +81,6 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 		drawList[i]->model->draw(prg,drawList[i]->outframe, true);
 	}
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, 0);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 	glActiveTexture(GL_TEXTURE0);
 }

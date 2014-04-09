@@ -1,5 +1,7 @@
-#version 120
+#version 130
+
+out float outColour;
 
 void main(){
-	gl_FragColor = vec4(gl_FragCoord.z,gl_FragCoord.z,gl_FragCoord.z,1.0);
+	outColour = gl_FragCoord.z;
 }

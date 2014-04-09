@@ -1,16 +1,16 @@
-#version 120
+#version 130
 
-attribute vec3 coord3d;
-attribute vec3 normal;
-attribute vec2 texcoord;
-attribute vec4 vweight;
-attribute vec4 vbones;
+in vec3 coord3d;
+in vec3 normal;
+in vec2 texcoord;
+in vec4 vweight;
+in vec4 vbones;
 
-varying vec3 lightDir;
-varying vec3 normalCam;
-varying mat4 modelMat_f;
-varying vec2 texcoord_f;
-varying vec4 mpos_f;
+out vec3 lightDir;
+out vec3 normalCam;
+out mat4 modelMat_f;
+out vec2 texcoord_f;
+out vec4 mpos_f;
 
 uniform vec4 lightPos = vec4(-4,6,-4, 0);
 uniform int skin;

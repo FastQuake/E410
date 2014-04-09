@@ -31,8 +31,8 @@ int main(int argc, char *argv[]){
 
 	//Create sfml window with opengl context
 	sf::ContextSettings cs;
-	cs.majorVersion = 2;
-	cs.minorVersion = 1;
+	cs.majorVersion = 3;
+	cs.minorVersion = 0;
 	cs.depthBits = 32;
 	cs.stencilBits = 8;
 	cs.antialiasingLevel = 4;
@@ -60,12 +60,8 @@ int main(int argc, char *argv[]){
 		return EXIT_FAILURE;
 	}
 
-	if(GLEW_VERSION_2_1 == false){
-		if(GL_EXT_framebuffer_object == false){
-			cerr << "EXT_framebuffer_object not found!" << endl;
-			return EXIT_FAILURE;
-		}
-		cerr << "Opengl 2.1 not supported!" << endl;
+	if(GLEW_VERSION_3_0 == false){
+		cerr << "OpenGL 3.0 not supported!" << endl;
 		return EXIT_FAILURE;
 	}
 
@@ -106,19 +102,19 @@ int main(int argc, char *argv[]){
 		return EXIT_FAILURE;
 	}
 
-	glGenFramebuffersEXT(1,&rendman.framebuffer);
-	glBindFramebufferEXT(GL_FRAMEBUFFER, rendman.framebuffer);
+	glGenFramebuffers(1,&rendman.framebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, rendman.framebuffer);
 
 	glGenTextures(1,&rendman.depthTextures);
-	glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, rendman.depthTextures);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, rendman.depthTextures);
 	//glTexStorage3D(GL_TEXTURE_2D_ARRAY_EXT,1,GL_DEPTH_COMPONENT24,1024,1024,2);
-	glTexImage3D(GL_TEXTURE_2D_ARRAY_EXT,0,GL_DEPTH_COMPONENT,1024,1024,2,0,GL_DEPTH_COMPONENT,GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY_EXT, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY_EXT, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY_EXT, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY_EXT, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY_EXT, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-	glBindTexture(GL_TEXTURE_2D_ARRAY_EXT, 0);
+	glTexImage3D(GL_TEXTURE_2D_ARRAY,0,GL_DEPTH_COMPONENT,1024,1024,2,0,GL_DEPTH_COMPONENT,GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
 
 #ifdef WINDOWS
@@ -126,12 +122,7 @@ int main(int argc, char *argv[]){
 	glReadBuffer(GL_NONE);
 #endif
 
-	glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
-
-	if(glCheckFramebufferStatusEXT(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
-		cerr << "Bad buffer" << endl;
-		return EXIT_FAILURE;
-	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	lua_getglobal(l, "init");
 	status = lua_pcall(l,0,0,0);
@@ -169,6 +160,11 @@ int main(int argc, char *argv[]){
 	rendman.lights.push_back(light1);
 	rendman.lights.push_back(light2);
 
+	int majv;
+	int minv;
+	glGetIntegerv(GL_MAJOR_VERSION, &majv);
+	glGetIntegerv(GL_MINOR_VERSION, &minv);
+	cout << "GL Version: "<< majv << "." << minv << endl;
 	while(window.isOpen()){
 		while(window.pollEvent(event)){
 			if(event.type == sf::Event::Closed){
@@ -227,13 +223,13 @@ int main(int argc, char *argv[]){
 
 		//Do all drawing here
 		glUseProgram(depthPrg.getID());
-		glBindFramebufferEXT(GL_FRAMEBUFFER,rendman.framebuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER,rendman.framebuffer);
 		for(int i=0;i<rendman.lights.size();i++){
-			glFramebufferTextureLayerEXT(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,rendman.depthTextures,0,i);
+			glFramebufferTextureLayer(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,rendman.depthTextures,0,i);
 			rendman.renderDepth(&depthPrg, dt.asSeconds(),rendman.lights[i]);
 		}
 
-		glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glUseProgram(prg.getID());
 		glUniformMatrix4fv(prg.getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
 		rendman.render(&prg,dt.asSeconds());
