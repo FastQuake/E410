@@ -77,9 +77,7 @@ int main(int argc, char *argv[]){
 	prg.setUniform("modelMat");
 	prg.setUniform("skin");
 	prg.setUniform("view");
-	prg.setUniform("depthMVPs");
 	prg.setUniform("shadowMap");
-	prg.setUniform("numLights");
 
 	ShaderProgram depthPrg("./data/shaders/depthv.glsl",
 			"./data/shaders/depthf.glsl");
@@ -104,6 +102,11 @@ int main(int argc, char *argv[]){
 
 	glGenFramebuffers(1,&rendman.framebuffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, rendman.framebuffer);
+
+	glGenBuffers(1, &rendman.ubo);
+	glBindBufferARB(GL_UNIFORM_BUFFER,rendman.ubo);
+	glBufferDataARB(GL_UNIFORM_BUFFER,sizeof(glm::mat4)*MAX_LIGHTS+sizeof(int),NULL,GL_DYNAMIC_DRAW);
+	glBindBufferARB(GL_UNIFORM_BUFFER,0);
 
 	glGenTextures(1,&rendman.depthTextures);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, rendman.depthTextures);

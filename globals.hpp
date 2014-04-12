@@ -6,6 +6,7 @@
 #include "GUI/Console.hpp"
 
 #define PI 3.14159265359 
+#define MAX_LIGHTS 24
 
 extern Console *global_con;
 extern InputManager *im;

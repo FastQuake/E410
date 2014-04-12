@@ -51,14 +51,20 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 			0.5, 0.5, 0.5, 1.0
 	);
 
+	glBindBufferARB(GL_UNIFORM_BUFFER, ubo);
+	glUniformBlockBinding(prg->getID(),glGetUniformBlockIndex(prg->getID(), "Light"),0);
+
 	glm::mat4 depthMVPs[lights.size()];
 	for(int i=0;i<lights.size();i++){
 		glm::mat4 mv = lights[i].mvp();
 		depthMVPs[i] = bias*mv;
 	}
-	glUniformMatrix4fv(prg->getUniform("depthMVPs"), lights.size(), GL_FALSE, glm::value_ptr(depthMVPs[0]));
-	glUniform1i(prg->getUniform("numLights"),lights.size());
-
+	glBufferSubDataARB(GL_UNIFORM_BUFFER,0,lights.size()*sizeof(glm::mat4),&depthMVPs);
+	int numLights = lights.size();
+	glBufferSubDataARB(GL_UNIFORM_BUFFER,sizeof(glm::mat4)*MAX_LIGHTS,sizeof(int),&numLights);
+	glBindBufferBase(GL_UNIFORM_BUFFER,0,ubo);
+	//glUniformMatrix4fv(prg->getUniform("depthMVPs"), lights.size(), GL_FALSE, glm::value_ptr(depthMVPs[0]));
+	//glUniform1i(prg->getUniform("numLights"),lights.size());
 	for(int i=0;i<this->drawList.size();i++){
 		if(drawList[i]->animate){
 			drawList[i]->aTime += dt;

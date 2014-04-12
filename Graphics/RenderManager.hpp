@@ -12,6 +12,7 @@ class RenderManager{
 public:
 	GLuint framebuffer;
 	GLuint depthTextures;
+	GLuint ubo;
 	std::vector<Light> lights;
 	void renderDepth(ShaderProgram *prg, float dt, Light light);
 	void render(ShaderProgram *prg, float dt);

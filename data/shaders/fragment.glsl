@@ -1,17 +1,21 @@
 #version 130
+#extension GL_ARB_uniform_buffer_object : enable
+#define MAX_LIGHTS 24 //Don't touch this without changing MAX_LIGHTS in globals.hpp and vertex.glsl
 
 in vec3 normalCam;
 in vec3 lightDir; 
-in vec4 mpos_f;
-in mat4 modelMat_f;
 in vec2 texcoord_f;
+in vec4 shadowCoords[MAX_LIGHTS];
 
-uniform mat4 depthMVPs[5];
 uniform sampler2D inTexture;
 uniform sampler2DArrayShadow shadowMap;
-uniform int numLights;
 
 out vec4 outColour;
+
+uniform Light {
+	mat4 depthMVPs[MAX_LIGHTS];
+	int numLights;
+};
 
 vec2 poissonDisk[16] = vec2[](
 	vec2( -0.94201624, -0.39906216 ),
@@ -39,10 +43,6 @@ float random(vec3 seed, int i){
 }
 
 void main(){
-	vec4 shadowCoords[20];
-	for(int i=0;i<numLights;i++){
-		shadowCoords[i] = (depthMVPs[i]*modelMat_f) * mpos_f;
-	}
 	vec3 n = normalize(normalCam);
 	vec3 l = normalize(lightDir);
 	float cosTheta = clamp(dot(n,l),0, 0.05);
