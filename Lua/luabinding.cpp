@@ -6,12 +6,21 @@
 #include "CameraBinding.hpp"
 #include "GuiBinding.hpp"
 #include "NetworkBinding.hpp"
+#include "mathbinding.hpp"
 using namespace std;
 
 //TODO make this less ugly, break it up, etc
 
 void bindFunctions(lua_State *l){
 	lua_register(l,"print",l_print);
+	lua_register(l,"vec3",l_createVec3);
+	lua_register(l,"dot",l_vec3Dot);
+	lua_register(l,"cross",l_vec3Cross);
+
+	//math stuff
+	luaL_newmetatable(l, "metaVEC");
+	luaL_setfuncs(l, Vec3_methods, 0);
+	lua_pushvalue(l, -1);
 
 	//create Gameobject register
 	luaL_newmetatable(l, "MetaGO");
@@ -105,29 +114,14 @@ bool l_toBool(lua_State *l, int pos){
 }
 
 string l_toString(lua_State *l, int pos){
-	if(lua_isstring(l, pos)){
-		return lua_tostring(l, pos);
-	} else {
-		stringstream error;
-		error << "Bad argument #" << pos << ", expected string got "
-			<< luaL_typename(l, pos);
-		errorTrace(l, error.str());
-	}
-
-	return "";
+	return luaL_tolstring(l, pos,NULL);
 }
 
 int l_print(lua_State *l){
-	string value = "";
-	if(lua_isstring(l,1)){
-		value = lua_tostring(l,1);
-	} else
-		value = "nil";
+	string value = l_toString(l, 1);
 	cout << value << endl;
 	global_con->out.print("\n"+value);
 	return 0;
-}
-string typeToString(lua_State *l, int pos){
 }
 void errorTrace(lua_State *l, string error){
 	luaL_traceback(l, l, error.c_str(), 1);

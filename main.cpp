@@ -48,6 +48,7 @@ float stringToFloat(string input){
 int main(int argc, char *argv[]){
 	//Create lua vm and generate bindings
 	lua_State *l = luaL_newstate();
+	luaL_openlibs(l);
 	bindFunctions(l);
 
 	//Load enet for networking
