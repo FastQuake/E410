@@ -6,6 +6,7 @@ in vec3 normalCam;
 in vec3 lightDir; 
 in vec2 texcoord_f;
 in vec4 shadowCoords[MAX_LIGHTS];
+in vec4 coord3d_f;
 
 uniform sampler2D inTexture;
 uniform sampler2DArrayShadow shadowMap;
@@ -14,6 +15,7 @@ out vec4 outColour;
 
 uniform Light {
 	mat4 depthMVPs[MAX_LIGHTS];
+	vec4 lightPositions[MAX_LIGHTS];
 	int numLights;
 };
 
@@ -48,14 +50,18 @@ void main(){
 	float cosTheta = clamp(dot(n,l),0, 0.05);
 	float bias = 0.005*tan(acos(cosTheta));
 	bias = clamp(bias,0, 0.005);
-	float visibility = 1.0f;
+	float shadowCoefficient = 1.0f;
+	float lightCoefficient = 0.2f;
 	for(int i=0;i<4;i++){
 		for(int j=0;j<numLights;j++){
 			int index = i; //Banded anti-aliasing
 			//int index = int(16.0*random(gl_FragCoord.xyy, i))%16; //Noise anti-aliasing
-			visibility -= 0.2*(1.0-texture(shadowMap,vec4(shadowCoords[j].xy + poissonDisk[index]/700.0,j,shadowCoords[j].z-bias)));
+			float reduceSC = 0.2*(1.0-texture(shadowMap,vec4(shadowCoords[j].xy + poissonDisk[index]/700.0,j,shadowCoords[j].z-bias)));
+			shadowCoefficient -= reduceSC;
+			if(reduceSC < 0.15)
+				lightCoefficient += 270.0/(4.0*3.14159265359*pow(distance(lightPositions[j],coord3d_f),2.0));
 		}
 	}
 	vec3 texColour = texture2D(inTexture,texcoord_f).rgb;
-	outColour = vec4(clamp(visibility,0.2,1.0)*texColour,1);
+	outColour = vec4(lightCoefficient*clamp(shadowCoefficient,0.2,1.0)*texColour,1.0);
 }

@@ -105,8 +105,10 @@ int main(int argc, char *argv[]){
 
 	glGenBuffers(1, &rendman.ubo);
 	glBindBufferARB(GL_UNIFORM_BUFFER,rendman.ubo);
-	glBufferDataARB(GL_UNIFORM_BUFFER,sizeof(glm::mat4)*MAX_LIGHTS+sizeof(int),NULL,GL_DYNAMIC_DRAW);
+	glBufferDataARB(GL_UNIFORM_BUFFER,sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*MAX_LIGHTS+sizeof(GLint),NULL,GL_DYNAMIC_DRAW);
 	glBindBufferARB(GL_UNIFORM_BUFFER,0);
+	glBindBufferBase(GL_UNIFORM_BUFFER,0,rendman.ubo);
+	cout << sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec3)*MAX_LIGHTS+sizeof(int) << endl;
 
 	glGenTextures(1,&rendman.depthTextures);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, rendman.depthTextures);

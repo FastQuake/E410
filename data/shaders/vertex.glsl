@@ -12,6 +12,7 @@ out vec3 lightDir;
 out vec3 normalCam;
 out vec2 texcoord_f;
 out vec4 shadowCoords[MAX_LIGHTS];
+out vec4 coord3d_f;
 
 uniform vec4 lightPos = vec4(-4,6,-4, 0);
 uniform int skin;
@@ -21,6 +22,7 @@ uniform mat4 view;
 uniform mat4 modelMat;
 uniform Light {
 	mat4 depthMVPs[MAX_LIGHTS];
+	vec4 lightPositions[MAX_LIGHTS];
 	int numLights;
 };
 
@@ -42,4 +44,5 @@ void main(){
 	for(int i=0;i<numLights;i++){
 		shadowCoords[i] = (depthMVPs[i]*modelMat) * mpos;
 	}
+	coord3d_f = modelMat*mpos;
 }
