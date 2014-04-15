@@ -72,11 +72,16 @@ bool checkGLError(){
 
 ShaderProgram::ShaderProgram(string vertex, string fragment){
 	GLint linkOK = GL_FALSE;
+	good = true;
 
-	if((vs = compileShader(vertex,GL_VERTEX_SHADER)) == 0)
+	if((vs = compileShader(vertex,GL_VERTEX_SHADER)) == 0){
 		cerr << "failed to compile vertex shader" << endl;
-	if((fs = compileShader(fragment,GL_FRAGMENT_SHADER)) == 0)
+		good = false;
+	}
+	if((fs = compileShader(fragment,GL_FRAGMENT_SHADER)) == 0){
 		cerr << "failed to compile fragment shader" << endl;
+		good = false;
+	}
 
 	programID = glCreateProgram();
 	glAttachShader(programID,vs);
@@ -89,8 +94,6 @@ ShaderProgram::ShaderProgram(string vertex, string fragment){
 		good = false;
 		return;
 	}
-
-	good = true;
 }
 
 ShaderProgram::~ShaderProgram(){
@@ -109,8 +112,7 @@ int ShaderProgram::compileShader(string filename, GLenum type){
 	GLint compileOK = GL_FALSE;
 	glGetShaderiv(shader,GL_COMPILE_STATUS,&compileOK);
 	if(compileOK == GL_FALSE){
-		cerr << filename << ":" << endl; 
-		cerr << sourcec << endl;
+		cerr << filename << ":" << endl;
 		printLog(shader);
 		return 0;
 	}

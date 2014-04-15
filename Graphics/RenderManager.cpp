@@ -14,7 +14,6 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt, Light light){
 	glm::mat4 depthMVP = light.mvp();
 	glUniformMatrix4fv(prg->getUniform("pv"), 1, GL_FALSE, glm::value_ptr(depthMVP));
 
-	glClear(GL_DEPTH_BUFFER_BIT);
 	for(int i=0;i<this->drawList.size();i++){
 		if(drawList[i]->animate){
 			drawList[i]->aTime += dt; 

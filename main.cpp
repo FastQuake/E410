@@ -65,29 +65,45 @@ int main(int argc, char *argv[]){
 		return EXIT_FAILURE;
 	}
 
+	bool programsGood = true;
+
 	ShaderProgram prg("./data/shaders/vertex.glsl",
 			"./data/shaders/fragment.glsl");
-	prg.setAttribute("coord3d");
-	prg.setAttribute("texcoord");
-	prg.setAttribute("vweight");
-	prg.setAttribute("vbones");
-	prg.setUniform("projection");
-	prg.setUniform("bonemats");
-	prg.setUniform("inTexture");
-	prg.setUniform("modelMat");
-	prg.setUniform("skin");
-	prg.setUniform("view");
-	prg.setUniform("shadowMap");
+	if(prg.good){
+		prg.setAttribute("coord3d");
+		prg.setAttribute("texcoord");
+		prg.setAttribute("vweight");
+		prg.setAttribute("vbones");
+		prg.setUniform("projection");
+		prg.setUniform("bonemats");
+		prg.setUniform("inTexture");
+		prg.setUniform("modelMat");
+		prg.setUniform("skin");
+		prg.setUniform("view");
+		prg.setUniform("shadowMap");
+	}else{
+		programsGood = false;
+		cerr << "Bad main shader program. Execution cannot continue." << endl;
+	}
 
 	ShaderProgram depthPrg("./data/shaders/depthv.glsl",
 			"./data/shaders/depthf.glsl");
-	depthPrg.setAttribute("coord3d");
-	depthPrg.setAttribute("vweight");
-	depthPrg.setAttribute("vbones");
-	depthPrg.setUniform("skin");
-	depthPrg.setUniform("bonemats");
-	depthPrg.setUniform("pv");
-	depthPrg.setUniform("modelMat");
+	if(depthPrg.good){
+		depthPrg.setAttribute("coord3d");
+		depthPrg.setAttribute("vweight");
+		depthPrg.setAttribute("vbones");
+		depthPrg.setUniform("skin");
+		depthPrg.setUniform("bonemats");
+		depthPrg.setUniform("pv");
+		depthPrg.setUniform("modelMat");
+	}else{
+		programsGood = false;
+		cerr << "Bad depth shader program. Execution cannot continue." << endl;
+	}
+
+	if(!programsGood){
+		return EXIT_FAILURE;
+	}
 	
 	//Load main lua file and then call init function
 	lua_pushnumber(l, width);
@@ -104,10 +120,9 @@ int main(int argc, char *argv[]){
 	glBindFramebuffer(GL_FRAMEBUFFER, rendman.framebuffer);
 
 	glGenBuffers(1, &rendman.ubo);
-	glBindBufferARB(GL_UNIFORM_BUFFER,rendman.ubo);
+	glBindBufferBase(GL_UNIFORM_BUFFER,0,rendman.ubo);
 	glBufferDataARB(GL_UNIFORM_BUFFER,sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*MAX_LIGHTS+sizeof(GLint),NULL,GL_DYNAMIC_DRAW);
 	glBindBufferARB(GL_UNIFORM_BUFFER,0);
-	glBindBufferBase(GL_UNIFORM_BUFFER,0,rendman.ubo);
 	cout << sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec3)*MAX_LIGHTS+sizeof(int) << endl;
 
 	glGenTextures(1,&rendman.depthTextures);
@@ -231,6 +246,7 @@ int main(int argc, char *argv[]){
 		glBindFramebuffer(GL_FRAMEBUFFER,rendman.framebuffer);
 		for(int i=0;i<rendman.lights.size();i++){
 			glFramebufferTextureLayer(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,rendman.depthTextures,0,i);
+			glClear(GL_DEPTH_BUFFER_BIT);
 			rendman.renderDepth(&depthPrg, dt.asSeconds(),rendman.lights[i]);
 		}
 
