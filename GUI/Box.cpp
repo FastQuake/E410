@@ -1,6 +1,7 @@
 #include "Box.hpp"
 using namespace std;
 
+//Generic box object
 Box::Box(sf::Vector2f pos, sf::Vector2f size, sf::Color colour) : 
 	rect(size){
 

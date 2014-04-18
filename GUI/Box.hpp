@@ -1,6 +1,8 @@
 #ifndef BOX_HPP
 #define BOX_HPP
 
+#include <iostream>
+#include <vector>
 #include "GuiManager.hpp"
 
 class Box : public GuiElement{
@@ -12,6 +14,5 @@ class Box : public GuiElement{
 		void update(InputManager *im){};
 		void draw(sf::RenderWindow *screen);	
 };
-
 
 #endif

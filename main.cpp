@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <sstream>
 #include <cmath>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -15,19 +16,47 @@
 #include "Graphics/RenderManager.hpp"
 #include "GUI/Console.hpp"
 #include "Lua/luabinding.hpp"
+#include "Networking/server.hpp"
 using namespace std;
 
 Console *global_con;
 InputManager *im;
 ResourceManager resman;
 RenderManager rendman;
+GuiManager *gui;
+ENetPeer *serverPeer;
+ENetHost *client;
+vector<string> packetList;
 
 int width, height;
 
+int stringToInt(string input){
+	int out;
+	stringstream ss;
+	ss << input;
+	ss >> out;
+	return out;	
+}
+float stringToFloat(string input){
+	float out;
+	stringstream ss;
+	ss << input;
+	ss >> out;
+	return out;	
+}
+
 int main(int argc, char *argv[]){
-	//Create lua vm
+	//Create lua vm and generate bindings
 	lua_State *l = luaL_newstate();
 	bindFunctions(l);
+
+	//Load enet for networking
+	if(enet_initialize() != 0){
+		cerr << "Could not initalize ENet" << endl;
+		return EXIT_FAILURE;
+	}
+	atexit(enet_deinitialize);
+	ENetEvent enetEvent;
 
 	//Create sfml window with opengl context
 	sf::ContextSettings cs;
@@ -51,8 +80,9 @@ int main(int argc, char *argv[]){
 
 	global_con = &con;
 	
-	GuiManager gui(im);
-	gui.add(&con);
+	GuiManager guie(im);
+	guie.add(&con);
+	gui = &guie;
 
 	GLenum glewStatus = glewInit();
 	if(glewStatus != GLEW_OK){
@@ -110,6 +140,8 @@ int main(int argc, char *argv[]){
 	lua_setglobal(l, "width");
 	lua_pushnumber(l, height);
 	lua_setglobal(l, "height");
+	lua_newtable(l);
+	lua_setglobal(l, "serverObjects");
 	int status = luaL_dofile(l, "./data/scripts/main.lua");
 	if(status){
 		cerr << "Could not load file " << lua_tostring(l,-1) << endl; 
@@ -147,8 +179,8 @@ int main(int argc, char *argv[]){
 	lua_getglobal(l, "init");
 	status = lua_pcall(l,0,0,0);
 	if(status){
-		cerr << "Could not find init funtion " << lua_tostring(l,-1)
-			<< endl;
+		cout << lua_tostring(l, -1) << endl;
+		global_con->out.println(lua_tostring(l, -1));
 		return EXIT_FAILURE;
 	}
 
@@ -163,6 +195,11 @@ int main(int argc, char *argv[]){
 
 	glClearColor(0.0,0.0,0.0,1.0);
 
+	//setfunction for server thread
+	sf::Thread sThread(&serverMain);
+	serverThread = &sThread;
+
+	//Set stuff for main game loop
 	sf::Clock dtTimer;
 	dtTimer.restart();
 	sf::Time dt;
@@ -227,19 +264,116 @@ int main(int argc, char *argv[]){
 				}
 			}
 		}
+		//Handle input packets and send buffered packets
+		if(client != NULL){
+			while(enet_host_service(client, &enetEvent, 0) >0){
+				if(enetEvent.type == ENET_EVENT_TYPE_RECEIVE){
+					//handle packets here
+					string input = (char*)enetEvent.packet->data;
+					vector<string> pdata = breakString(input);
+					if(pdata[0] == "create"){
+						//Push the object to lua so
+						//lua side code can control it if it wants to
+						string modelName = pdata[1];
+						Model *mod = resman.loadModel(modelName);
+						if(mod == NULL){
+							cerr << "Could not create model " << modelName
+								<< endl;
+							continue;
+						}
+						
+						lua_getglobal(l, "serverObjects");
+						GameObject *out = new (lua_newuserdata(l, sizeof(GameObject))) GameObject;
+						out->setModel(mod);
+						out->magic = GOMAGIC;
+						out->tag = pdata[2];
+						out->id = stringToInt(pdata[3]);
+						rendman.drawList.push_back(out);
+
+						//Push gameobject onto global serverObjects table to keep track of it						
+						luaL_getmetatable(l, "MetaGO");
+						lua_setmetatable(l, -2);
+						lua_rawseti(l, -3, out->id);
+
+						//push gameobject to lua createObject so a game script can handle it
+						lua_getglobal(l, "createObject"); //push createObject
+						lua_rawgeti(l, -3, out->id); // get serverObjects[id]
+						if(lua_pcall(l,1,0,0)){ //call createObjects(serverObjects[id])
+							cout << lua_tostring(l, -1) << endl;
+							global_con->out.println(lua_tostring(l, -1));
+						}
+
+					}
+					else if(pdata[0] == "move"){
+						uint32_t id = stringToInt(pdata[1]);
+						GameObject *obj = rendman.getId(id);
+						if(obj == NULL){
+							cerr << "Could not find object " << id << endl;
+							continue;
+						}
+						obj->position.x = stringToFloat(pdata[2]);
+						obj->position.y = stringToFloat(pdata[3]);
+						obj->position.z = stringToFloat(pdata[4]);
+					}
+					else if(pdata[0] == "rotate"){
+						uint32_t id = stringToInt(pdata[1]);
+						GameObject *obj = rendman.getId(id);
+						if(obj == NULL){
+							cerr << "Could not find object " << id << endl;
+							continue;
+						}
+						obj->rotation.x = stringToFloat(pdata[2]);
+						obj->rotation.y = stringToFloat(pdata[3]);
+						obj->rotation.z = stringToFloat(pdata[4]);
+					}
+					else if(pdata[0] == "scale"){
+						uint32_t id = stringToInt(pdata[1]);
+						GameObject *obj = rendman.getId(id);
+						if(obj == NULL){
+							cerr << "Could not find object " << id << endl;
+							continue;
+						}
+						obj->scale.x = stringToFloat(pdata[2]);
+						obj->scale.y = stringToFloat(pdata[3]);
+						obj->scale.z = stringToFloat(pdata[4]);
+					}
+
+					enet_packet_destroy(enetEvent.packet);
+				}else if(enetEvent.type == ENET_EVENT_TYPE_DISCONNECT){
+					//handle server disconnect here
+				}
+			}
+			//send buffered packets
+			for(int i=0;i<packetList.size();i++){
+				ENetPacket *packet = enet_packet_create(
+						packetList[i].c_str(),
+						packetList[i].length(),
+						ENET_PACKET_FLAG_RELIABLE);
+				enet_peer_send(serverPeer, 0, packet);
+				enet_host_flush(client);
+			}
+			packetList.clear();
+		}
 		
+		//Check if gui is locked and show cursor
+		if(im->isGuiLocked()){
+			window.setMouseCursorVisible(true);
+		} else {
+			window.setMouseCursorVisible(false);
+		}
+
 		//call lua update
 		lua_getglobal(l,"update");
 		lua_pushnumber(l,dt.asSeconds());
 		if(lua_pcall(l,1,0,0)){
-			cerr << "Could not find update function " << 
-				lua_tostring(l,-1) << endl;
+			cout << lua_tostring(l, -1) << endl;
+			global_con->out.println(lua_tostring(l, -1));
 		}
 
-		glm::mat4 projection = glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
+		gui->update();
 
-		//Updating code
-		gui.update();
+		//Create projection matrix for main render
+		glm::mat4 projection = glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
 
 		//Do all drawing here
 		glUseProgram(depthPrg.getID());
@@ -256,9 +390,13 @@ int main(int argc, char *argv[]){
 		rendman.render(&prg,dt.asSeconds());
 
 		//Do sfml drawing here
-		gui.draw(&window);
+		gui->draw(&window);
 
 		window.display();
 		dt = dtTimer.restart();
 	}
+
+	enet_host_destroy(client);
+	serverRunning = false;
+	serverThread->wait();
 }

@@ -19,11 +19,10 @@ public:
 	std::vector<GameObject*> drawList;
 	std::vector<FPSCamera*> cameras;
 
-	sf::Image depthimg;
+	GameObject* getId(uint32_t id);
+	void remove(GameObject* obj);
 
 	FPSCamera *currentCam;
-
-	~RenderManager();
 };
 
 

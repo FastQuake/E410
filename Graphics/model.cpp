@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <SFML/Graphics.hpp>
 #include "model.hpp"
+#include "../globals.hpp"
 using namespace std;
 
 
@@ -88,27 +89,20 @@ bool loadIQMMesh(string filename, iqmheader header, Model &target, unsigned char
 		iqmmesh &m = meshes[i];
 		cout << "LOADING MESH: " << &str[m.name] << endl;
 		cout << "WITH TEXTURE: " << &str[m.material] << endl;
-		string texture = "./data/textures/";
-		texture += &str[m.material];
-		sf::Image img;
-		img.loadFromFile(texture);
-		glGenTextures(1,&texid);
-		glBindTexture(GL_TEXTURE_2D, texid);
-		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexImage2D(GL_TEXTURE_2D,
-				0,
-				GL_RGBA,
-				img.getSize().x,
-				img.getSize().y,
-				0,
-				GL_RGBA,
-				GL_UNSIGNED_BYTE,
-				img.getPixelsPtr());
+		//string texture = "./data/textures/";
+		string texture = &str[m.material];
+		texid =	resman.loadTexture(texture);
+		
+		if(texid == -1){
+			cout << "Could not find " << texture <<endl;
+			texid = resman.loadTexture("default.png");
+		}
+
 		target.setTEXID(texid);
 		target.textureIDS.push_back(texid);
 		target.meshes.push_back(m);
 
-		cout << "IMAGE X:"<<img.getSize().x << " IMAGE Y:" << img.getSize().y << endl;
+		//cout << "IMAGE X:"<<img.getSize().x << " IMAGE Y:" << img.getSize().y << endl;
 	}
 
 	//load joints
@@ -258,7 +252,7 @@ bool loadIQM(string filename, Model &target){
 
 		loadIQMMesh(filename, header, target, buf);
 		loadIQMAnim(filename, header, target, buf);
-		delete buf;
+		delete[] buf;
 
 		return true;
 	}else{

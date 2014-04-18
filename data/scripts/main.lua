@@ -1,41 +1,69 @@
 sensitvity = 10
 speed = 10
 
-function init()
-	cam = camera.createCam()
-	camera.setPos(cam, 0, 0, 0)
-	camera.setCam(cam)
-	fixit = GO.createIQM("mr_fixit.iqm")
-	floor = GO.createIQM("cube.iqm")
-	shit = GO.createIQM("monkey.iqm")
-	cube = GO.createIQM("cube.iqm")
-
-	GO.setScale(floor,10,0.1,10)
-	GO.setPos(floor,0,-0.5,0)
-	GO.setPos(shit,5,1.1,0)
-	GO.setScale(cube,1.5,1.5,1.5)
-	GO.setPos(cube,-3,1,2)
+function createObject(obj)
 end
 
+function init()
+	--Create stuff for GUI
+	fpsCounter = GUI.createText()
+	fpsCounter:setCharSize(26)
+	fpsCounter:setString("FPS: ".. 0)
+	--Create stuff for scene
+	cam = camera.createCam()
+	cam:setPos(0, 0, 0)
+	camera.setCam(cam)
+
+	fixit = GO.loadIQM("mr_fixit.iqm")
+	floor = GO.loadIQM("cube.iqm")
+	shit = GO.loadIQM("monkey.iqm")
+	cube = GO.loadIQM("cube.iqm")
+
+	floor:setScale(10, 0.1, 10)
+	floor:setPos(0, 0, 0)
+	shit:setPos(6, 1.1, 0)
+	cube:setScale(1.5,1.5,1.5)
+	cube:setPos(-3,1,2)
+end
+
+time = 0
+frames = 0;
+
 function update(dt)
+	time = time + dt
+	frames = frames + 1
+	if time > 1.0 then
+		fpsCounter:setString("FPS: " .. frames)
+		frames = 0
+		time = 0
+	end
 	--Move camera with standard FPS controls
 	local mousex, mousey = input.getMousePos()
 	mousex = mousex - (width/2)
 	mousey = mousey - (height/2)
-	camera.turn(cam, mousex*sensitvity*dt, 
+	cam:turn(mousex*sensitvity*dt, 
 		mousey*sensitvity*dt)
 	input.setMousePos(width/2, height/2)
 
 	if input.isKeyDown(keys.W) then 
-		camera.move(cam, speed*dt)
+		cam:move(speed*dt)
 	end 
 	if input.isKeyDown(keys.S) then
-		camera.move(cam, -speed*dt)
+		cam:move(-speed*dt)
 	end
 	if input.isKeyDown(keys.A) then
-		camera.strafe(cam, -speed*dt)
+		cam:strafe(-speed*dt)
 	end
 	if input.isKeyDown(keys.D) then
-		camera.strafe(cam, speed*dt)
+		cam:strafe(speed*dt)
+	end
+	if input.isKeyDown(keys.J) then
+		network.sendPacket("forward")
+	end
+	if input.isKeyDown(keys.H) then
+		network.sendPacket("turn left")
+	end
+	if input.isKeyDown(keys.L) then
+		network.sendPacket("turn right")
 	end
 end

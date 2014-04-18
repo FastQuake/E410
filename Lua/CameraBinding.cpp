@@ -1,5 +1,7 @@
+#include <sstream>
 #include "../globals.hpp"
 #include "CameraBinding.hpp"
+using namespace std;
 
 FPSCamera *l_toCam(lua_State *l, int pos){
 	if(lua_isuserdata(l, pos)){
@@ -8,15 +10,19 @@ FPSCamera *l_toCam(lua_State *l, int pos){
 			return out;
 	}
 		
-	lua_pushstring(l, "Argument in not a Camera");
-	lua_error(l);
+	stringstream error;
+	error << "Bad argument #" << pos << ", expected camera got "
+		<< luaL_typename(l, pos);
+	errorTrace(l, error.str());
 
 	return NULL;
 }
 
 int l_createCam(lua_State *l){
-	rendman.cameras.push_back(new FPSCamera(0,0,0));
-	lua_pushlightuserdata(l, rendman.cameras.back());
+	FPSCamera *out = new (lua_newuserdata(l, sizeof(FPSCamera))) FPSCamera(0,0,0);
+	rendman.cameras.push_back(out);
+	luaL_getmetatable(l, "MetaCam");
+	lua_setmetatable(l, -2);
 	return 1;
 }
 int l_setCam(lua_State *l){
@@ -25,13 +31,10 @@ int l_setCam(lua_State *l){
 	return 0;
 }
 int l_camSetPos(lua_State *l){
-	FPSCamera *cam;
-	float x,y,z;
-
-	cam = l_toCam(l, 1);
-	x = l_toNumber(l, 2);
-	y = l_toNumber(l, 3);
-	z = l_toNumber(l, 4);
+	FPSCamera *cam = l_toCam(l, 1);
+	float x = l_toNumber(l, 2);
+	float y = l_toNumber(l, 3);
+	float z = l_toNumber(l, 4);
 
 	cam->pos.x = x;
 	cam->pos.y = y;
@@ -40,13 +43,10 @@ int l_camSetPos(lua_State *l){
 	return 0;
 }
 int l_camSetRot(lua_State *l){
-	FPSCamera *cam;
-	float x,y,z;
-
-	cam = l_toCam(l, 1);
-	x = l_toNumber(l, 2);
-	y = l_toNumber(l, 3);
-	z = l_toNumber(l, 4);
+	FPSCamera *cam = l_toCam(l, 1);
+	float x = l_toNumber(l, 2);
+	float y = l_toNumber(l, 3);
+	float z = l_toNumber(l, 4);
 	
 	cam->angle.x = x;
 	cam->angle.y = y;
@@ -55,33 +55,31 @@ int l_camSetRot(lua_State *l){
 	return 0;
 }
 int l_camTurn(lua_State *l){
-	FPSCamera *cam;
-	float x, y;
-
-	cam = l_toCam(l,1);
-	x = l_toNumber(l, 2);
-	y = l_toNumber(l, 3);
+	FPSCamera *cam = l_toCam(l,1);
+	float x = l_toNumber(l, 2);
+	float y = l_toNumber(l, 3);
 
 	cam->turn(glm::vec2(x,y));
 	return 0;
 }
 int l_camMove(lua_State *l){
-	FPSCamera *cam;
-	float amount;
-
-	cam = l_toCam(l,1);
-	amount = l_toNumber(l,2);
+	FPSCamera *cam = l_toCam(l,1);
+	float amount = l_toNumber(l,2);
 
 	cam->move(amount);
 	return 0;
 }
 int l_camStrafe(lua_State *l){
-	FPSCamera *cam;
-	float amount;
+	FPSCamera *cam = l_toCam(l,1);
 
-	cam = l_toCam(l,1);
-	amount = l_toNumber(l,2);
+	float amount = l_toNumber(l,2);
 
 	cam->strafe(amount);
+	return 0;
+}
+int l_camDelete(lua_State *l){
+	FPSCamera *cam = l_toCam(l,1);
+	if(cam == rendman.currentCam)
+		rendman.currentCam = NULL;
 	return 0;
 }

@@ -1,9 +1,10 @@
 #include "TextBox.hpp"
+#include "../globals.hpp"
 using namespace std;
 
 TextBox::TextBox(sf::Vector2f pos, int length, sf::Color colour):
 rect(sf::Vector2f(7,14)){
-	font.loadFromFile("./data/fonts/DejaVuSansMono.ttf");
+	this->magic = GUIINPUT_MAGIC;
 	this->length = length;
 	this->pos = pos;
 	inputTimer.restart();
@@ -13,7 +14,7 @@ rect(sf::Vector2f(7,14)){
 	textPos = 0;
 	textString = "";
 
-	text.setFont(font);
+	text.setFont(*resman.loadFont(defaultFont));
 	text.setCharacterSize(12);
 	text.setStyle(sf::Text::Regular);
 	text.setColor(colour);
@@ -54,6 +55,8 @@ string TextBox::getString(){
 }
 
 void TextBox::update(InputManager *im){
+	if(global_con->visible == true && this != &global_con->in)
+		return;
 	updateString(im->getString());
 	if(inputTimer.getElapsedTime().asMilliseconds() > 50){
 		if(im->isGuiKeyDown(sf::Keyboard::Left)){
@@ -89,6 +92,7 @@ void TextBox::update(InputManager *im){
 }
 
 void TextBox::draw(sf::RenderWindow *screen){
+	text.setPosition(pos);
 	if(blinkTimer.getElapsedTime().asMilliseconds() > 500){
 		drawCursor = !drawCursor;
 		blinkTimer.restart();
@@ -101,15 +105,15 @@ void TextBox::draw(sf::RenderWindow *screen){
 
 ScrollText::ScrollText(sf::Vector2f pos, sf::Vector2i size, 
 		sf::Color colour){
-	font.loadFromFile("./data/fonts/DejaVuSansMono.ttf");
 
+	this->magic = GUITEXT_MAGIC;
 	this->pos = pos;
 	this->size = size;
 	textPos = sf::Vector2i(0,0);
 	lines.push_back("");
 	history = 500;
 
-	text.setFont(font);
+	text.setFont(*resman.loadFont(defaultFont));
 	text.setCharacterSize(12);
 	text.setStyle(sf::Text::Regular);
 	text.setColor(colour);
@@ -118,7 +122,7 @@ ScrollText::ScrollText(sf::Vector2f pos, sf::Vector2i size,
 	visible = true;
 	updates = true;
 	alive = true;
-	locks = true;
+	locks = false;
 }
 
 void ScrollText::print(string text){
@@ -149,6 +153,13 @@ void ScrollText::print(string text){
 
 void ScrollText::println(string text){
 	print(text+"\n");
+}
+
+void ScrollText::clear(){
+	for(int i=0; i<lines.size();i++){
+		lines[i] = "";
+	}
+	textPos = sf::Vector2i(0,0);
 }
 
 void ScrollText::update(InputManager *im){

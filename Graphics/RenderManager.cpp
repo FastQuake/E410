@@ -1,11 +1,13 @@
-#include <SFML/Graphics/Image.hpp>
 #include "RenderManager.hpp"
 #include "../globals.hpp"
 
-RenderManager::~RenderManager(){
-	for(int i=0;i<this->drawList.size();i++){
-		delete drawList[i];
+GameObject *RenderManager::getId(uint32_t id){
+	for(int i=0;i<drawList.size();i++){
+		if(drawList[i]->id == id){
+			return drawList[i];
+		}
 	}
+	return NULL;
 }
 
 void RenderManager::renderDepth(ShaderProgram *prg, float dt, Light light){
@@ -93,3 +95,12 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 	glActiveTexture(GL_TEXTURE0);
 }
+
+void RenderManager::remove(GameObject *obj){
+	for(int i=0;i<drawList.size();i++){
+		if(obj == drawList[i]){
+			drawList.erase(drawList.begin() + i);
+		}
+	}
+}
+
