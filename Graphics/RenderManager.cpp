@@ -9,7 +9,6 @@ GameObject *RenderManager::getId(uint32_t id){
 	}
 	return NULL;
 }
-
 void RenderManager::renderDepth(ShaderProgram *prg, float dt, Light *light){
 	glViewport(0,0,1024,1024);
 
@@ -29,7 +28,7 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt, Light *light){
 			glm::rotate(glm::mat4(1),drawList[i]->rotation.y,glm::vec3(0,1.0,0)) *
 			glm::rotate(glm::mat4(1),drawList[i]->rotation.z,glm::vec3(0,0,1.0));
 		glm::mat4 trans = glm::translate(glm::mat4(1), drawList[i]->position);
-		glm::mat4 modelMat = scale * rot * trans;
+		glm::mat4 modelMat = rot * scale * trans;
 		modelMat *= glm::rotate(glm::mat4(1),-90.0f,glm::vec3(1.0,0,0)); //Rotate everything -90deg on x axis
 		glUniformMatrix4fv(prg->getUniform("modelMat"),1,GL_FALSE,glm::value_ptr(modelMat));
 		drawList[i]->model->draw(prg,drawList[i]->outframe, false);
