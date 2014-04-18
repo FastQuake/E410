@@ -208,14 +208,14 @@ int main(int argc, char *argv[]){
 
 	rendman.currentCam->pos = glm::vec3(-9, 11, 5);
 	//TODO: Move this to main.lua and all that that implies
-	Light light1;
+	/*Light light1;
 	Light light2;
 	light1.pos = glm::vec3(-18, 12, -11);
 	light1.rot = glm::vec3(33,117,0);
 	light2.pos = glm::vec3(-9,11,5);
 	light2.rot = glm::vec3(-37,124,0);
 	rendman.lights.push_back(light1);
-	rendman.lights.push_back(light2);
+	rendman.lights.push_back(light2);*/
 
 	int majv;
 	int minv;

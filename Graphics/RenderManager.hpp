@@ -13,14 +13,15 @@ public:
 	GLuint framebuffer;
 	GLuint depthTextures;
 	GLuint ubo;
-	std::vector<Light> lights;
-	void renderDepth(ShaderProgram *prg, float dt, Light light);
+	void renderDepth(ShaderProgram *prg, float dt, Light *light);
 	void render(ShaderProgram *prg, float dt);
 	std::vector<GameObject*> drawList;
 	std::vector<FPSCamera*> cameras;
+	std::vector<Light*> lights;
 
 	GameObject* getId(uint32_t id);
 	void remove(GameObject* obj);
+	void removeLight(Light *light);
 
 	FPSCamera *currentCam;
 };
