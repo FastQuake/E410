@@ -9,11 +9,10 @@ GameObject *RenderManager::getId(uint32_t id){
 	}
 	return NULL;
 }
-
-void RenderManager::renderDepth(ShaderProgram *prg, float dt, Light light){
+void RenderManager::renderDepth(ShaderProgram *prg, float dt, Light *light){
 	glViewport(0,0,1024,1024);
 
-	glm::mat4 depthMVP = light.mvp();
+	glm::mat4 depthMVP = light->mvp();
 	glUniformMatrix4fv(prg->getUniform("pv"), 1, GL_FALSE, glm::value_ptr(depthMVP));
 
 	for(int i=0;i<this->drawList.size();i++){
@@ -63,9 +62,9 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 	glUniformBlockBinding(prg->getID(),glGetUniformBlockIndex(prg->getID(), "Light"),0);
 
 	for(int i=0;i<lights.size();i++){
-		glm::mat4 mv = lights[i].mvp();
+		glm::mat4 mv = lights[i]->mvp();
 		data.depthMVPs[i] = bias*mv;
-		data.lightPositions[i] = glm::vec4(lights[i].pos,1.0);
+		data.lightPositions[i] = glm::vec4(lights[i]->pos,1.0);
 	}
 	data.numLights = lights.size();
 
@@ -100,6 +99,16 @@ void RenderManager::remove(GameObject *obj){
 	for(int i=0;i<drawList.size();i++){
 		if(obj == drawList[i]){
 			drawList.erase(drawList.begin() + i);
+			return;
+		}
+	}
+}
+
+void RenderManager::removeLight(Light *light){
+	for(int i=0;i<lights.size();i++){
+		if(light == lights[i]){
+			lights.erase(lights.begin() + i);
+			return;
 		}
 	}
 }

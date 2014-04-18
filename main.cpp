@@ -162,8 +162,8 @@ int main(int argc, char *argv[]){
 	//glTexStorage3D(GL_TEXTURE_2D_ARRAY_EXT,1,GL_DEPTH_COMPONENT24,1024,1024,2);
 	glTexImage3D(GL_TEXTURE_2D_ARRAY,0,GL_DEPTH_COMPONENT,1024,1024,MAX_LIGHTS,0,GL_DEPTH_COMPONENT,GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
@@ -208,14 +208,14 @@ int main(int argc, char *argv[]){
 
 	rendman.currentCam->pos = glm::vec3(-9, 11, 5);
 	//TODO: Move this to main.lua and all that that implies
-	Light light1;
+	/*Light light1;
 	Light light2;
 	light1.pos = glm::vec3(-18, 12, -11);
 	light1.rot = glm::vec3(33,117,0);
 	light2.pos = glm::vec3(-9,11,5);
 	light2.rot = glm::vec3(-37,124,0);
 	rendman.lights.push_back(light1);
-	rendman.lights.push_back(light2);
+	rendman.lights.push_back(light2);*/
 
 	int majv;
 	int minv;
