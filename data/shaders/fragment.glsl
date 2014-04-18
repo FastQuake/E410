@@ -44,24 +44,25 @@ float random(vec3 seed, int i){
 	return fract(sin(dot_product) * 43758.5453);
 }
 
+//TODO: Shadow AA that works with additive lighting
 void main(){
-	vec3 n = normalize(normalCam);
+	//It doesn't look like we need this anymore.
+	/*vec3 n = normalize(normalCam);
 	vec3 l = normalize(lightDir);
 	float cosTheta = clamp(dot(n,l),0, 0.05);
 	float bias = 0.005*tan(acos(cosTheta));
-	bias = clamp(bias,0, 0.005);
-	float shadowCoefficient = 1.0f;
-	float lightCoefficient = 0.2f;
-	for(int i=0;i<4;i++){
-		for(int j=0;j<numLights;j++){
-			int index = i; //Banded anti-aliasing
-			//int index = int(16.0*random(gl_FragCoord.xyy, i))%16; //Noise anti-aliasing
-			float reduceSC = 0.2*(1.0-texture(shadowMap,vec4(shadowCoords[j].xy + poissonDisk[index]/700.0,j,shadowCoords[j].z-bias)));
-			shadowCoefficient -= reduceSC;
-			if(reduceSC < 0.15)
-				lightCoefficient += 270.0/(4.0*3.14159265359*pow(distance(lightPositions[j],coord3d_f),2.0));
-		}
+	bias = clamp(bias,0, 0.005);*/
+
+	float bias = 0.00001;
+	float lightCoefficient = 0.0f;
+	for(int i=0;i<numLights;i++){
+		float shadowed = 0.0f;
+		shadowed = 1.0f-texture(shadowMap,vec4(shadowCoords[i].xy,i,shadowCoords[i].z-bias));
+		if(shadowed < 1.0f)
+			lightCoefficient += 520.0/(4.0*3.14159265359*pow(distance(lightPositions[i],coord3d_f),2.0));
 	}
+	if(lightCoefficient < 0.01f)
+		lightCoefficient = 0.01f;
 	vec3 texColour = texture2D(inTexture,texcoord_f).rgb;
-	outColour = vec4(lightCoefficient*clamp(shadowCoefficient,0.2,1.0)*texColour,1.0);
+	outColour = vec4(lightCoefficient*texColour,1.0);
 }

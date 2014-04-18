@@ -351,13 +351,13 @@ void Model::draw(ShaderProgram *prg, vector<glm::mat4> outframe, bool texture){
 				GL_FALSE,
 				sizeof(vertex),
 				&vert->texcoord);
-		glVertexAttribPointer(
+/*		glVertexAttribPointer(
 				prg->getAttribute("normal"),
 				3,
 				GL_FLOAT,
 				GL_FALSE,
 				sizeof(vertex),
-				&vert->normal);
+				&vert->normal);*/
 	}
 	if(frames.size() > 0){
 		glVertexAttribPointer(
@@ -378,7 +378,7 @@ void Model::draw(ShaderProgram *prg, vector<glm::mat4> outframe, bool texture){
 	glEnableVertexAttribArray(prg->getAttribute("coord3d"));
 	if(texture){
 		glEnableVertexAttribArray(prg->getAttribute("texcoord"));
-		glEnableVertexAttribArray(prg->getAttribute("normal"));
+//		glEnableVertexAttribArray(prg->getAttribute("normal"));
 	}
 	glEnableVertexAttribArray(prg->getAttribute("vweight"));
 	glEnableVertexAttribArray(prg->getAttribute("vbones"));
@@ -399,7 +399,7 @@ void Model::draw(ShaderProgram *prg, vector<glm::mat4> outframe, bool texture){
 	glDisableVertexAttribArray(prg->getAttribute("coord3d"));
 	if(texture){
 		glDisableVertexAttribArray(prg->getAttribute("texcoord"));
-		glDisableVertexAttribArray(prg->getAttribute("normal"));
+//		glDisableVertexAttribArray(prg->getAttribute("normal"));
 	}
 	glDisableVertexAttribArray(prg->getAttribute("vweight"));
 	glDisableVertexAttribArray(prg->getAttribute("vbones"));
