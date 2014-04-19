@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include "SettingsBinding.hpp"
 #include "luabinding.hpp"
 #include "../globals.hpp"
@@ -32,6 +34,24 @@ void setSettings(){
 
 }
 void saveSettings(){
+	ofstream ss("./data/scripts/settings.lua");
+	//Add nice settings comment to file
+	ss << "--[[\n" <<
+		"Available commands\n" <<
+		"settings.vsync(bool)\n" <<
+		"settings.AA(number)\n" <<
+		"settings.maxFPS(number) 0 means ulimited\n"<<
+		"settings.size(number,number) sets default demensions of the window\n" <<
+		"settings.fullscreen(bool)\n"<<
+		"--]]" << endl; 
+
+	//Set all the indivdual settings
+	ss << "settings.vsync(" << (settings.vsync ? "true":"false") << ")" << endl;
+	ss << "settings.fullscreen(" << (settings.fullscreen ? "true":"false") << ")" << endl;
+	ss << "settings.AA(" << settings.AA << ")" << endl;
+	ss << "settings.maxFPS(" << settings.maxFPS << ")" << endl;
+	ss << "settings.size(" << settings.width << "," << settings.height << ")" << endl;
+	ss.close();
 }
 
 int l_setVsync(lua_State *l){

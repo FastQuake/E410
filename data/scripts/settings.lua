@@ -7,4 +7,7 @@ settings.size(number,number) sets default demensions of the window
 settings.fullscreen(bool)
 --]]
 settings.vsync(true)
+settings.fullscreen(false)
 settings.AA(4)
+settings.maxFPS(0)
+settings.size(800,600)
