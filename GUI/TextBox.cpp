@@ -1,3 +1,4 @@
+#include <cmath>
 #include "TextBox.hpp"
 #include "../globals.hpp"
 using namespace std;
@@ -10,6 +11,7 @@ rect(sf::Vector2f(7,14)){
 	inputTimer.restart();
 	blinkTimer.restart();
 	drawCursor = false;
+	focused = false;
 	
 	textPos = 0;
 	textString = "";
@@ -55,9 +57,36 @@ string TextBox::getString(){
 }
 
 void TextBox::update(InputManager *im){
+	//Console takes priority of input
 	if(global_con->visible == true && this != &global_con->in)
 		return;
-	updateString(im->getString());
+	//use temp pos incase index is negative
+	sf::Vector2f tpos = pos;
+	if(pos.x < 0){
+		tpos.x = width + pos.x;
+	}
+	if(pos.y < 0){
+		tpos.y = height + pos.y;
+	}
+	//Clicking on textbox will give it focus
+	int halfchar = (text.findCharacterPos(1).x-tpos.x);
+	if(halfchar == 0)
+		halfchar = 1;
+	if(im->isGuiMouseDown(sf::Mouse::Left)){
+		sf::IntRect colBox(sf::Vector2i(tpos.x,tpos.y),
+				sf::Vector2i(halfchar*length, 
+					text.getCharacterSize()));
+		if(colBox.contains(im->getGuiMousePos())){
+			focused = true;
+			im->getString();
+		} else {
+			focused = false;
+		}
+	}
+	if(focused == true || this == &global_con->in){
+		focused = true;
+		updateString(im->getString());
+	}
 	if(inputTimer.getElapsedTime().asMilliseconds() > 50){
 		if(im->isGuiKeyDown(sf::Keyboard::Left)){
 			if(textPos != 0){
@@ -73,19 +102,14 @@ void TextBox::update(InputManager *im){
 	}
 
 	//Set the postion of the text cursor
-	//use temp pos incase index is negative
-	sf::Vector2f tpos = pos;
-	if(pos.x < 0){
-		tpos.x = width + pos.x;
-	}
-	if(pos.y < 0){
-		tpos.y = height + pos.y;
-	}
 	if(textPos > length){
-		rect.setPosition(tpos.x+(length*7),tpos.y);
+		rect.setPosition(tpos.x+(length*halfchar),tpos.y);
+		//rect.setPosition(tpos.x+(length*7),tpos.y);
 	} else {
-		rect.setPosition(tpos.x+(textPos*7),tpos.y);
+		rect.setPosition(tpos.x+(textPos*halfchar),tpos.y);
+		//rect.setPosition(tpos.x+(textPos*7),tpos.y);
 	}
+	rect.setSize(sf::Vector2f(halfchar,text.getCharacterSize()));
 
 	//Display text normally if length is smaller than max width
 	if(textString.length() < length){
@@ -113,7 +137,7 @@ void TextBox::draw(sf::RenderWindow *screen){
 		drawCursor = !drawCursor;
 		blinkTimer.restart();
 	}
-	if(drawCursor){
+	if(drawCursor && focused){
 		screen->draw(rect);
 	}
 	screen->draw(text);

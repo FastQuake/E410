@@ -95,3 +95,25 @@ int l_saveSettings(lua_State *l){
 	saveSettings();
 	return 0;
 }
+
+int l_getVsync(lua_State *l){
+	lua_pushboolean(l,settings.vsync);
+	return 1;
+}
+int l_getAA(lua_State *l){
+	lua_pushnumber(l, settings.AA);
+	return 1;
+}
+int l_getFPS(lua_State *l){
+	lua_pushnumber(l, settings.maxFPS);
+	return 1;
+}
+int l_getSize(lua_State *l){
+	lua_pushnumber(l,settings.width);
+	lua_pushnumber(l,settings.height);
+	return 2;
+}
+int l_getFullscreen(lua_State *l){
+	lua_pushboolean(l, settings.fullscreen);
+	return 1;
+}

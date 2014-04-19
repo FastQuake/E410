@@ -130,7 +130,6 @@ int l_GuisetZ(lua_State *l){
 	return 0;
 }
 int l_Guidelete(lua_State *l){
-	lua_pushlightuserdata(l, NULL);
 	GuiElement *e = l_toGuiElement(l, 1);
 	
 	gui->remove(e);
@@ -168,7 +167,14 @@ int l_GuisetString(lua_State *l){
 		t->clear();
 		t->print(text);
 
-	}else {
+	}
+	//If its an input box
+	else if(last == 'I'){
+		TextBox *i = (TextBox *)e;
+		i->getString();
+		i->updateString(text);
+	}
+	else {
 		lua_pushstring(l, "Argument does not contain text");
 		lua_error(l);
 	}

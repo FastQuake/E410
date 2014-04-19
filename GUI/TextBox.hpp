@@ -21,6 +21,7 @@ class TextBox : public GuiElement {
 		sf::Clock inputTimer;
 		sf::Clock blinkTimer;
 		bool drawCursor;
+		bool focused;
 
 		std::string textString;
 		int length;
