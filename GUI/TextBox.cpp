@@ -191,7 +191,7 @@ void ScrollText::draw(sf::RenderWindow *screen){
 	}
 	if(lines.size() < size.y){
 		for(int i=0;i<lines.size();i++){
-			text.setPosition(tpos.x,tpos.y+(i*14));
+			text.setPosition(tpos.x,tpos.y+(i*text.getCharacterSize()));
 			text.setString(lines.at(i));
 			screen->draw(text);
 		}

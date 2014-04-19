@@ -55,7 +55,11 @@ function Title.create()
 	title.credits:setPos(10,-75)
 	title.credits:setCallback(function()
 		print("Credits time!")
-		title.state = tstates.credits
+		if title.state == tstates.credits then
+			title.state = tstates.default
+		else
+			title.state = tstates.credits
+		end
 	end)
 
 	title.quit = GUI.createButton()
@@ -66,8 +70,53 @@ function Title.create()
 		print("Quittin time!")
 		quit()
 	end)
+
+	--Create credits window
+	title.creds = {}
+	title.creds.box = GUI.createBox()
+	title.creds.box:setScale(400,400)
+	title.creds.box:setPos(-410,-410)
+	title.creds.box:setColour(100,100,100,255)
+	title.creds.box:setVisible(false)
+
+	title.creds.title = GUI.createText()
+	title.creds.title:setString("Credits")
+	title.creds.title:setCharSize(32)
+	title.creds.title:setPos(-380,-400)
+
+	title.creditText = [[
+	Lucas Fryzek - 
+	 Programmer and Artist
+	John Brooks -
+	 Programmer and Artist
+	
+	Special Thanks to Astrid Fryzek 
+	 for artwork
+
+	Technologies used:
+	OpenGL - SFML - GLEW
+	ENET - Bullet
+
+	Thanks for playing!
+	]]
+
+	title.creds.text = GUI.createText()
+	title.creds.text:setString(title.creditText)
+	title.creds.text:setCharSize(18)
+	title.creds.text:setPos(-420,-300)
 	return title
 end
 
+function Title:setCredits(bool)
+	for key,value in pairs(self.creds) do
+		value:setVisible(bool)
+	end
+end
+
 function Title:update(dt)
+	if self.state == tstates.credits then
+		self:setCredits(true)
+	else
+		self:setCredits(false)
+	end
 end
