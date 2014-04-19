@@ -72,10 +72,19 @@ void TextBox::update(InputManager *im){
 		inputTimer.restart();
 	}
 
+	//Set the postion of the text cursor
+	//use temp pos incase index is negative
+	sf::Vector2f tpos = pos;
+	if(pos.x < 0){
+		tpos.x = width + pos.x;
+	}
+	if(pos.y < 0){
+		tpos.y = height + pos.y;
+	}
 	if(textPos > length){
-		rect.setPosition(pos.x+(length*7),pos.y);
+		rect.setPosition(tpos.x+(length*7),tpos.y);
 	} else {
-		rect.setPosition(pos.x+(textPos*7),pos.y);
+		rect.setPosition(tpos.x+(textPos*7),tpos.y);
 	}
 
 	//Display text normally if length is smaller than max width
@@ -92,7 +101,14 @@ void TextBox::update(InputManager *im){
 }
 
 void TextBox::draw(sf::RenderWindow *screen){
-	text.setPosition(pos);
+	sf::Vector2f tpos = pos;
+	if(pos.x < 0){
+		tpos.x = width + pos.x;
+	}
+	if(pos.y < 0){
+		tpos.y = height + pos.y;
+	}
+	text.setPosition(tpos);
 	if(blinkTimer.getElapsedTime().asMilliseconds() > 500){
 		drawCursor = !drawCursor;
 		blinkTimer.restart();
@@ -166,16 +182,23 @@ void ScrollText::update(InputManager *im){
 }
 
 void ScrollText::draw(sf::RenderWindow *screen){
+	sf::Vector2f tpos = pos;
+	if(pos.x < 0){
+		tpos.x = width + pos.x;
+	}
+	if(pos.y < 0){
+		tpos.y = height + pos.y;
+	}
 	if(lines.size() < size.y){
 		for(int i=0;i<lines.size();i++){
-			text.setPosition(pos.x,pos.y+(i*14));
+			text.setPosition(tpos.x,tpos.y+(i*14));
 			text.setString(lines.at(i));
 			screen->draw(text);
 		}
 	}else{
 		int j = (size.y-1);
 		for(int i=0;i<size.y;i++){
-			text.setPosition(pos.x,pos.y+(j*14));
+			text.setPosition(tpos.x,tpos.y+(j*14));
 			text.setString(lines.at((lines.size()-1)-i));
 			screen->draw(text);
 			j--;

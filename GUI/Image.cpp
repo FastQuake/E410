@@ -17,9 +17,16 @@ Image::Image(){
 
 
 void Image::draw(sf::RenderWindow *screen){
+	sf::Vector2f tpos = pos;
+	if(pos.x < 0){
+		tpos.x = width + pos.x;
+	}
+	if(pos.y < 0){
+		tpos.y = height + pos.y;
+	}
 	sf::Sprite out;
 	out.setTexture(img);
-	out.setPosition(pos);
+	out.setPosition(tpos);
 	out.scale(scale);
 	screen->draw(out);
 }

@@ -72,6 +72,15 @@ void bindFunctions(lua_State *l){
 	//create settings binding
 	luaL_newlib(l, Setting_funcs);
 	lua_setglobal(l,"settings");
+
+	//add data/scripts to package path
+	lua_getglobal(l, "package");
+	lua_getfield(l,-1,"path");
+	string oldpath = lua_tostring(l,-1);
+	string path = oldpath + string(";./data/scripts/?.lua");
+	lua_pushstring(l,path.c_str());
+	lua_setfield(l,-3,"path");
+	lua_pop(l,1);
 }
 
 void serverBindFunctions(lua_State *l){
