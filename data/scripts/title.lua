@@ -28,7 +28,11 @@ function Title.create()
 	title.play:setPos(10,-150)
 	title.play:setCallback(function()
 		print("Play time!")
-		title.state = tstates.play
+		if title.state == tstates.play then
+			title.state = tstates.default
+		else 
+			title.state = tstates.play
+		end
 	end)
 
 	title.multi = GUI.createButton()
@@ -37,7 +41,11 @@ function Title.create()
 	title.multi:setPos(10,-125)
 	title.multi:setCallback(function()
 		print("Multiplayer time!")
-		title.state = tstates.multi
+		if title.state == tstates.multi then
+			title.state = tstates.default
+		else
+			title.state = tstates.multi
+		end
 	end)
 
 	title.settings = GUI.createButton()
@@ -46,7 +54,11 @@ function Title.create()
 	title.settings:setPos(10,-100)
 	title.settings:setCallback(function()
 		print("Settings time!")
-		title.state = tstates.settings
+		if title.state == tstates.settings then
+			title.state = tstates.default
+		else
+			title.state = tstates.settings
+		end
 	end)
 
 	title.credits = GUI.createButton()
