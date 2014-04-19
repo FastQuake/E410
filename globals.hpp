@@ -15,6 +15,7 @@ extern InputManager *im;
 extern ResourceManager resman;
 extern RenderManager rendman;
 extern GuiManager *gui;
+extern sf::RenderWindow *gwindow;
 extern std::vector<std::string> packetList;
 
 extern int width;
@@ -25,6 +26,18 @@ struct Packet {
 	int port;
 	std::string data;
 };
+
+
+struct Settings{
+	bool vsync;
+	bool fullscreen;
+	int AA;
+	int maxFPS;
+	int width;
+	int height;
+};
+
+extern Settings settings;
 
 std::vector<std::string> breakString(std::string input);
 int stringToInt(std::string input);

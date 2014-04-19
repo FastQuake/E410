@@ -7,6 +7,7 @@
 #include "GuiBinding.hpp"
 #include "NetworkBinding.hpp"
 #include "mathbinding.hpp"
+#include "SettingsBinding.hpp"
 using namespace std;
 
 //TODO make this less ugly, break it up, etc
@@ -67,6 +68,10 @@ void bindFunctions(lua_State *l){
 	//Bind networking functions
 	luaL_newlib(l, Network_fucs);
 	lua_setglobal(l, "network");
+
+	//create settings binding
+	luaL_newlib(l, Setting_funcs);
+	lua_setglobal(l,"settings");
 }
 
 void serverBindFunctions(lua_State *l){

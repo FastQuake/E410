@@ -17,6 +17,7 @@
 #include "GUI/Console.hpp"
 #include "Lua/luabinding.hpp"
 #include "Networking/server.hpp"
+#include "Lua/SettingsBinding.hpp"
 using namespace std;
 
 Console *global_con;
@@ -26,6 +27,7 @@ RenderManager rendman;
 GuiManager *gui;
 ENetPeer *serverPeer;
 ENetHost *client;
+sf::RenderWindow *gwindow;
 vector<string> packetList;
 
 int width, height;
@@ -46,10 +48,25 @@ float stringToFloat(string input){
 }
 
 int main(int argc, char *argv[]){
+	//Set Default settings
+	width = 800;
+	height = 600;
+	settings.vsync = true;
+	settings.fullscreen = false;
+	settings.maxFPS = 0;
+	settings.AA = 1;
+	settings.width = width;
+	settings.height = height;
 	//Create lua vm and generate bindings
 	lua_State *l = luaL_newstate();
 	luaL_openlibs(l);
 	bindFunctions(l);
+
+	//Load settings from lua
+	if(luaL_dofile(l,"./data/scripts/settings.lua")){
+		cerr << lua_tostring(l, -1) << endl;
+		return EXIT_FAILURE;
+	}
 
 	//Load enet for networking
 	if(enet_initialize() != 0){
@@ -62,18 +79,15 @@ int main(int argc, char *argv[]){
 	//Create sfml window with opengl context
 	sf::ContextSettings cs;
 	cs.majorVersion = 3;
-	cs.minorVersion = 0;
+	cs.majorVersion = 0;
 	cs.depthBits = 24;
 	cs.stencilBits = 8;
-	cs.antialiasingLevel = 4;
-	width = 800;
-	height = 600;
-	sf::RenderWindow window(sf::VideoMode(width,height),"E410 | dev", sf::Style::Default, cs);
-	window.setMouseCursorVisible(false);
-	window.setVerticalSyncEnabled(true);
+	cs.antialiasingLevel = settings.AA;
+	gwindow = NULL;
+	setSettings();
 	sf::Event event;
 
-	InputManager ime(&window);
+	InputManager ime(gwindow);
 	im = &ime;
 
 	Console con(l,sf::Vector2f(0,0),
@@ -125,14 +139,6 @@ int main(int argc, char *argv[]){
 		return EXIT_FAILURE;
 	}
 
-	//Set opengl flags
-	glEnable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-
-	glClearColor(0.0,0.0,0.0,1.0);
-
 	//setfunction for server thread
 	sf::Thread sThread(&serverMain);
 	serverThread = &sThread;
@@ -142,22 +148,22 @@ int main(int argc, char *argv[]){
 	dtTimer.restart();
 	sf::Time dt;
 
-	window.setActive(true);
+	gwindow->setActive(true);
 
-	while(window.isOpen()){
-		while(window.pollEvent(event)){
+	while(gwindow->isOpen()){
+		while(gwindow->pollEvent(event)){
 			if(event.type == sf::Event::Closed){
-				window.close();
+				gwindow->close();
 			}
 			if(event.type == sf::Event::Resized){
 				width = event.size.width;
 				height = event.size.height;
 				glViewport(0,0,width,height);
 
-				sf::View view = window.getView();
+				sf::View view = gwindow->getView();
 				view.setSize(width,height);
 				view.setCenter(width/2, height/2);
-				window.setView(view);
+				gwindow->setView(view);
 
 				lua_pushnumber(l, width);
 				lua_setglobal(l, "width");
@@ -279,9 +285,9 @@ int main(int argc, char *argv[]){
 		
 		//Check if gui is locked and show cursor
 		if(im->isGuiLocked()){
-			window.setMouseCursorVisible(true);
+			gwindow->setMouseCursorVisible(true);
 		} else {
-			window.setMouseCursorVisible(false);
+			gwindow->setMouseCursorVisible(false);
 		}
 
 		//call lua update
@@ -306,12 +312,13 @@ int main(int argc, char *argv[]){
 		rendman.render(&prg,dt.asSeconds());
 
 		//Do sfml drawing here
-		gui->draw(&window);
+		gui->draw(gwindow);
 
-		window.display();
+		gwindow->display();
 		dt = dtTimer.restart();
 	}
 
+	delete gwindow;
 	enet_host_destroy(client);
 	serverRunning = false;
 	serverThread->wait();
