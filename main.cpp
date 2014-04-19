@@ -77,12 +77,6 @@ int main(int argc, char *argv[]){
 	ENetEvent enetEvent;
 
 	//Create sfml window with opengl context
-	sf::ContextSettings cs;
-	cs.majorVersion = 3;
-	cs.majorVersion = 0;
-	cs.depthBits = 24;
-	cs.stencilBits = 8;
-	cs.antialiasingLevel = settings.AA;
 	gwindow = NULL;
 	setSettings();
 	sf::Event event;
