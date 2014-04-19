@@ -14,6 +14,7 @@ using namespace std;
 
 void bindFunctions(lua_State *l){
 	lua_register(l,"print",l_print);
+	lua_register(l,"quit",l_quit);
 	lua_register(l,"vec3",l_createVec3);
 	lua_register(l,"dot",l_vec3Dot);
 	lua_register(l,"cross",l_vec3Cross);
@@ -135,6 +136,10 @@ int l_print(lua_State *l){
 	string value = l_toString(l, 1);
 	cout << value << endl;
 	global_con->out.print("\n"+value);
+	return 0;
+}
+int l_quit(lua_State *l){
+	gwindow->close();
 	return 0;
 }
 void errorTrace(lua_State *l, string error){

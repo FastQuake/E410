@@ -5,12 +5,14 @@
 #include "../GUI/TextBox.hpp"
 #include "../GUI/Image.hpp"
 #include "../GUI/Button.hpp"
+#include "../GUI/Box.hpp"
 
 GuiElement *l_toGuiElement(lua_State *l, int pos);
 ScrollText *l_toGuiText(lua_State *l, int pos);
 Image *l_toGuiImage(lua_State *l, int pos);
 Button *l_toGuiButton(lua_State *l, int pos);
 TextBox *l_toGuiInput(lua_State *l, int pos);
+Box *l_toGuiBox(lua_State *l, int pos);
 
 int l_GuisetPos(lua_State *l);
 int l_GuisetScale(lua_State *l);
@@ -39,11 +41,15 @@ int l_GuisetBGColour(lua_State *l);
 int l_Guisetcallback(lua_State *l);
 int l_GuisetPadding(lua_State *l);
 
+//Box related function
+int l_GuiCreateBox(lua_State *l);
+
 static const struct luaL_Reg GUI_funcs[] = {
 	{"createText", l_GuiCreateText},
 	{"createButton", l_GuicreateButton},
 	{"createImg", l_GuicreateImg},
 	{"createInput", l_GuiCreateInput},
+	{"createBox",l_GuiCreateBox},
 	{NULL, NULL}
 };
 

@@ -16,5 +16,6 @@ std::string l_toString(lua_State *l, int pos);
 
 //Bunch 'o' functions
 int l_print(lua_State *l);
+int l_quit(lua_State *l);
 
 #endif

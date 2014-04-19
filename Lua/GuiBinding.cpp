@@ -81,6 +81,21 @@ TextBox *l_toGuiInput(lua_State *l, int pos){
 
 	return NULL;
 }
+Box *l_toGuiBox(lua_State *l, int pos){
+	if(lua_isuserdata(l, pos)){
+		Box *b = (Box*)lua_touserdata(l,pos);
+		if(b->magic == GUIBOX_MAGIC){
+			return b;
+		}
+	}
+
+	stringstream error;
+	error << "Bad argument #" << pos << ", expected gui box got "
+		<< luaL_typename(l, pos);
+	errorTrace(l, error.str());	
+
+	return NULL;
+}
 
 int l_GuisetPos(lua_State *l){
 	GuiElement *e = l_toGuiElement(l, 1);
@@ -232,7 +247,10 @@ int l_GuisetColour(lua_State *l){
 	else if(lastChar(e->magic) == 'I'){
 		TextBox *t = (TextBox*)e;
 		t->text.setColor(sf::Color(r,g,b,a));
-	} else {
+	} else if(lastChar(e->magic) == 'C'){
+		Box *c = (Box*)e;
+		c->colour = sf::Color(r,g,b,a);	
+	}else {
 		lua_pushstring(l, "Argument does not contain text");
 		lua_error(l);
 	}
@@ -320,4 +338,15 @@ int l_GuisetPadding(lua_State *l){
 
 	b->padding = pad;
 	return 0;
+}
+//Box related functions
+int l_GuiCreateBox(lua_State *l){
+	Box *b = new (lua_newuserdata(l, sizeof(Box))) Box(sf::Vector2f(0,0),
+			sf::Vector2f(0,0),sf::Color::Transparent);
+
+	gui->add(b);
+
+	luaL_getmetatable(l, "MetaGUI");
+	lua_setmetatable(l, -2);
+	return 1;
 }

@@ -10,4 +10,5 @@ function init()
 end
 
 function update(dt)
+	title:update(dt)
 end
