@@ -327,24 +327,24 @@ void Model::draw(ShaderProgram *prg, vector<GLuint> textures,vector<glm::mat4> o
 
 	GLsizei arrsize = outframe.size(); //OpenGL will complain if I feed it a size_t
 	if(frames.size() > 0)
-		glUniformMatrix3x4fv(prg->getUniform(1), arrsize, GL_FALSE, glm::value_ptr(outframe3x4[0]));
-	else
+		glUniformMatrix3x4fv(prg->getUniform("bonemats"), arrsize, GL_FALSE, glm::value_ptr(outframe3x4[0]));
+	else 
 		skin = false;
-
-	glUniform1i(prg->getUniform(4),skin);
+		
+	glUniform1i(prg->getUniform("skin"),skin);
 
 	glBindBuffer(GL_ARRAY_BUFFER,verts_vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tris_ebo);
 	vertex *vert = NULL;
 	glVertexAttribPointer(
-			prg->getAttribute(0),
+			prg->getAttribute("coord3d"),
 			3,
 			GL_FLOAT,
 			GL_FALSE,
 			sizeof(vertex),
 			&vert->position);
 	glVertexAttribPointer(
-			prg->getAttribute(1),
+			prg->getAttribute("texcoord"),
 			2,
 			GL_FLOAT,
 			GL_FALSE,
@@ -352,37 +352,41 @@ void Model::draw(ShaderProgram *prg, vector<GLuint> textures,vector<glm::mat4> o
 			&vert->texcoord);
 	if(frames.size() > 0){
 		glVertexAttribPointer(
-				prg->getAttribute(2),
+				prg->getAttribute("vweight"),
 				4,
 				GL_UNSIGNED_BYTE,
 				GL_TRUE,
 				sizeof(vertex),
 				&vert->blendweight);
 		glVertexAttribPointer(
-				prg->getAttribute(3),
+				prg->getAttribute("vbones"),
 				4,
 				GL_UNSIGNED_BYTE,
 				GL_FALSE,
 				sizeof(vertex),
 				&vert->blendindex);
 	}
-	glEnableVertexAttribArray(prg->getAttribute(0));
-	glEnableVertexAttribArray(prg->getAttribute(1));
-	glEnableVertexAttribArray(prg->getAttribute(2));
-	glEnableVertexAttribArray(prg->getAttribute(3));
+	glEnableVertexAttribArray(prg->getAttribute("coord3d"));
+	glEnableVertexAttribArray(prg->getAttribute("texcoord"));
+	if(frames.size() > 0){
+		glEnableVertexAttribArray(prg->getAttribute("vweight"));
+		glEnableVertexAttribArray(prg->getAttribute("vbones"));
+	}
 
 	iqmtriangle *tris = NULL;
 	for(int i=0;i<meshes.size();i++){
 		iqmmesh &m = meshes[i];
 		glBindTexture(GL_TEXTURE_2D, textures[i]);
-		glUniform1i(prg->getUniform(2),0);
+		glUniform1i(prg->getUniform("mTexture"),0);
 		glDrawElements(GL_TRIANGLES, 3*m.num_triangles, GL_UNSIGNED_INT, &tris[m.first_triangle]);
 	}
 
-	glDisableVertexAttribArray(prg->getAttribute(0));
-	glDisableVertexAttribArray(prg->getAttribute(1));
-	glDisableVertexAttribArray(prg->getAttribute(2));
-	glDisableVertexAttribArray(prg->getAttribute(3));
+	glDisableVertexAttribArray(prg->getAttribute("coord3d"));
+	glDisableVertexAttribArray(prg->getAttribute("texcoord"));
+	if(frames.size() > 0){
+		glDisableVertexAttribArray(prg->getAttribute("vweight"));
+		glDisableVertexAttribArray(prg->getAttribute("vbones"));
+	}
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
 }

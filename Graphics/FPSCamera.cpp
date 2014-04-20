@@ -60,3 +60,7 @@ glm::mat4 FPSCamera::view(){
 	return out;
 	//return glm::lookAt(pos,lookat+pos,up);
 }
+
+glm::vec3 FPSCamera::getLookat(){
+	return lookat;
+}

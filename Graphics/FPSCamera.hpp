@@ -20,6 +20,7 @@ class FPSCamera{
 		void turn(glm::vec2 amount);
 
 		glm::mat4 view();
+		glm::vec3 getLookat();
 
 	private:
 		glm::vec3 right;

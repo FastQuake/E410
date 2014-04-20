@@ -101,16 +101,12 @@ int main(int argc, char *argv[]){
 
 	ShaderProgram prg("./data/shaders/vertex.glsl",
 			"./data/shaders/fragment.glsl");
-	prg.setAttribute("coord3d");
-	prg.setAttribute("texcoord");
-	prg.setAttribute("vweight");
-	prg.setAttribute("vbones");
-	prg.setUniform("projection");
-	prg.setUniform("bonemats");
-	prg.setUniform("texture");
-	prg.setUniform("modelMat");
-	prg.setUniform("skin");
-	prg.setUniform("view");
+
+	ShaderProgram skyprg("./data/shaders/skyvertex.glsl",
+			"./data/shaders/skyfragment.glsl");
+
+	//Load the skybox
+	rendman.skybox.setModel(resman.loadModel("skybox.iqm"));
 
 	//Load main lua file and then call init function
 	lua_pushnumber(l, width);
@@ -300,10 +296,10 @@ int main(int argc, char *argv[]){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//Do all drawing here
-		glUseProgram(prg.getID());
-		glUniformMatrix4fv(prg.getUniform(0),1,GL_FALSE,glm::value_ptr(projection));
+		//glUseProgram(prg.getID());
+		//glUniformMatrix4fv(prg.getUniform(0),1,GL_FALSE,glm::value_ptr(projection));
 
-		rendman.render(&prg,dt.asSeconds());
+		rendman.render(&prg,&skyprg,dt.asSeconds());
 
 		//Do sfml drawing here
 		gui->draw(gwindow);

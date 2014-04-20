@@ -11,9 +11,10 @@ public:
 	FPSCamera *currentCam;
 	std::vector<GameObject*> drawList;
 	std::vector<FPSCamera*> cameras;
+	GameObject skybox;
 
 	GameObject* getId(uint32_t id);
-	void render(ShaderProgram *prg, float curTime);
+	void render(ShaderProgram *prg, ShaderProgram *skyprg,float curTime);
 	void remove(GameObject* obj);
 };
 
