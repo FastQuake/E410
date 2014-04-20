@@ -158,6 +158,41 @@ function Title.create()
 		title:getOptions()
 	end)
 
+	--Create multiplayer window
+	title.mult = {}
+	title.mult.box = GUI.createBox()
+	title.mult.box:setScale(400,400)
+	title.mult.box:setPos(-410,-410)
+	title.mult.box:setColour(100,100,100,255)
+	title.mult.box:setZ(-1)
+
+	title.mult.title = GUI.createText()
+	title.mult.title:setString("Multiplayer")
+	title.mult.title:setCharSize(32)
+	title.mult.title:setPos(-380,-400)
+
+	title.mult.iptitle = GUI.createText()
+	title.mult.iptitle:setString("Address:")
+	title.mult.iptitle:setCharSize(18)
+	title.mult.iptitle:setPos(-380,-300)
+
+	title.mult.ipbox = GUI.createInput()
+	title.mult.ipbox:setCharSize(18)
+	title.mult.ipbox:setPos(-280,-300)
+
+	title.mult.errmsg = GUI.createText()
+	title.mult.errmsg:setCharSize(18)
+	title.mult.errmsg:setPos(-380,-200)
+
+	title.mult.join = GUI.createButton()
+	title.mult.join:setString("Join")
+	title.mult.join:setCharSize(18)
+	title.mult.join:setPos(-220,-60)
+	title.mult.join:setBGColour(50,50,50,255)
+	title.mult.join:setPadding(4)
+	title.mult.join:setCallback(function()
+		title:connect()
+	end)
 
 	--Create credits window
 	title.creds = {}
@@ -208,6 +243,12 @@ function Title:setSettings(bool)
 	end
 end
 
+function Title:setMulti(bool)
+	for key, value in pairs(self.mult) do
+		value:setVisible(bool)
+	end
+end
+
 function Title:getOptions()
 	title.state = tstates.settings
 	title.settOptions.vsync = settings.getvsync()
@@ -220,6 +261,13 @@ function Title:getOptions()
 	title.sett.maxFPS:setString(title.settOptions.FPS)
 	title.sett.width:setString(title.settOptions.width)
 	title.sett.height:setString(title.settOptions.height)
+end
+
+function Title:connect()
+	local status = network.connectTo(self.mult.ipbox:getInput())
+	if status ~= true then
+		self.mult.errmsg:setString(status)
+	end
 end
 
 function Title:update(dt)
@@ -245,5 +293,14 @@ function Title:update(dt)
 		end
 	else
 		self:setSettings(false)
+	end
+
+	if self.state == tstates.multi then
+		self:setMulti(true)
+		if input.isGuiKeyDown(keys.Return) then
+			self:connect()
+		end
+	else
+		self:setMulti(false)
 	end
 end

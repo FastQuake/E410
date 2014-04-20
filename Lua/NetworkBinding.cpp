@@ -53,12 +53,14 @@ int l_connectTo(lua_State *l){
 	string serverAddr = l_toString(l, 1);
 	if(serverPeer != NULL){
 		lua_pushstring(l,"Already connected to a server!");
-		lua_error(l);
+		//lua_error(l);
+		return 1;
 	}
 	client = enet_host_create(NULL, 1, 2, 0, 0);
 	if(client == NULL){
 		lua_pushstring(l,"cannot create client!");
-		lua_error(l);
+		//lua_error(l);
+		return 1;
 	}
 	ENetAddress addr;
 	ENetEvent event;
@@ -74,7 +76,8 @@ int l_connectTo(lua_State *l){
 		enet_host_destroy(client);
 		client = NULL;
 		lua_pushstring(l, serverAddr.c_str());
-		lua_error(l);
+		//lua_error(l);
+		return 1;
 	}
 	if((enet_host_service(client, &event, 5000) > 0) &&
 			event.type == ENET_EVENT_TYPE_CONNECT){
@@ -88,9 +91,12 @@ int l_connectTo(lua_State *l){
 		client = NULL;
 		serverAddr = "Connection to "+serverAddr+" failed";
 		lua_pushstring(l, serverAddr.c_str());
-		lua_error(l);
+		//lua_error(l);
+		return 1;
 	}
-	return 0;
+
+	lua_pushboolean(l, true);
+	return 1;
 }
 int l_sendPacket(lua_State *l){
 	string data = l_toString(l, 1);
