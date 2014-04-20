@@ -31,19 +31,19 @@ void FPSCamera::strafe(float amount){
 
 void FPSCamera::turn(glm::vec2 amount){
 	angle += glm::vec3(amount,0.0);
-	if(angle.y >= 179){
-		angle.y = 179;
-	} else if(angle.y <= 1){
-		angle.y = 1;
+	if(angle.x >= 179){
+		angle.x = 179;
+	} else if(angle.x <= 1){
+		angle.x = 1;
 	}
-	if(angle.x > 360){
-		angle.x = abs(angle.x)-360.0;
-	} else if(angle.x < -360){
-		angle.x = -(abs(angle.x)-360.0);
+	if(angle.y > 360){
+		angle.y = abs(angle.y)-360.0;
+	} else if(angle.y < -360){
+		angle.y = -(abs(angle.y)-360.0);
 	}
-	lookat.x = sin(toRad(angle.y)) * cos(toRad(angle.x));
-	lookat.y = cos(toRad(angle.y));
-	lookat.z = sin(toRad(angle.y)) * sin(toRad(angle.x));
+	lookat.x = sin(toRad(angle.x)) * cos(toRad(angle.y));
+	lookat.y = cos(toRad(angle.x));
+	lookat.z = sin(toRad(angle.x)) * sin(toRad(angle.y));
 	right = glm::cross(lookat,up);
 }
 
@@ -51,8 +51,8 @@ void FPSCamera::turn(glm::vec2 amount){
 glm::mat4 FPSCamera::view(){
 	glm::mat4 out;
 	glm::mat4 rot = \
-		glm::rotate(glm::mat4(1),angle.y-90.0f, glm::vec3(1,0,0)) *
-		glm::rotate(glm::mat4(1),angle.x+90.0f, glm::vec3(0,1,0)) *
+		glm::rotate(glm::mat4(1),angle.x-90.0f, glm::vec3(1,0,0)) *
+		glm::rotate(glm::mat4(1),angle.y+90.0f, glm::vec3(0,1,0)) *
 		glm::rotate(glm::mat4(1),angle.z, glm::vec3(0,0,1));
 	
 	glm::mat4 trans = glm::translate(glm::mat4(1), -pos);

@@ -41,8 +41,8 @@ function update(dt)
 	local mousex, mousey = input.getMousePos()
 	mousex = mousex - (width/2)
 	mousey = mousey - (height/2)
-	cam:turn(mousex*sensitvity*dt, 
-		mousey*sensitvity*dt)
+	cam:turn(mousey*sensitvity*dt, 
+		mousex*sensitvity*dt)
 	input.setMousePos(width/2, height/2)
 
 	if input.isKeyDown(keys.W) then 
