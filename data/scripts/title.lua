@@ -18,17 +18,18 @@ function Title.create()
 	title.state = tstates.default
 	title.settOptions = {}
 	--Create GUI Text and Buttons
-	title.title = GUI.createText()
-	title.title:setString("E410")
-	title.title:setCharSize(48)
-	title.title:setPos(10,10)
+	title.top = {}
+	title.top.title = GUI.createText()
+	title.top.title:setString("E410")
+	title.top.title:setCharSize(48)
+	title.top.title:setPos(10,10)
 
-	title.play = GUI.createButton()
-	title.play:setString("Play")
-	title.play:setCharSize(24)
-	title.play:setPos(10,-150)
-	title.play:setBGColour(0,0,0,0)
-	title.play:setCallback(function()
+	title.top.play = GUI.createButton()
+	title.top.play:setString("Play")
+	title.top.play:setCharSize(24)
+	title.top.play:setPos(10,-150)
+	title.top.play:setBGColour(0,0,0,0)
+	title.top.play:setCallback(function()
 		if title.state == tstates.play then
 			title.state = tstates.default
 		else 
@@ -36,12 +37,12 @@ function Title.create()
 		end
 	end)
 
-	title.multi = GUI.createButton()
-	title.multi:setString("Multiplayer")
-	title.multi:setCharSize(24)
-	title.multi:setPos(10,-125)
-	title.multi:setBGColour(0,0,0,0)
-	title.multi:setCallback(function()
+	title.top.multi = GUI.createButton()
+	title.top.multi:setString("Multiplayer")
+	title.top.multi:setCharSize(24)
+	title.top.multi:setPos(10,-125)
+	title.top.multi:setBGColour(0,0,0,0)
+	title.top.multi:setCallback(function()
 		if title.state == tstates.multi then
 			title.state = tstates.default
 		else
@@ -49,12 +50,12 @@ function Title.create()
 		end
 	end)
 
-	title.settings = GUI.createButton()
-	title.settings:setString("Settings")
-	title.settings:setCharSize(24)
-	title.settings:setPos(10,-100)
-	title.settings:setBGColour(0,0,0,0)
-	title.settings:setCallback(function()
+	title.top.settings = GUI.createButton()
+	title.top.settings:setString("Settings")
+	title.top.settings:setCharSize(24)
+	title.top.settings:setPos(10,-100)
+	title.top.settings:setBGColour(0,0,0,0)
+	title.top.settings:setCallback(function()
 		if title.state == tstates.settings then
 			title.state = tstates.default
 		else
@@ -62,12 +63,12 @@ function Title.create()
 		end
 	end)
 
-	title.credits = GUI.createButton()
-	title.credits:setString("Credits")
-	title.credits:setCharSize(24)
-	title.credits:setPos(10,-75)
-	title.credits:setBGColour(0,0,0,0)
-	title.credits:setCallback(function()
+	title.top.credits = GUI.createButton()
+	title.top.credits:setString("Credits")
+	title.top.credits:setCharSize(24)
+	title.top.credits:setPos(10,-75)
+	title.top.credits:setBGColour(0,0,0,0)
+	title.top.credits:setCallback(function()
 		if title.state == tstates.credits then
 			title.state = tstates.default
 		else
@@ -75,12 +76,12 @@ function Title.create()
 		end
 	end)
 
-	title.quit = GUI.createButton()
-	title.quit:setString("Quit")
-	title.quit:setCharSize(24)
-	title.quit:setPos(10,-50)
-	title.quit:setBGColour(0,0,0,0)
-	title.quit:setCallback(function()
+	title.top.quit = GUI.createButton()
+	title.top.quit:setString("Quit")
+	title.top.quit:setCharSize(24)
+	title.top.quit:setPos(10,-50)
+	title.top.quit:setBGColour(0,0,0,0)
+	title.top.quit:setCallback(function()
 		quit()
 	end)
 
@@ -260,6 +261,12 @@ function Title:setMulti(bool)
 	end
 end
 
+function Title:setTop(bool)
+	for key, value in pairs(self.top) do
+		value:setVisible(bool)
+	end
+end
+
 function Title:getOptions()
 	title.state = tstates.settings
 	title.settOptions.vsync = settings.getvsync()
@@ -279,6 +286,14 @@ function Title:connect()
 	if status ~= true then
 		self.mult.errmsg:setString(status)
 	end
+end
+
+function Title:show(bool)
+	self:setTop(bool)
+	self:setCredits(bool)
+	self:setSettings(bool)
+	self:setMulti(bool)
+	self.planet:setVisible(bool)
 end
 
 function Title:update(dt)

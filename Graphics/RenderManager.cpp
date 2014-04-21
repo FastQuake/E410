@@ -30,8 +30,10 @@ void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg, float dt){
 	skybox.model->draw(skyprg,skybox.textures,skybox.outframe);
 	glDepthMask(1);
 
+	glUseProgram(prg->getID());
 	for(int i=0;i<this->drawList.size();i++){
-		glUseProgram(prg->getID());
+		if(this->drawList[i]->visible == false)
+			break;
 		glUniformMatrix4fv(prg->getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
 		if(drawList[i]->animate){
 			drawList[i]->aTime += dt; 

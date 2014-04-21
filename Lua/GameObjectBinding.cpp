@@ -156,6 +156,13 @@ int l_setTexture(lua_State *l){
 	obj->textures.at(0) = id;
 	return 0;
 }
+int l_setVisible(lua_State *l){
+	GameObject *obj = l_toGO(l,1);
+	bool vis = l_toBool(l,2);
+
+	obj->visible = vis;
+	return 0;
+}
 int l_delete(lua_State *l){
 	lua_pushnil(l);
 	GameObject *obj = l_toGO(l, 1);
