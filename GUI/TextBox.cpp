@@ -72,7 +72,7 @@ void TextBox::update(InputManager *im){
 	int halfchar = (text.findCharacterPos(1).x-tpos.x);
 	if(halfchar == 0)
 		halfchar = 1;
-	if(im->isGuiMouseDown(sf::Mouse::Left)){
+	if(im->isGuiMouseDown(sf::Mouse::Left) && this->visible){
 		sf::IntRect colBox(sf::Vector2i(tpos.x,tpos.y),
 				sf::Vector2i(halfchar*length, 
 					text.getCharacterSize()));

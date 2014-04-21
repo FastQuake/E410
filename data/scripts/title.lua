@@ -27,6 +27,7 @@ function Title.create()
 	title.play:setString("Play")
 	title.play:setCharSize(24)
 	title.play:setPos(10,-150)
+	title.play:setBGColour(0,0,0,0)
 	title.play:setCallback(function()
 		if title.state == tstates.play then
 			title.state = tstates.default
@@ -39,6 +40,7 @@ function Title.create()
 	title.multi:setString("Multiplayer")
 	title.multi:setCharSize(24)
 	title.multi:setPos(10,-125)
+	title.multi:setBGColour(0,0,0,0)
 	title.multi:setCallback(function()
 		if title.state == tstates.multi then
 			title.state = tstates.default
@@ -51,6 +53,7 @@ function Title.create()
 	title.settings:setString("Settings")
 	title.settings:setCharSize(24)
 	title.settings:setPos(10,-100)
+	title.settings:setBGColour(0,0,0,0)
 	title.settings:setCallback(function()
 		if title.state == tstates.settings then
 			title.state = tstates.default
@@ -63,6 +66,7 @@ function Title.create()
 	title.credits:setString("Credits")
 	title.credits:setCharSize(24)
 	title.credits:setPos(10,-75)
+	title.credits:setBGColour(0,0,0,0)
 	title.credits:setCallback(function()
 		if title.state == tstates.credits then
 			title.state = tstates.default
@@ -75,6 +79,7 @@ function Title.create()
 	title.quit:setString("Quit")
 	title.quit:setCharSize(24)
 	title.quit:setPos(10,-50)
+	title.quit:setBGColour(0,0,0,0)
 	title.quit:setCallback(function()
 		quit()
 	end)
@@ -228,6 +233,12 @@ function Title.create()
 	title.creds.text:setString(title.creditText)
 	title.creds.text:setCharSize(18)
 	title.creds.text:setPos(-420,-300)
+
+	--Add planet geometry
+	title.planet = GO.loadIQM("planet.iqm")
+	title.planet:setPos(3,0,0)
+	title.planetspeed = 10
+	title.planetangle = 0
 	return title
 end
 
@@ -303,4 +314,7 @@ function Title:update(dt)
 	else
 		self:setMulti(false)
 	end
+
+	self.planetangle = self.planetangle + self.planetspeed*dt
+	self.planet:setRot(0,self.planetangle,0)
 end

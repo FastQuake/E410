@@ -42,7 +42,7 @@ void Button::updateShape(){
 
 void Button::update(InputManager *im){
 	updateShape();
-	if(im->isGuiMouseDown(sf::Mouse::Left)){
+	if(im->isGuiMouseDown(sf::Mouse::Left) && this->visible){
 		sf::Vector2i pos = im->getGuiMousePos();
 		if(colBox.contains(pos.x, pos.y)){
 			if(hasCallback && bTimer.getElapsedTime().asMilliseconds() > 300){
