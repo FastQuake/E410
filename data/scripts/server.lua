@@ -8,7 +8,6 @@ function onPeerConnect(address, port)
 	table.insert(peers,p)
 end
 
-forward = false
 function onReceivePacket(address, port, data)
 	p = Peer.getPeer(peers, Peer.create(address,port))
 	if data[1] == "forward" then

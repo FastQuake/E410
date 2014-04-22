@@ -9,7 +9,7 @@ states = {
 }
 
 state = states.title
-player = {}
+local player = {}
 function createObject(obj)
 	if obj:getTag() == "player" then
 		player = obj
