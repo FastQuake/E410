@@ -94,11 +94,12 @@ void serverMain(){
 
 	//Create lua VM for server
 	lua_State *l = luaL_newstate();
+	luaL_openlibs(l);
 	serverBindFunctions(l);
 
 	//load main server lua function
 	if(luaL_dofile(l,"./data/scripts/server.lua")){
-		cerr << "Could not find server.lua" << endl;
+		cerr << "error " << lua_tostring(l,-1)<< endl;
 		serverRunning = false;
 		enet_host_destroy(server);
 		return;
@@ -129,6 +130,7 @@ void serverMain(){
 											ENET_PEER_TIMEOUT_MINIMUM,
 											ENET_PEER_TIMEOUT_MAXIMUM);
 					peers.push_back(event.peer);
+					sendSpawnPackets(event.peer);
 					lua_getglobal(l, "onPeerConnect");
 					lua_pushnumber(l, event.peer->address.host);
 					lua_pushnumber(l, event.peer->address.port);
@@ -137,7 +139,6 @@ void serverMain(){
 						cout << error << endl;
 						global_con->out.println("[SERVER] "+error);
 					}
-					sendSpawnPackets(event.peer);
 					break;
 				case ENET_EVENT_TYPE_DISCONNECT:
 					lua_getglobal(l, "onPeerDisconnect");

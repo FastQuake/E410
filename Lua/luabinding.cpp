@@ -67,7 +67,7 @@ void bindFunctions(lua_State *l){
 	lua_setglobal(l, "GUI");
 
 	//Bind networking functions
-	luaL_newlib(l, Network_fucs);
+	luaL_newlib(l, Network_funcs);
 	lua_setglobal(l, "network");
 
 	//create settings binding
@@ -100,6 +100,18 @@ void serverBindFunctions(lua_State *l){
 
 	luaL_newlib(l,GO_funcs);
 	lua_setglobal(l, "GO");
+
+	luaL_newlib(l, ServerNetwork_funcs);
+	lua_setglobal(l, "network");
+
+	//add data/scripts to package path
+	lua_getglobal(l, "package");
+	lua_getfield(l,-1,"path");
+	string oldpath = lua_tostring(l,-1);
+	string path = oldpath + string(";./data/scripts/?.lua");
+	lua_pushstring(l,path.c_str());
+	lua_setfield(l,-3,"path");
+	lua_pop(l,1);
 }
 
 float l_toNumber(lua_State *l, int pos){

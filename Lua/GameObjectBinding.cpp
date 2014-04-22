@@ -163,6 +163,20 @@ int l_setVisible(lua_State *l){
 	obj->visible = vis;
 	return 0;
 }
+int l_getPos(lua_State *l){
+	GameObject *obj = l_toGO(l,1);
+
+	lua_pushnumber(l,obj->position.x);
+	lua_pushnumber(l,obj->position.y);
+	lua_pushnumber(l,obj->position.z);
+	return 3;
+}
+int l_getTag(lua_State *l){
+	GameObject *obj = l_toGO(l,1);
+
+	lua_pushstring(l,obj->tag.c_str());
+	return 1;
+}
 int l_delete(lua_State *l){
 	lua_pushnil(l);
 	GameObject *obj = l_toGO(l, 1);

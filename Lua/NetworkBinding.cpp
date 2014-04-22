@@ -116,3 +116,16 @@ int l_reset(lua_State *l){
 	client = NULL;
 	return 0;
 }
+int l_serverSendPacket(lua_State *l){
+	Packet p;
+	p.addr = l_toNumber(l, 1);
+	p.port = l_toNumber(l, 2);
+	p.data = l_toString(l, 3);
+	if(client == NULL){
+		lua_pushstring(l,"Not connected to a server");
+		lua_error(l);
+	}
+
+	serverPacketList.push_back(p);
+	return 0;
+}

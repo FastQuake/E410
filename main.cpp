@@ -211,11 +211,11 @@ int main(int argc, char *argv[]){
 						//Push gameobject onto global serverObjects table to keep track of it						
 						luaL_getmetatable(l, "MetaGO");
 						lua_setmetatable(l, -2);
-						lua_rawseti(l, -3, out->id);
+						lua_rawseti(l, -2, out->id);
 
 						//push gameobject to lua createObject so a game script can handle it
 						lua_getglobal(l, "createObject"); //push createObject
-						lua_rawgeti(l, -3, out->id); // get serverObjects[id]
+						lua_rawgeti(l, -2, out->id); // get serverObjects[id]
 						if(lua_pcall(l,1,0,0)){ //call createObjects(serverObjects[id])
 							cout << lua_tostring(l, -1) << endl;
 							global_con->out.println(lua_tostring(l, -1));

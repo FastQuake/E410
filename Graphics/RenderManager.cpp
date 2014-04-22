@@ -33,7 +33,7 @@ void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg, float dt){
 	glUseProgram(prg->getID());
 	for(int i=0;i<this->drawList.size();i++){
 		if(this->drawList[i]->visible == false)
-			break;
+			continue;
 		glUniformMatrix4fv(prg->getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
 		if(drawList[i]->animate){
 			drawList[i]->aTime += dt; 

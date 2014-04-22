@@ -4,6 +4,7 @@
 
 int l_loadIQM(lua_State *l);
 int l_serverLoadIQM(lua_State *l);
+//setters
 int l_setPos(lua_State *l);
 int l_setRot(lua_State *l);
 int l_setScale(lua_State *l);
@@ -14,6 +15,10 @@ int l_setCurAnim(lua_State *l);
 int l_setAnim(lua_State *l);
 int l_setTexture(lua_State *l);
 int l_setVisible(lua_State *l);
+//getters
+int l_getPos(lua_State *l);
+int l_getTag(lua_State *l);
+
 int l_delete(lua_State *l);
 int l_serverDelete(lua_State *l);
 
@@ -35,6 +40,8 @@ static struct luaL_Reg GO_methods[] = {
 	{"setTexture", l_setTexture},
 	{"setVisible", l_setVisible},
 	{"animate", l_setAnim},
+	{"getPos", l_getPos},
+	{"getTag", l_getTag},
 	{NULL,NULL}
 };
 
