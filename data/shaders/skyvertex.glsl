@@ -12,6 +12,6 @@ uniform mat4 view;
 void main(){
 	mat4 mvp = projection*view;
 
-	gl_Position = mvp*vec4(coord3d,1.0)+(skin/skin);
+	gl_Position = mvp*vec4(coord3d,1.0+skin);
 	f_texcoord = texcoord;
 }
