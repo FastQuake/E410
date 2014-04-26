@@ -12,8 +12,9 @@ class RenderManager{
 public:
 	GLuint framebuffer;
 	GLuint depthTextures;
+	GLuint depthCubemaps;
 	GLuint ubo;
-	void renderDepth(ShaderProgram *prg, float dt, Light *light);
+	void renderDepth(ShaderProgram *prg, float dt, int lightIndex);
 	void render(ShaderProgram *prg, float dt);
 	std::vector<GameObject*> drawList;
 	std::vector<FPSCamera*> cameras;

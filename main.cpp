@@ -90,6 +90,14 @@ int main(int argc, char *argv[]){
 		return EXIT_FAILURE;
 	}
 
+	if(!GL_ARB_uniform_buffer_object){
+		cerr << "UBOs not supported!" << endl;
+		return EXIT_FAILURE;
+	}
+	if(!GL_ARB_texture_cube_map_array){
+		cerr << "Cubemap arrays not supported!" << endl;
+		return EXIT_FAILURE;
+	}
 	if(GLEW_VERSION_3_0 == false){
 		cerr << "OpenGL 3.0 not supported!" << endl;
 		return EXIT_FAILURE;
@@ -110,7 +118,9 @@ int main(int argc, char *argv[]){
 		prg.setUniform("modelMat");
 		prg.setUniform("skin");
 		prg.setUniform("view");
-		prg.setUniform("shadowMap");
+		prg.setUniform("shadowMaps");
+		prg.setUniform("shadowCubes");
+		prg.setUniform("pointProj");
 	}else{
 		programsGood = false;
 		cerr << "Bad main shader program. Execution cannot continue." << endl;
@@ -153,21 +163,31 @@ int main(int argc, char *argv[]){
 
 	glGenBuffers(1, &rendman.ubo);
 	glBindBufferBase(GL_UNIFORM_BUFFER,0,rendman.ubo);
-	glBufferDataARB(GL_UNIFORM_BUFFER,sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*MAX_LIGHTS+sizeof(GLint),NULL,GL_DYNAMIC_DRAW);
+	glBufferDataARB(GL_UNIFORM_BUFFER,sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*(1+MAX_LIGHTS*2),NULL,GL_DYNAMIC_DRAW);
 	glBindBufferARB(GL_UNIFORM_BUFFER,0);
-	cout << sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec3)*MAX_LIGHTS+sizeof(int) << endl;
+	cout << sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*(1+MAX_LIGHTS*2) << endl;
+	cout << sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*(MAX_LIGHTS*2) + sizeof(glm::vec4)<< endl;
 
 	glGenTextures(1,&rendman.depthTextures);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, rendman.depthTextures);
 	//glTexStorage3D(GL_TEXTURE_2D_ARRAY_EXT,1,GL_DEPTH_COMPONENT24,1024,1024,2);
-	glTexImage3D(GL_TEXTURE_2D_ARRAY,0,GL_DEPTH_COMPONENT,1024,1024,MAX_LIGHTS,0,GL_DEPTH_COMPONENT,GL_FLOAT, NULL);
+	glTexImage3D(GL_TEXTURE_2D_ARRAY,0,GL_DEPTH_COMPONENT,1024,1024,MAX_DIR_LIGHTS,0,GL_DEPTH_COMPONENT,GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 
+	glGenTextures(1,&rendman.depthCubemaps);
+	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, rendman.depthCubemaps);
+	glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY_ARB,0,GL_DEPTH_COMPONENT,1024,1024,MAX_POINT_LIGHTS*6,0,GL_DEPTH_COMPONENT,GL_FLOAT,NULL);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, 0);
 
 #ifdef WINDOWS
 	glDrawBuffer(GL_NONE);
@@ -206,17 +226,19 @@ int main(int argc, char *argv[]){
 
 	window.setActive(true);
 
-	rendman.currentCam->pos = glm::vec3(-9, 11, 5);
+//	rendman.currentCam->pos = glm::vec3(-9, 11, 5);
 	//TODO: Move this to main.lua and all that that implies
-	/*Light light1;
-	Light light2;
+	DLight light1;
+	DLight light2;
+	PLight light3;
 	light1.pos = glm::vec3(-18, 12, -11);
-	light1.rot = glm::vec3(33,117,0);
+	light1.rot = glm::vec3(-40,60,0);
 	light2.pos = glm::vec3(-9,11,5);
 	light2.rot = glm::vec3(-37,124,0);
-	rendman.lights.push_back(light1);
-	rendman.lights.push_back(light2);*/
-
+	light3.pos = glm::vec3(0,11,0);
+//	rendman.lights.push_back(&light1);
+//	rendman.lights.push_back(&light2);
+	rendman.lights.push_back(&light3);
 	int majv;
 	int minv;
 	glGetIntegerv(GL_MAJOR_VERSION, &majv);
@@ -374,19 +396,18 @@ int main(int argc, char *argv[]){
 
 		//Create projection matrix for main render
 		glm::mat4 projection = glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
+		glm::mat4 pointProjection = glm::perspective(90.0f, 1.0f, 0.1f, 1000.0f);
 
 		//Do all drawing here
 		glUseProgram(depthPrg.getID());
 		glBindFramebuffer(GL_FRAMEBUFFER,rendman.framebuffer);
-		for(int i=0;i<rendman.lights.size();i++){
-			glFramebufferTextureLayer(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,rendman.depthTextures,0,i);
-			glClear(GL_DEPTH_BUFFER_BIT);
-			rendman.renderDepth(&depthPrg, dt.asSeconds(),rendman.lights[i]);
-		}
+		for(int i=0;i<rendman.lights.size();i++)
+			rendman.renderDepth(&depthPrg, dt.asSeconds(),i);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glUseProgram(prg.getID());
 		glUniformMatrix4fv(prg.getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
+		glUniformMatrix4fv(prg.getUniform("pointProj"),1,GL_FALSE,glm::value_ptr(pointProjection));
 		rendman.render(&prg,dt.asSeconds());
 
 		//Do sfml drawing here

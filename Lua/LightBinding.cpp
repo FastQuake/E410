@@ -22,7 +22,13 @@ Light *l_toLight(lua_State *l, int pos){
 }
 
 int l_lightCreate(lua_State *l){
-	Light *i = new (lua_newuserdata(l,sizeof(Light))) Light;
+	int type = 0;
+	string typeString = l_toString(l,1);
+	Light *i;
+	if(typeString == "point")
+		i = new (lua_newuserdata(l,sizeof(PLight))) PLight;
+	if(typeString == "directional")
+		i = new (lua_newuserdata(l,sizeof(DLight))) DLight;
 	i->magic = LIGHT_MAGIC;
 	rendman.lights.push_back(i);
 	luaL_getmetatable(l, "MetaLight");
@@ -40,11 +46,13 @@ int l_lightSetPos(lua_State *l){
 }
 int l_lightSetRot(lua_State *l){
 	Light *i = l_toLight(l, 1);
-	float x = l_toNumber(l, 2);
-	float y = l_toNumber(l, 3);
-	float z = l_toNumber(l, 4);
+	if(i->type == DIRECTIONAL_LIGHT){
+		float x = l_toNumber(l, 2);
+		float y = l_toNumber(l, 3);
+		float z = l_toNumber(l, 4);
 
-	i->rot = glm::vec3(x,y,z);
+		static_cast<DLight*>(i)->rot = glm::vec3(x,y,z);
+	}
 	return 0;
 }
 int l_lightDelete(lua_State *l){

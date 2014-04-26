@@ -11,7 +11,7 @@ function init()
 	fpsCounter:setString("FPS: ".. 0)
 	--Create stuff for scene
 	cam = ent.createCam()
-	cam:setPos(0, 0, 0)
+	cam:setPos(5, 11, 0)
 	ent.setCam(cam)
 
 	fixit = ent.loadIQM("mr_fixit.iqm")

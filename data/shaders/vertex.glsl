@@ -1,6 +1,6 @@
 #version 130
 #extension GL_ARB_uniform_buffer_object : enable
-#define MAX_LIGHTS 24 //Don't touch this without changing MAX_LIGHTS in globals.hpp and fragment.glsl
+#define MAX_LIGHTS 24 //Don't touch this without changing MAX_*_LIGHTS in globals.hpp and fragment.glsl
 
 in vec3 coord3d;
 in vec3 normal;
@@ -23,8 +23,16 @@ uniform mat4 modelMat;
 uniform Light {
 	mat4 depthMVPs[MAX_LIGHTS];
 	vec4 lightPositions[MAX_LIGHTS];
-	int numLights;
+	vec4 lightTypes[MAX_LIGHTS];
+	vec4 numLights;
 };
+
+mat4 bias = mat4(
+		0.5, 0.0, 0.0, 0.0,
+		0.0, 0.5, 0.0, 0.0,
+		0.0, 0.0, 0.5, 0.0,
+		0.5, 0.5, 0.5, 1.0
+);
 
 void main(){
 	mat4 mvp = projection*view*modelMat;
@@ -41,8 +49,8 @@ void main(){
 	lightDir = vec4(view*lightPos).xyz;
 	normalCam = vec4(view*modelMat*vec4(normal,0)).xyz;
 	texcoord_f = texcoord;
-	for(int i=0;i<numLights;i++){
-		shadowCoords[i] = (depthMVPs[i]*modelMat) * mpos;
+	for(int i=0;i<numLights.x;i++){
+		shadowCoords[i] = (bias*depthMVPs[i]*modelMat) * mpos;
 	}
 	coord3d_f = modelMat*mpos;
 }

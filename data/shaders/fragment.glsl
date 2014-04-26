@@ -1,6 +1,7 @@
 #version 130
 #extension GL_ARB_uniform_buffer_object : enable
-#define MAX_LIGHTS 24 //Don't touch this without changing MAX_LIGHTS in globals.hpp and vertex.glsl
+#extension GL_ARB_texture_cube_map_array : enable
+#define MAX_LIGHTS 24 //Don't touch this without changing MAX_*_LIGHTS in globals.hpp and vertex.glsl
 
 in vec3 normalCam;
 in vec3 lightDir; 
@@ -9,14 +10,17 @@ in vec4 shadowCoords[MAX_LIGHTS];
 in vec4 coord3d_f;
 
 uniform sampler2D inTexture;
-uniform sampler2DArrayShadow shadowMap;
+uniform sampler2DArrayShadow shadowMaps;
+uniform samplerCubeArrayShadow shadowCubes;
+uniform mat4 pointProj;
 
 out vec4 outColour;
 
 uniform Light {
 	mat4 depthMVPs[MAX_LIGHTS];
 	vec4 lightPositions[MAX_LIGHTS];
-	int numLights;
+	vec4 lightTypes[MAX_LIGHTS];
+	vec4 numLights;
 };
 
 vec2 poissonDisk[16] = vec2[](
@@ -55,11 +59,18 @@ void main(){
 
 	float bias = 0.00001;
 	float lightCoefficient = 0.0f;
-	for(int i=0;i<numLights;i++){
+	for(int i=0;i<numLights.x;i++){
 		float shadowed = 0.0f;
-		shadowed = 1.0f-texture(shadowMap,vec4(shadowCoords[i].xy,i,shadowCoords[i].z-bias));
+		if(lightTypes[i].x == 1)
+			shadowed = 1.0f-texture(shadowMaps,vec4(shadowCoords[i].xy,i,shadowCoords[i].z-bias));
+		else{
+			float depth;
+			depth = 
+			shadowed = 1.0f-texture(shadowCubes,vec4((inverse(pointProj)*depthMVPs[i]*coord3d_f).xyz,i),shadowCoords[i].z-bias);
+		}
 		if(shadowed < 1.0f)
-			lightCoefficient += 520.0/(4.0*3.14159265359*pow(distance(lightPositions[i],coord3d_f),2.0));
+			lightCoefficient += 1000.0/(4.0*3.14159265359*pow(distance(lightPositions[i],coord3d_f),2.0));
+		//lightCoefficient -= shadowed;
 	}
 	if(lightCoefficient < 0.01f)
 		lightCoefficient = 0.01f;
