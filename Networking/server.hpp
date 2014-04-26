@@ -15,7 +15,15 @@ extern ENetPeer *serverPeer;
 extern ENetHost *client;
 extern uint32_t serverID;
 
+struct Peer{
+	uint64_t id;
+	ENetPeer *peer;	
+};
+extern std::vector<Peer> peers;
 extern std::vector<Packet> serverPacketList;
+
+int peerIndexByPeer(ENetPeer* checkPeer);
+int peerIndexByID(int id);
 
 void serverMain();
 void sendCreatePacket(ENetPeer *peer, GameObject *obj);

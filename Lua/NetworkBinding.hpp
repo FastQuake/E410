@@ -22,7 +22,7 @@ static const struct luaL_Reg Network_funcs[] = {
 };
 
 static const struct luaL_Reg ServerNetwork_funcs[] = {
-	{"sendPacker",l_serverSendPacket},
+	{"sendPacket",l_serverSendPacket},
 	{NULL, NULL}
 };
 

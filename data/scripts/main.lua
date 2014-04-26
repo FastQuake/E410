@@ -11,8 +11,14 @@ states = {
 state = states.title
 local player = {}
 function createObject(obj)
-	if obj:getTag() == "player" then
-		player = obj
+	if obj:getTag() == "player"..player.id then
+		player.model = obj
+	end
+end
+
+function onReceivePacket(data)
+	if data[1]:sub(1,6) == "player" then	
+		player.id = data[1]:sub(7)
 	end
 end
 
@@ -36,8 +42,10 @@ function update(dt)
 		cam:setRot(0,110,0)
 	end
 	if state == states.play then
-		x,y,z = player:getPos()
-		cam:setPos(x-10,y+10,z)
+		if player.model ~= nil then
+			x,y,z = player.model:getPos()
+			cam:setPos(x-10,y+10,z)
+		end
 		if input.isKeyDown(keys.Up) then
 			network.sendPacket("forward")
 		end

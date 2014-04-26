@@ -1,15 +1,19 @@
 require "networkutils"
-peers = {}
 
-function onPeerConnect(address, port)
-	print("Got connection from: "..address..":"..port.."\n")
-	p = Peer.create(address,port)
-	p.model = GO.loadIQM("mr_fixit.iqm","player")
+peers = {}
+peerID = 0
+function onPeerConnect(id)
+	print("Got connection from peer "..id)
+	network.sendPacket(id, "player".. peerID)
+	local p = {}
+	p.id = id
+	p.model = GO.loadIQM("mr_fixit.iqm","player".. peerID)
+	peerID = peerID + 1
 	table.insert(peers,p)
 end
 
-function onReceivePacket(address, port, data)
-	p = Peer.getPeer(peers, Peer.create(address,port))
+function onReceivePacket(id, data)
+	local p = Peer.getPeer(peers, id)
 	if data[1] == "forward" then
 		p.model:move(10*delta)
 	elseif data[1] == "right" then

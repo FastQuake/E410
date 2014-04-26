@@ -118,13 +118,16 @@ int l_reset(lua_State *l){
 }
 int l_serverSendPacket(lua_State *l){
 	Packet p;
-	p.addr = l_toNumber(l, 1);
-	p.port = l_toNumber(l, 2);
-	p.data = l_toString(l, 3);
+	int id = l_toNumber(l, 1);
+	p.data = l_toString(l, 2);
 	if(client == NULL){
 		lua_pushstring(l,"Not connected to a server");
 		lua_error(l);
 	}
+
+	int index = peerIndexByID(id);
+	p.addr = peers[index].peer->address.host;
+	p.port = peers[index].peer->address.port;
 
 	serverPacketList.push_back(p);
 	return 0;

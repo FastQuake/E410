@@ -2,6 +2,7 @@
 #define LUABINDING_HPP
 
 #include <iostream>
+#include <vector>
 #include <lua.hpp>
 
 void bindFunctions(lua_State *l);
@@ -13,6 +14,7 @@ std::string typeToString(lua_State *l, int pos);
 float l_toNumber(lua_State *l, int pos);
 bool l_toBool(lua_State *l, int pos);
 std::string l_toString(lua_State *l, int pos);
+void l_pushStringVector(lua_State *l,std::vector<std::string> vec);
 
 //Bunch 'o' functions
 int l_print(lua_State *l);

@@ -8,14 +8,15 @@ sf::Thread *serverThread;
 int serverPort = 1255;
 bool serverRunning = false;
 RenderManager serverRendMan;
-vector<ENetPeer*> peers;
+vector<Peer> peers;
 vector<Packet> serverPacketList;
 uint32_t serverID;
+uint64_t peerID = 0;
 
-int peerIndex(ENetPeer *checkPeer){
+int peerIndexByPeer(ENetPeer* checkPeer){
 	for(int i=0;i<peers.size();i++){
-		if(peers[i]->address.host == checkPeer->address.host &&
-				peers[i]->address.port == checkPeer->address.port){
+		if(peers[i].peer->address.host == checkPeer->address.host &&
+				peers[i].peer->address.port == checkPeer->address.port){
 			return i;
 		}
 	}
@@ -23,8 +24,17 @@ int peerIndex(ENetPeer *checkPeer){
 	return -1;
 }
 
-void removePeerByIndex(ENetPeer *checkPeer){
-	int index = peerIndex(checkPeer);
+int peerIndexByID(int id){
+	for(int i=0;i<peers.size();i++){
+		if(peers[i].id == id){
+			return i;
+		}
+	}
+	return -1;
+}
+
+void removePeerByPeer(ENetPeer* checkPeer){
+	int index = peerIndexByPeer(checkPeer);
 	if(index != -1){
 		peers.erase(peers.begin()+index);
 	}
@@ -48,19 +58,11 @@ vector<string> breakString(string input){
 	return out;
 }
 
-void l_pushStringVector(lua_State *l,vector<string> vec){
-	lua_newtable(l);
-	for(int i=0;i<vec.size();i++){
-		lua_pushstring(l,vec[i].c_str());
-		lua_rawseti(l,-2,i+1);
-	}
-}
-
 void sendPacketToAllClients(ENetHost *host,string data){
 	for(int i=0;i<peers.size();i++){
 		ENetPacket *packet = enet_packet_create(data.c_str(),
 				data.length(), ENET_PACKET_FLAG_RELIABLE);
-		enet_peer_send(peers[i], 0, packet);
+		enet_peer_send(peers[i].peer, 0, packet);
 	}
 	enet_host_flush(host);
 }
@@ -124,17 +126,18 @@ void serverMain(){
 		while(enet_host_service(server, &event, 10) > 0){
 			string packetData = "";
 			vector<string> splitPacket;
+			int index = 0;
 			switch(event.type){
 				case ENET_EVENT_TYPE_CONNECT:
 					enet_peer_timeout(event.peer, ENET_PEER_TIMEOUT_LIMIT,
 											ENET_PEER_TIMEOUT_MINIMUM,
 											ENET_PEER_TIMEOUT_MAXIMUM);
-					peers.push_back(event.peer);
+					peers.push_back((Peer){peerID++,event.peer});
 					sendSpawnPackets(event.peer);
+					index = peerIndexByPeer(event.peer);
 					lua_getglobal(l, "onPeerConnect");
-					lua_pushnumber(l, event.peer->address.host);
-					lua_pushnumber(l, event.peer->address.port);
-					if(lua_pcall(l, 2, 0, 0)){
+					lua_pushnumber(l, peers[index].id);
+					if(lua_pcall(l, 1, 0, 0)){
 						string error = "[SERVER] " + string(lua_tostring(l,-1));
 						cout << error << endl;
 						global_con->out.println("[SERVER] "+error);
@@ -149,7 +152,7 @@ void serverMain(){
 						cout << error << endl;
 						global_con->out.println("[SERVER] "+error);
 					}
-					removePeerByIndex(event.peer);
+					removePeerByPeer(event.peer);
 					break;
 				case ENET_EVENT_TYPE_RECEIVE:
 					//TODO input packet handling here
@@ -157,11 +160,11 @@ void serverMain(){
 					packetData = (char*)(event.packet->data);
 					packetData = packetData.substr(0, event.packet->dataLength);
 					splitPacket = breakString(packetData);
+					index = peerIndexByPeer(event.peer);
 					lua_getglobal(l, "onReceivePacket");
-					lua_pushnumber(l,event.peer->address.host);
-					lua_pushnumber(l,event.peer->address.port);
+					lua_pushnumber(l,peers[index].id);
 					l_pushStringVector(l, splitPacket);	
-					if(lua_pcall(l,3,0,0)){
+					if(lua_pcall(l,2,0,0)){
 						string error = "[SERVER] " + string(lua_tostring(l,-1));
 						cout << error << endl;
 						global_con->out.println("[SERVER] "+error);
@@ -181,11 +184,11 @@ void serverMain(){
 				ENetPeer peer;
 				peer.address.host = serverPacketList[i].addr;
 				peer.address.port = serverPacketList[i].port;
-				int index = peerIndex(&peer);
+				int index = peerIndexByPeer(&peer);
 				if(index != -1){
 					ENetPacket *packet = enet_packet_create(serverPacketList[i].data.c_str(),
 							serverPacketList[i].data.length(), ENET_PACKET_FLAG_RELIABLE);
-					enet_peer_send(peers[index], 0, packet);
+					enet_peer_send(peers[index].peer, 0, packet);
 					enet_host_flush(server);
 				}
 			}

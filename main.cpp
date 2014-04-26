@@ -254,6 +254,14 @@ int main(int argc, char *argv[]){
 						obj->scale.x = stringToFloat(pdata[2]);
 						obj->scale.y = stringToFloat(pdata[3]);
 						obj->scale.z = stringToFloat(pdata[4]);
+					}else {
+						lua_getglobal(l,"onReceivePacket");
+						l_pushStringVector(l,pdata);
+						if(lua_pcall(l,1,0,0)){
+							string error = lua_tostring(l,-1);
+							cout << error << endl;
+							global_con->out.print(error);
+						}
 					}
 
 					enet_packet_destroy(enetEvent.packet);

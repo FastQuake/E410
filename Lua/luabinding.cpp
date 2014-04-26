@@ -143,6 +143,13 @@ bool l_toBool(lua_State *l, int pos){
 string l_toString(lua_State *l, int pos){
 	return luaL_tolstring(l, pos,NULL);
 }
+void l_pushStringVector(lua_State *l,vector<string> vec){
+	lua_newtable(l);
+	for(int i=0;i<vec.size();i++){
+		lua_pushstring(l,vec[i].c_str());
+		lua_rawseti(l,-2,i+1);
+	}
+}
 
 int l_print(lua_State *l){
 	string value = l_toString(l, 1);
