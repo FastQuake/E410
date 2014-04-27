@@ -207,7 +207,6 @@ int main(int argc, char *argv[]){
 	}
 
 	//Set opengl flags
-	glEnable(GL_TEXTURE_CUBE_MAP);
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
