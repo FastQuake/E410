@@ -66,7 +66,6 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt, int lightIndex){
 			}
 		}
 	}
-
 	glViewport(0,0,width,height);
 }
 
