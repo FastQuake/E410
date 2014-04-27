@@ -1,7 +1,7 @@
 #include "Light.hpp"
 #include "../globals.hpp"
 
-glm::mat4 PLight::pointProjection = glm::perspective(90.0f, 1.0f, 0.6f, 100.0f);
+glm::mat4 PLight::pointProjection = glm::perspective(90.0f, 1.0f, 0.6f, 1000.0f);
 
 glm::mat4 DLight::mvp(){
 	//TODO: Compute projection based on the camera frustum and light rotation, instead of using lookAt
@@ -29,10 +29,10 @@ glm::mat4 PLight::mvp(int face){
 	glm::mat4 out;
 	switch(face){
 	case 0:
-		out = glm::lookAt(pos,glm::vec3(pos.x+0.1,pos.y,pos.z),glm::vec3(0.0f,1.0f,0.0f));
+		out = glm::lookAt(pos,glm::vec3(pos.x+0.1,pos.y,pos.z),glm::vec3(0.0f,-1.0f,0.0f));
 		break;
 	case 1:
-		out = glm::lookAt(pos,glm::vec3(pos.x-0.1,pos.y,pos.z),glm::vec3(0.0f,1.0f,0.0f));
+		out = glm::lookAt(pos,glm::vec3(pos.x-0.1,pos.y,pos.z),glm::vec3(0.0f,-1.0f,0.0f));
 		break;
 	case 2:
 		out = glm::lookAt(pos,glm::vec3(pos.x,pos.y+0.1,pos.z),glm::vec3(0.0f,0.0f,1.0f));
@@ -41,10 +41,10 @@ glm::mat4 PLight::mvp(int face){
 		out = glm::lookAt(pos,glm::vec3(pos.x,pos.y-0.1,pos.z),glm::vec3(0.0f,0.0f,-1.0f));
 		break;
 	case 4:
-		out = glm::lookAt(pos,glm::vec3(pos.x,pos.y,pos.z+0.1),glm::vec3(0.0f,1.0f,0.0f));
+		out = glm::lookAt(pos,glm::vec3(pos.x,pos.y,pos.z+0.1),glm::vec3(0.0f,-1.0f,0.0f));
 		break;
 	case 5:
-		out = glm::lookAt(pos,glm::vec3(pos.x,pos.y,pos.z-0.1),glm::vec3(0.0f,1.0f,0.0f));
+		out = glm::lookAt(pos,glm::vec3(pos.x,pos.y,pos.z-0.1),glm::vec3(0.0f,-1.0f,0.0f));
 		break;
 	default:
 		break;
