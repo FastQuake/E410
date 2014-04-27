@@ -33,6 +33,7 @@ class PLight : public Light {
 public:
 	glm::mat4 mvp(int face);
 	glm::mat4 mvp();
+	static glm::mat4 pointProjection;
 	PLight();
 };
 

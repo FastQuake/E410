@@ -1,6 +1,8 @@
 #include "Light.hpp"
 #include "../globals.hpp"
 
+glm::mat4 PLight::pointProjection = glm::perspective(90.0f, 1.0f, 0.6f, 100.0f);
+
 glm::mat4 DLight::mvp(){
 	//TODO: Compute projection based on the camera frustum and light rotation, instead of using lookAt
 	glm::vec3 p;
@@ -24,45 +26,41 @@ glm::mat4 DLight::mvp(){
 }
 
 glm::mat4 PLight::mvp(int face){
-	glm::mat4 out = glm::lookAt(pos,glm::vec3(1.0f,0.0f,0.0f),glm::vec3(0.0f,1.0f,0.0f));
-//	out = glm::mat4(1.0f);
+	glm::mat4 out;
 	switch(face){
-	case 4: //Right
-		out = glm::lookAt(pos,glm::vec3(pos.x,pos.y,pos.z+0.1),glm::vec3(0.0f,1.0f,0.0f));
-	//	out = glm::rotate(out,90.0f,glm::vec3(0,1,0));
-		break;
-	case 5: //Left
-		out = glm::lookAt(pos,glm::vec3(pos.x,pos.y,pos.z-0.1),glm::vec3(0.0f,1.0f,0.0f));
-	//	out = glm::rotate(out,-90.0f,glm::vec3(0,1,0));
-		break;
-	case 2: //Up
-		out = glm::lookAt(pos,glm::vec3(pos.x,pos.y+0.1,pos.z),glm::vec3(0.0f,0.0f,1.0f));
-	//	out = glm::rotate(out,-90.0f,glm::vec3(0,1,0));
-	//	out = glm::rotate(out,-90.0f,glm::vec3(1,0,0));
-		break;
-	case 3: //Down
-		out = glm::lookAt(pos,glm::vec3(pos.x,pos.y-0.1,pos.z),glm::vec3(0.0f,0.0f,-1.0f));
-	//	out = glm::rotate(out,-90.0f,glm::vec3(0,1,0));
-	//	out = glm::rotate(out,90.0f,glm::vec3(1,0,0));
-		break;
-	case 1: //Forward
-		out = glm::lookAt(pos,glm::vec3(pos.x-0.1,pos.y,pos.z),glm::vec3(0.0f,1.0f,0.0f));
-	//	out = glm::rotate(out,-90.0f,glm::vec3(0,1,0));
-		break;
-	case 0: //Backward
+	case 0:
 		out = glm::lookAt(pos,glm::vec3(pos.x+0.1,pos.y,pos.z),glm::vec3(0.0f,1.0f,0.0f));
-	//	out = glm::rotate(out,180.0f,glm::vec3(0,1,0));
+		break;
+	case 1:
+		out = glm::lookAt(pos,glm::vec3(pos.x-0.1,pos.y,pos.z),glm::vec3(0.0f,1.0f,0.0f));
+		break;
+	case 2:
+		out = glm::lookAt(pos,glm::vec3(pos.x,pos.y+0.1,pos.z),glm::vec3(0.0f,0.0f,1.0f));
+		break;
+	case 3:
+		out = glm::lookAt(pos,glm::vec3(pos.x,pos.y-0.1,pos.z),glm::vec3(0.0f,0.0f,-1.0f));
+		break;
+	case 4:
+		out = glm::lookAt(pos,glm::vec3(pos.x,pos.y,pos.z+0.1),glm::vec3(0.0f,1.0f,0.0f));
+		break;
+	case 5:
+		out = glm::lookAt(pos,glm::vec3(pos.x,pos.y,pos.z-0.1),glm::vec3(0.0f,1.0f,0.0f));
 		break;
 	default:
 		break;
 	}
-	glm::mat4 projection = glm::perspective(90.0f, 1.0f, 0.6f, 50.0f);
 	//glm::mat4 projection = glm::ortho<float>(-10.0f,10.0f,-10.0f,10.0f, -10.0 ,10.0f);
-	return projection*out;
+	return pointProjection*out;
 }
 
 glm::mat4 PLight::mvp(){
-	return glm::perspective(90.0f, 1.0f, 0.6f, 50.0f)*glm::translate(glm::mat4(1.0f),-pos);
+	glm::mat4 biasInverse = glm::mat4{
+			2.0, 0.0, 0.0, 0.0,
+			0.0, 2.0, 0.0, 0.0,
+			0.0, 0.0, 2.0, 0.0,
+			-1.0, -1.0, -1.0, 1.0
+	};
+	return biasInverse*glm::translate(glm::mat4(1.0f),-pos);
 }
 
 DLight::DLight(){

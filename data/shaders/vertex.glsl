@@ -8,8 +8,8 @@ in vec2 texcoord;
 in vec4 vweight;
 in vec4 vbones;
 
-out vec3 lightDir;
-out vec3 normalCam;
+//out vec3 lightDir;
+//out vec3 normalCam;
 out vec2 texcoord_f;
 out vec4 shadowCoords[MAX_LIGHTS];
 out vec4 coord3d_f;
@@ -46,14 +46,11 @@ void main(){
 	vec4 mpos = vec4(vec4(coord3d,1.0)*m,1.0);
 	gl_Position = mvp * mpos;
 
-	lightDir = vec4(view*lightPos).xyz;
-	normalCam = vec4(view*modelMat*vec4(normal,0)).xyz;
+	//lightDir = vec4(view*lightPos).xyz;
+	//normalCam = vec4(view*modelMat*vec4(normal,0)).xyz;
 	texcoord_f = texcoord;
 	for(int i=0;i<numLights.x;i++){
 		shadowCoords[i] = (bias*depthMVPs[i]*modelMat) * mpos;
-		shadowCoords[i].x /= shadowCoords[i].w;
-		shadowCoords[i].y /= shadowCoords[i].w;
-		shadowCoords[i].z /= shadowCoords[i].w;
 	}
 	coord3d_f = modelMat*mpos;
 }
