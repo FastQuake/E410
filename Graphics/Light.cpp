@@ -1,7 +1,7 @@
 #include "Light.hpp"
 #include "../globals.hpp"
 
-glm::mat4 PLight::pointProjection = glm::perspective(90.0f, 1.0f, 0.6f, 1000.0f);
+glm::mat4 PLight::pointProjection = glm::perspective(90.0f, 1.0f, 0.6f, 250.0f);
 
 glm::mat4 DLight::mvp(){
 	//TODO: Compute projection based on the camera frustum and light rotation, instead of using lookAt

@@ -3,8 +3,8 @@
 #extension GL_ARB_texture_cube_map_array : enable
 #define MAX_LIGHTS 24 //Don't touch this without changing MAX_*_LIGHTS in globals.hpp and vertex.glsl
 
-//in vec3 normalCam;
-//in vec3 lightDir; 
+in vec3 normalCam;
+in mat4 view_f;
 in vec2 texcoord_f;
 in vec4 shadowCoords[MAX_LIGHTS];
 in vec4 coord3d_f;
@@ -15,6 +15,17 @@ uniform samplerCubeArrayShadow shadowCubes;
 uniform mat4 pointProj;
 
 out vec4 outColour;
+
+float offset = 1.0/1024.0+0.05;
+
+vec3 offsets[6] = vec3[](
+	vec3(-offset,0.0,0.0),
+	vec3(0.0,-offset,0.0),
+	vec3(0.0,0.0,-offset),
+	vec3(offset,0.0,0.0),
+	vec3(0.0,offset,0.0),
+	vec3(0.0,0.0,offset)
+);
 
 uniform Light {
 	mat4 depthMVPs[MAX_LIGHTS];
@@ -50,29 +61,26 @@ float random(vec3 seed, int i){
 
 //TODO: Shadow AA that works with additive lighting
 void main(){
-	//It doesn't look like we need this anymore.
-	/*vec3 n = normalize(normalCam);
-	vec3 l = normalize(lightDir);
-	float cosTheta = clamp(dot(n,l),0, 0.05);
-	float bias = 0.005*tan(acos(cosTheta));
-	bias = clamp(bias,0, 0.005);*/
-
-	float bias = 0.00001;
 	float lightCoefficient = 0.0f;
+	vec3 n = normalize(normalCam);
 	for(int i=0;i<numLights.x;i++){
+		vec3 l = normalize((view_f*vec4(lightPositions[i].xyz,0.0)).xyz);
+		float cosTheta = clamp(dot(n,l),0.0, 1.0);
+		float bias = clamp(tan(acos(cosTheta)),0.0,0.0025);
 		float shadowed = 0.0f;
 		if(lightTypes[i].x == 1)
 			shadowed = 1.0f-texture(shadowMaps,vec4(shadowCoords[i].xy,i,shadowCoords[i].z-bias));
 		else{
-		//	vec4 position_ls = depthMVPs[i]*coord3d_f;
+			shadowed = 1.0f;
 			vec4 abs_position = abs(shadowCoords[i]);
 			float fs_z = -max(abs_position.x, max(abs_position.y, abs_position.z));
 			vec4 clip = pointProj * vec4(0.0, 0.0, fs_z, 1.0);
 			float depth = (clip.z / (clip.w)) * 0.5 + 0.5;
-			shadowed = 1.0f-texture(shadowCubes,vec4(shadowCoords[i].xyz,i),depth-bias);
+			for(int j=0;j<6;j++)
+				shadowed -= (1.0/6.0)*texture(shadowCubes,vec4(shadowCoords[i].xyz-offsets[j],i),depth-bias);
 		}
 		if(shadowed < 1.0f)
-			lightCoefficient += 1000.0/(4.0*3.14159265359*pow(distance(lightPositions[i],coord3d_f),2.0));
+			lightCoefficient += (abs(shadowed-1.0))*(1000.0/(4.0*3.14159265359*pow(distance(lightPositions[i],coord3d_f),2.0)));
 	}
 	if(lightCoefficient < 0.01f)
 		lightCoefficient = 0.01f;

@@ -112,6 +112,7 @@ int main(int argc, char *argv[]){
 		prg.setAttribute("texcoord");
 		prg.setAttribute("vweight");
 		prg.setAttribute("vbones");
+		prg.setAttribute("normal");
 		prg.setUniform("projection");
 		prg.setUniform("bonemats");
 		prg.setUniform("inTexture");
