@@ -120,6 +120,7 @@ int main(int argc, char *argv[]){
 		prg.setUniform("view");
 		prg.setUniform("shadowMaps");
 		prg.setUniform("shadowCubes");
+		prg.setUniform("pointProjInverse");
 		prg.setUniform("pointProj");
 	}else{
 		programsGood = false;
@@ -185,6 +186,7 @@ int main(int argc, char *argv[]){
 	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, 0);
@@ -205,6 +207,7 @@ int main(int argc, char *argv[]){
 	}
 
 	//Set opengl flags
+	glEnable(GL_TEXTURE_CUBE_MAP);
 	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
@@ -235,7 +238,7 @@ int main(int argc, char *argv[]){
 	light1.rot = glm::vec3(-40,60,0);
 	light2.pos = glm::vec3(-9,11,5);
 	light2.rot = glm::vec3(-37,124,0);
-	light3.pos = glm::vec3(0,11,0);
+	light3.pos = glm::vec3(0,11,2);
 //	rendman.lights.push_back(&light1);
 //	rendman.lights.push_back(&light2);
 	rendman.lights.push_back(&light3);
@@ -396,7 +399,9 @@ int main(int argc, char *argv[]){
 
 		//Create projection matrix for main render
 		glm::mat4 projection = glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
-		glm::mat4 pointProjection = glm::perspective(90.0f, 1.0f, 0.1f, 1000.0f);
+		glm::mat4 pointProjection = glm::perspective(90.0f, 1.0f, 0.6f, 50.0f);
+		glm::mat4 pointProjectionInverse = glm::inverse(pointProjection);
+		//glm::mat4 pointProjectionInverse = glm::inverse(glm::ortho<float>(-10.0f,10.0f,-10.0f,10.0f, 1.0f ,50.0f));
 
 		//Do all drawing here
 		glUseProgram(depthPrg.getID());
@@ -407,6 +412,7 @@ int main(int argc, char *argv[]){
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glUseProgram(prg.getID());
 		glUniformMatrix4fv(prg.getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
+		glUniformMatrix4fv(prg.getUniform("pointProjInverse"),1,GL_FALSE,glm::value_ptr(pointProjectionInverse));
 		glUniformMatrix4fv(prg.getUniform("pointProj"),1,GL_FALSE,glm::value_ptr(pointProjection));
 		rendman.render(&prg,dt.asSeconds());
 

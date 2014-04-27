@@ -51,6 +51,9 @@ void main(){
 	texcoord_f = texcoord;
 	for(int i=0;i<numLights.x;i++){
 		shadowCoords[i] = (bias*depthMVPs[i]*modelMat) * mpos;
+		shadowCoords[i].x /= shadowCoords[i].w;
+		shadowCoords[i].y /= shadowCoords[i].w;
+		shadowCoords[i].z /= shadowCoords[i].w;
 	}
 	coord3d_f = modelMat*mpos;
 }

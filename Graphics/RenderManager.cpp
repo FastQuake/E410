@@ -2,6 +2,9 @@
 #include "../globals.hpp"
 #include <sstream>
 
+bool faku = false;
+bool pointu = false;
+
 GameObject *RenderManager::getId(uint32_t id){
 	for(int i=0;i<drawList.size();i++){
 		if(drawList[i]->id == id){
@@ -39,6 +42,22 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt, int lightIndex){
 			glUniformMatrix4fv(prg->getUniform("modelMat"),1,GL_FALSE,glm::value_ptr(modelMat));
 			drawList[i]->model->draw(prg,drawList[i]->outframe, false);
 		}
+		if(!faku){
+			sf::Image depthimg;
+			GLfloat *pixels = new GLfloat[1024*1024];
+			glReadPixels(0,0,1024,1024,GL_DEPTH_COMPONENT,GL_FLOAT,pixels);
+			depthimg.create(1024,1024,sf::Color::Black);
+			for(unsigned int i=0,x=0,y=0;i<1024*1024;i++){
+				x = i%1024;
+				if(x == 0 && i>0)
+				y++;
+				depthimg.setPixel(x,y,sf::Color(ceil((double)(pixels[i]*255.0f)),
+				ceil((double)(pixels[i]*255.0f)),
+				ceil((double)(pixels[i]*255.0f)),255));
+			}
+			depthimg.saveToFile("asdf.png");
+		}
+		faku = true;
 	}else if(light->type == POINT_LIGHT){
 		PLight myLight = *static_cast<PLight*>(light);
 		for(int i=0;i<6;i++){
@@ -46,25 +65,43 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt, int lightIndex){
 			glm::mat4 depthMVP = myLight.mvp(i);
 			glUniformMatrix4fv(prg->getUniform("pv"), 1, GL_FALSE, glm::value_ptr(depthMVP));
 			glClear(GL_DEPTH_BUFFER_BIT);
-			for(int i=0;i<this->drawList.size();i++){
-				if(drawList[i]->animate){
-					drawList[i]->aTime += dt;
-					drawList[i]->model->animate(drawList[i]->currentAnimation,
-							drawList[i]->aTime,&drawList[i]->outframe);
+			for(int j=0;j<this->drawList.size();j++){
+				if(drawList[j]->animate){
+					drawList[j]->aTime += dt;
+					drawList[j]->model->animate(drawList[j]->currentAnimation,
+							drawList[j]->aTime,&drawList[j]->outframe);
 				}
 
-				glm::mat4 scale = glm::scale(glm::mat4(1),drawList[i]->scale);
+				glm::mat4 scale = glm::scale(glm::mat4(1),drawList[j]->scale);
 				glm::mat4 rot = \
-					glm::rotate(glm::mat4(1),drawList[i]->rotation.x,glm::vec3(1.0,0,0)) *
-					glm::rotate(glm::mat4(1),drawList[i]->rotation.y,glm::vec3(0,1.0,0)) *
-					glm::rotate(glm::mat4(1),drawList[i]->rotation.z,glm::vec3(0,0,1.0));
-				glm::mat4 trans = glm::translate(glm::mat4(1), drawList[i]->position);
+					glm::rotate(glm::mat4(1),drawList[j]->rotation.x,glm::vec3(1.0,0,0)) *
+					glm::rotate(glm::mat4(1),drawList[j]->rotation.y,glm::vec3(0,1.0,0)) *
+					glm::rotate(glm::mat4(1),drawList[j]->rotation.z,glm::vec3(0,0,1.0));
+				glm::mat4 trans = glm::translate(glm::mat4(1), drawList[j]->position);
 				glm::mat4 modelMat = rot * scale * trans;
 				modelMat *= glm::rotate(glm::mat4(1),-90.0f,glm::vec3(1.0,0,0)); //Rotate everything -90deg on x axis
 				glUniformMatrix4fv(prg->getUniform("modelMat"),1,GL_FALSE,glm::value_ptr(modelMat));
-				drawList[i]->model->draw(prg,drawList[i]->outframe, false);
+				drawList[j]->model->draw(prg,drawList[j]->outframe, false);
+			}
+			if(!pointu){
+				sf::Image depthimg;
+				GLfloat *pixels = new GLfloat[1024*1024];
+				glReadPixels(0,0,1024,1024,GL_DEPTH_COMPONENT,GL_FLOAT,pixels);
+				depthimg.create(1024,1024,sf::Color::Black);
+				for(unsigned int j=0,x=0,y=0;j<1024*1024;j++){
+					x = j%1024;
+					if(x == 0 && j>0)
+					y++;
+					depthimg.setPixel(x,y,sf::Color(ceil((double)(pixels[j]*255.0f)),
+					ceil((double)(pixels[j]*255.0f)),
+					ceil((double)(pixels[j]*255.0f)),255));
+				}
+				std::stringstream fname;
+				fname << "point" << i << ".png";
+				depthimg.saveToFile(fname.str());
 			}
 		}
+		pointu = true;
 	}
 
 	glViewport(0,0,width,height);

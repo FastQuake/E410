@@ -11,7 +11,7 @@ function init()
 	fpsCounter:setString("FPS: ".. 0)
 	--Create stuff for scene
 	cam = ent.createCam()
-	cam:setPos(5, 11, 0)
+	cam:setPos(-2, 6, 2)
 	ent.setCam(cam)
 
 	fixit = ent.loadIQM("mr_fixit.iqm")
@@ -19,7 +19,7 @@ function init()
 	shit = ent.loadIQM("monkey.iqm")
 	cube = ent.loadIQM("cube.iqm")
 
-	floor:setScale(10, 0.1, 10)
+	floor:setScale(20, 0.1, 20)
 	floor:setPos(0, 0, 0)
 	shit:setPos(6, 1.1, 0)
 	cube:setScale(1.5,1.5,1.5)
