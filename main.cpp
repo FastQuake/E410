@@ -46,6 +46,16 @@ float stringToFloat(string input){
 	ss >> out;
 	return out;	
 }
+string intToString(int input){
+	stringstream out;
+	out << input;
+	return out.str();
+}
+string floatToString(float input){
+	stringstream out;
+	out << input;
+	return out.str();
+}
 
 int main(int argc, char *argv[]){
 	//Set Default settings
@@ -139,7 +149,7 @@ int main(int argc, char *argv[]){
 	sf::Time dt;
 
 	gwindow->setActive(true);
-
+	char *pstr = new char[65536];
 	while(gwindow->isOpen()){
 		while(gwindow->pollEvent(event)){
 			if(event.type == sf::Event::Closed){
@@ -187,7 +197,9 @@ int main(int argc, char *argv[]){
 			while(enet_host_service(client, &enetEvent, 0) >0){
 				if(enetEvent.type == ENET_EVENT_TYPE_RECEIVE){
 					//handle packets here
-					string input = (char*)enetEvent.packet->data;
+					memcpy(pstr,enetEvent.packet->data,enetEvent.packet->dataLength);
+					pstr[enetEvent.packet->dataLength] = 0;
+					string input = pstr;
 					vector<string> pdata = breakString(input);
 					if(pdata[0] == "create"){
 						//Push the object to lua so
@@ -271,8 +283,9 @@ int main(int argc, char *argv[]){
 			}
 			//send buffered packets
 			for(int i=0;i<packetList.size();i++){
+				const char *cstr = packetList[i].c_str();
 				ENetPacket *packet = enet_packet_create(
-						packetList[i].c_str(),
+						cstr,
 						packetList[i].length(),
 						ENET_PACKET_FLAG_RELIABLE);
 				enet_peer_send(serverPeer, 0, packet);
@@ -317,6 +330,7 @@ int main(int argc, char *argv[]){
 	}
 
 	delete gwindow;
+	delete[] pstr;
 	enet_host_destroy(client);
 	serverRunning = false;
 	serverThread->wait();

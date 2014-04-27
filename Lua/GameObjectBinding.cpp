@@ -83,6 +83,7 @@ int l_setRot(lua_State *l){
 	obj->rotation.y = y;
 	obj->rotation.z = z;
 	obj->rotated = true;
+	obj->updateLookat();
 	return 0;
 }
 

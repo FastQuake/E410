@@ -13,13 +13,24 @@ function onPeerConnect(id)
 end
 
 function onReceivePacket(id, data)
+	out = ""
+	for k,v in pairs(data) do
+		out = out.." "..v
+	end
+	--print(out)
 	local p = Peer.getPeer(peers, id)
 	if data[1] == "forward" then
+		p.model:setRot(0,data[2],0)
 		p.model:move(10*delta)
+	elseif data[1] == "backward" then
+		p.model:setRot(0,data[2],0)
+		p.model:move(-10*delta)
 	elseif data[1] == "right" then
-		p.model:turn(50*delta,0)
+		p.model:setRot(0,data[2],0)
+		p.model:strafe(10*delta)
 	elseif data[1] == "left" then
-		p.model:turn(-50*delta,0)
+		p.model:setRot(0,data[2],0)
+		p.model:strafe(-10*delta)
 	end
 end
 

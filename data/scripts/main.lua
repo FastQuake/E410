@@ -1,5 +1,5 @@
 require "title"
-sensitvity = 1
+sensitvity = 0.75
 speed = 10
 
 states = {
@@ -9,10 +9,14 @@ states = {
 }
 
 state = states.title
-local player = {}
+player = {}
+player.model = nil
+player.id = -1
+player.height = 7
 function createObject(obj)
 	if obj:getTag() == "player"..player.id then
 		player.model = obj
+		player.model:setVisible(false)
 	end
 end
 
@@ -26,6 +30,7 @@ function init()
 	title = Title.create()
 	cam = camera.createCam()
 	cam:setPos(0,0,0)
+	cam:setRot(0,0,0)
 	camera.setCam(cam)
 end
 
@@ -36,17 +41,38 @@ function update(dt)
 		title.state = tstates.default
 		state = states.play
 		--Start local server and do whatever here
-		network.startServer()
-		network.connectTo("localhost")
 		cam:setPos(0,2,0)
-		cam:setRot(0,110,0)
+		--cam:setRot(0,90,0)
+		cam:setRot(0,0,0)
+		input.setGuiMousePos(width/2, height/2)
 	end
 	if state == states.play then
 		if player.model ~= nil then
 			x,y,z = player.model:getPos()
-			cam:setPos(x-10,y+10,z)
+			cam:setPos(x,y+player.height,z)
 		end
-		if input.isKeyDown(keys.Up) then
+		local mousex, mousey = input.getMousePos()
+		mousex = mousex - (width/2)
+		mousey = mousey - (height/2)
+		cam:turn(mousex*sensitvity,
+		-mousey*sensitvity)
+		input.setMousePos(width/2, height/2)
+
+		local camx,camy,camz = cam:getRot()
+		dir = camx.." "..camy
+		if input.isKeyDown(keys.W) then
+			network.sendPacket("forward "..dir)
+		end
+		if input.isKeyDown(keys.S) then
+			network.sendPacket("backward "..dir)
+		end
+		if input.isKeyDown(keys.A) then
+			network.sendPacket("left "..dir)
+		end
+		if input.isKeyDown(keys.D) then
+			network.sendPacket("right "..dir)
+		end
+		--[[if input.isKeyDown(keys.Up) then
 			network.sendPacket("forward")
 		end
 		if input.isKeyDown(keys.Right) then
@@ -54,6 +80,7 @@ function update(dt)
 		end
 		if input.isKeyDown(keys.Left) then
 			network.sendPacket("left")
-		end
+		end]]--
+
 	end
 end

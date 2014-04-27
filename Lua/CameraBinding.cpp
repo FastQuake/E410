@@ -83,3 +83,22 @@ int l_camDelete(lua_State *l){
 		rendman.currentCam = NULL;
 	return 0;
 }
+
+int l_camGetPos(lua_State *l){
+	FPSCamera *cam = l_toCam(l,1);
+
+	lua_pushnumber(l,cam->pos.x);
+	lua_pushnumber(l,cam->pos.y);
+	lua_pushnumber(l,cam->pos.z);
+
+	return 3;
+}
+int l_camGetRot(lua_State *l){
+	FPSCamera *cam = l_toCam(l,1);
+
+	lua_pushnumber(l,cam->angle.x);
+	lua_pushnumber(l,cam->angle.y);
+	lua_pushnumber(l,cam->angle.z);
+
+	return 3;
+}

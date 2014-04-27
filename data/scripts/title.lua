@@ -34,6 +34,8 @@ function Title.create()
 			title.state = tstates.default
 		else 
 			title.state = tstates.play
+			network.startServer()
+			network.connectTo("localhost")
 		end
 	end)
 
@@ -237,7 +239,7 @@ function Title.create()
 
 	--Add planet geometry
 	title.planet = GO.loadIQM("planet.iqm")
-	title.planet:setPos(3,0,0)
+	title.planet:setPos(0,0,-3)
 	title.planetspeed = 10
 	title.planetangle = 0
 	return title
@@ -285,6 +287,8 @@ function Title:connect()
 	local status = network.connectTo(self.mult.ipbox:getInput())
 	if status ~= true then
 		self.mult.errmsg:setString(status)
+	else
+		self.state = tstates.play
 	end
 end
 

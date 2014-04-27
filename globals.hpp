@@ -42,6 +42,8 @@ extern Settings settings;
 std::vector<std::string> breakString(std::string input);
 int stringToInt(std::string input);
 float stringToFloat(std::string input);
+std::string intToString(int input);
+std::string floatToString(float input);
 float toDegrees(float rad);
 float toRad(float degrees);
 #endif

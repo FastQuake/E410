@@ -121,11 +121,20 @@ int l_serverSendPacket(lua_State *l){
 	int id = l_toNumber(l, 1);
 	p.data = l_toString(l, 2);
 	if(client == NULL){
-		lua_pushstring(l,"Not connected to a server");
-		lua_error(l);
+		errorTrace(l,"Not connected to a server");
+	}
+
+	if(id == -1){
+		p.addr = -1;
+		p.port = -1;
+		return 0;
 	}
 
 	int index = peerIndexByID(id);
+	if(index==-1){
+		string err = "Peer ID " + intToString(id) + " is not a valid id";
+		errorTrace(l,err);	
+	}
 	p.addr = peers[index].peer->address.host;
 	p.port = peers[index].peer->address.port;
 

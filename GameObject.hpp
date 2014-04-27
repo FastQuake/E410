@@ -37,6 +37,7 @@ public:
 	void move(float amount);
 	void strafe(float amount);
 	void turn(glm::vec2 amount);
+	void updateLookat();
 };
 
 #endif

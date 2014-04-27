@@ -121,6 +121,7 @@ void serverMain(){
 	sf::Clock timer;
 	sf::Time dt = timer.restart();
 	ENetEvent event;
+	char *pstr = new char[65536];
 	while(serverRunning){
 		//Handle networking packets
 		while(enet_host_service(server, &event, 10) > 0){
@@ -157,8 +158,9 @@ void serverMain(){
 				case ENET_EVENT_TYPE_RECEIVE:
 					//TODO input packet handling here
 					//Send to lua etc
-					packetData = (char*)(event.packet->data);
-					packetData = packetData.substr(0, event.packet->dataLength);
+					memcpy(pstr,event.packet->data,event.packet->dataLength);
+					pstr[event.packet->dataLength] = 0;
+					packetData = pstr;
 					splitPacket = breakString(packetData);
 					index = peerIndexByPeer(event.peer);
 					lua_getglobal(l, "onReceivePacket");
@@ -186,7 +188,8 @@ void serverMain(){
 				peer.address.port = serverPacketList[i].port;
 				int index = peerIndexByPeer(&peer);
 				if(index != -1){
-					ENetPacket *packet = enet_packet_create(serverPacketList[i].data.c_str(),
+					const char *cstr = serverPacketList[i].data.c_str(); 
+					ENetPacket *packet = enet_packet_create(cstr,
 							serverPacketList[i].data.length(), ENET_PACKET_FLAG_RELIABLE);
 					enet_peer_send(peers[index].peer, 0, packet);
 					enet_host_flush(server);
@@ -225,6 +228,7 @@ void serverMain(){
 		dt = timer.restart();
 	}
 
+	delete[] pstr;
 	serverRunning = false;
 	peers.clear();
 	enet_host_destroy(server);
