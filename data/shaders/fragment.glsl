@@ -72,7 +72,7 @@ void main(){
 			vec4 clip = pointProj * vec4(0.0, 0.0, fs_z, 1.0);
 			float depth = (clip.z / (clip.w)) * 0.5 + 0.5;
 			//shadowed = 1.0f-texture(shadowCubes,vec4(((depthMVPs[i])*coord3d_f).xyz/(depthMVPs[i]*coord3d_f).w,i),(shadowCoords[i]).z);
-			shadowed = 1.0f-texture(shadowCubes,vec4(position_ls.xyz,0),depth);
+			shadowed = 1.0f-texture(shadowCubes,vec4(position_ls.xyz,0),depth-bias);
 		}
 		if(shadowed < 1.0f)
 			lightCoefficient += 1000.0/(4.0*3.14159265359*pow(distance(lightPositions[i],coord3d_f),2.0));
