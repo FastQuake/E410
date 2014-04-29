@@ -60,8 +60,13 @@ int main(int argc, char *argv[]){
 
 	//Create sfml window with opengl context
 	sf::ContextSettings cs;
+#ifdef WINDOWS
+	cs.majorVersion = 3;
+	cs.minorVersion = 3;
+#else
 	cs.majorVersion = 3;
 	cs.minorVersion = 0;
+#endif
 	cs.depthBits = 32;
 	cs.stencilBits = 8;
 	cs.antialiasingLevel = 4;
