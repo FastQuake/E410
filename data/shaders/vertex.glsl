@@ -8,7 +8,6 @@ in vec2 texcoord;
 in vec4 vweight;
 in vec4 vbones;
 
-out mat4 view_f;
 out vec3 normalCam;
 out vec2 texcoord_f;
 out vec4 shadowCoords[MAX_LIGHTS];
@@ -20,6 +19,7 @@ uniform mat3x4 bonemats[80];
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 modelMat;
+uniform mat4 modelMatIT;
 uniform Light {
 	mat4 depthMVPs[MAX_LIGHTS];
 	vec4 lightPositions[MAX_LIGHTS];
@@ -46,8 +46,7 @@ void main(){
 	vec4 mpos = vec4(vec4(coord3d,1.0)*m,1.0);
 	gl_Position = mvp * mpos;
 
-	view_f = view;
-	normalCam = vec4(view*modelMat*vec4(normal,0.0)).xyz;
+	normalCam = normalize(vec4(mat4(mat3(modelMatIT))*vec4(normal,0.0)).xyz);
 	texcoord_f = texcoord;
 	for(int i=0;i<numLights.x;i++){
 		shadowCoords[i] = (bias*depthMVPs[i]*modelMat) * mpos;

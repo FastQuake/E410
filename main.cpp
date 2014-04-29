@@ -65,8 +65,8 @@ int main(int argc, char *argv[]){
 	cs.depthBits = 32;
 	cs.stencilBits = 8;
 	cs.antialiasingLevel = 4;
-	width = 800;
-	height = 600;
+	width = 1024;
+	height = 768;
 	sf::RenderWindow window(sf::VideoMode(width,height),"E410 | dev", sf::Style::Default, cs);
 	window.setMouseCursorVisible(false);
 	window.setVerticalSyncEnabled(true);
@@ -90,11 +90,11 @@ int main(int argc, char *argv[]){
 		return EXIT_FAILURE;
 	}
 
-	if(!GL_ARB_uniform_buffer_object){
+	if(!GLEW_ARB_uniform_buffer_object){
 		cerr << "UBOs not supported!" << endl;
 		return EXIT_FAILURE;
 	}
-	if(!GL_ARB_texture_cube_map_array){
+	if(!GLEW_ARB_texture_cube_map_array){
 		cerr << "Cubemap arrays not supported!" << endl;
 		return EXIT_FAILURE;
 	}
@@ -117,6 +117,7 @@ int main(int argc, char *argv[]){
 		prg.setUniform("bonemats");
 		prg.setUniform("inTexture");
 		prg.setUniform("modelMat");
+		prg.setUniform("modelMatIT");
 		prg.setUniform("skin");
 		prg.setUniform("view");
 		prg.setUniform("shadowMaps");
