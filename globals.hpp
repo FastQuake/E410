@@ -9,8 +9,8 @@
 #include "GUI/Console.hpp"
 
 #define PI 3.14159265359 
-#define MAX_DIR_LIGHTS 12
-#define MAX_POINT_LIGHTS 12
+#define MAX_DIR_LIGHTS 6
+#define MAX_POINT_LIGHTS 6
 #define MAX_LIGHTS (MAX_DIR_LIGHTS+MAX_POINT_LIGHTS)
 
 extern Console *global_con;
