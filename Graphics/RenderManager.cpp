@@ -26,6 +26,7 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt, int lightIndex){
 				drawList[i]->aTime += dt;
 				drawList[i]->model->animate(drawList[i]->currentAnimation,
 						drawList[i]->aTime,&drawList[i]->outframe);
+				drawList[i]->aTime -=dt;
 			}
 
 			glm::mat4 scale = glm::scale(glm::mat4(1),drawList[i]->scale);
@@ -51,6 +52,7 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt, int lightIndex){
 					drawList[j]->aTime += dt;
 					drawList[j]->model->animate(drawList[j]->currentAnimation,
 							drawList[j]->aTime,&drawList[j]->outframe);
+					drawList[j]->aTime -=dt;
 				}
 
 				glm::mat4 scale = glm::scale(glm::mat4(1),drawList[j]->scale);
