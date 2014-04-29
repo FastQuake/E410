@@ -1,6 +1,6 @@
 #version 130
 #extension GL_ARB_uniform_buffer_object : enable
-#define MAX_LIGHTS 12 //Don't touch this without changing MAX_*_LIGHTS in globals.hpp and fragment.glsl
+#define MAX_LIGHTS 24 //Don't touch this without changing MAX_*_LIGHTS in globals.hpp and fragment.glsl
 
 in vec3 coord3d;
 in vec3 normal;

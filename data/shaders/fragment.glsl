@@ -1,7 +1,7 @@
 #version 130
 #extension GL_ARB_uniform_buffer_object : enable
 #extension GL_ARB_texture_cube_map_array : enable
-#define MAX_LIGHTS 12 //Don't touch this without changing MAX_*_LIGHTS in globals.hpp and vertex.glsl
+#define MAX_LIGHTS 24 //Don't touch this without changing MAX_*_LIGHTS in globals.hpp and vertex.glsl
 
 in vec3 normalCam;
 in mat4 view_f;
