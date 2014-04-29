@@ -192,6 +192,7 @@ int main(int argc, char *argv[]){
 	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, 0);
 
 #ifdef WINDOWS
+	cout << "setting drawbufers to none" << endl;
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 #endif
@@ -400,7 +401,7 @@ int main(int argc, char *argv[]){
 		glm::mat4 projection = glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
 
 		//Do all drawing here
-		glEnable(GL_TEXTURE_CUBE_MAP);
+		glEnable(GL_TEXTURE_CUBE_MAP_ARB);
 		glUseProgram(depthPrg.getID());
 		glBindFramebuffer(GL_FRAMEBUFFER,rendman.framebuffer);
 		for(int i=0;i<rendman.lights.size();i++)
@@ -411,7 +412,7 @@ int main(int argc, char *argv[]){
 		glUniformMatrix4fv(prg.getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
 		glUniformMatrix4fv(prg.getUniform("pointProj"),1,GL_FALSE,glm::value_ptr(PLight::pointProjection));
 		rendman.render(&prg,dt.asSeconds());
-		glDisable(GL_TEXTURE_CUBE_MAP);
+		glDisable(GL_TEXTURE_CUBE_MAP_ARB);
 
 		//Do sfml drawing here
 		gui->draw(&window);
