@@ -120,7 +120,7 @@ int main(int argc, char *argv[]){
 		prg.setUniform("modelMatIT");
 		prg.setUniform("skin");
 		prg.setUniform("view");
-		prg.setUniform("shadowMaps");
+//		prg.setUniform("shadowMaps");
 		prg.setUniform("shadowCubes");
 		prg.setUniform("pointProj");
 	}else{
@@ -170,7 +170,7 @@ int main(int argc, char *argv[]){
 	cout << sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*(1+MAX_LIGHTS*2) << endl;
 	cout << sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*(MAX_LIGHTS*2) + sizeof(glm::vec4)<< endl;
 
-	glGenTextures(1,&rendman.depthTextures);
+/*	glGenTextures(1,&rendman.depthTextures);
 	glBindTexture(GL_TEXTURE_2D_ARRAY, rendman.depthTextures);
 	//glTexStorage3D(GL_TEXTURE_2D_ARRAY_EXT,1,GL_DEPTH_COMPONENT24,1024,1024,2);
 	glTexImage3D(GL_TEXTURE_2D_ARRAY,0,GL_DEPTH_COMPONENT,1024,1024,MAX_LIGHTS,0,GL_DEPTH_COMPONENT,GL_FLOAT, NULL);
@@ -179,7 +179,7 @@ int main(int argc, char *argv[]){
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);*/
 
 	glGenTextures(1,&rendman.depthCubemaps);
 	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, rendman.depthCubemaps);

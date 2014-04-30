@@ -75,11 +75,11 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D_ARRAY, depthTextures);
-	glActiveTexture(GL_TEXTURE2);
+	//glBindTexture(GL_TEXTURE_2D_ARRAY, depthTextures);
+	//glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, depthCubemaps);
-	glUniform1i(prg->getUniform("shadowMaps"), 1);
-	glUniform1i(prg->getUniform("shadowCubes"), 2);
+	//glUniform1i(prg->getUniform("shadowMaps"), 1);
+	glUniform1i(prg->getUniform("shadowCubes"), 1);
 
 	struct toUBO{
 		glm::mat4 depthMVPs[MAX_LIGHTS];

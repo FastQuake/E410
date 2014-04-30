@@ -33,12 +33,6 @@ uniform Light {
 	vec4 numLights;
 };
 
-/*float random(vec3 seed, int i){
-	vec4 seed4 = vec4(seed,i);
-	float dot_product = dot(seed4, vec4(12.9898,78.233,45.164,94.673));
-	return fract(sin(dot_product) * 43758.5453);
-}*/
-
 void main(){
 	float lightCoefficient = 0.0f;
 	for(int i=0;i<numLights.x;i++){
@@ -46,17 +40,17 @@ void main(){
 		float cosTheta = clamp(dot(normalCam,l),0.000001, 1.0);
 		float bias = clamp(tan(acos(cosTheta)),0.0,0.0025);
 		float shadowed = 0.0f;
-		if(lightTypes[i].x == 1.0)
-			shadowed = 1.0f-texture(shadowMaps,vec4(shadowCoords[i].xy,i,shadowCoords[i].z-bias));
-		else if(lightTypes[i].x == 0.0){
-			shadowed = 1.0f;
-			vec4 abs_position = abs(shadowCoords[i]);
-			float fs_z = -max(abs_position.x, max(abs_position.y, abs_position.z));
-			vec4 clip = pointProj * vec4(0.0, 0.0, fs_z, 1.0);
-			float depth = (clip.z / (clip.w)) * 0.5 + 0.5;
-			for(int j=0;j<6;j++)
-				shadowed -= (1.0/6.0)*texture(shadowCubes,vec4(shadowCoords[i].xyz-offsets[j],i),depth-bias);
-		}
+		shadowed = 1.0f;
+		vec4 abs_position = abs(shadowCoords[i]);
+		float fs_z = -max(abs_position.x, max(abs_position.y, abs_position.z));
+		vec4 clip = pointProj * vec4(0.0, 0.0, fs_z, 1.0);
+		float depth = (clip.z / (clip.w)) * 0.5 + 0.5;
+		shadowed -= (1.0/6.0)*texture(shadowCubes,vec4(shadowCoords[i].xyz-offsets[0],i),depth-bias);
+		shadowed -= (1.0/6.0)*texture(shadowCubes,vec4(shadowCoords[i].xyz-offsets[1],i),depth-bias);
+		shadowed -= (1.0/6.0)*texture(shadowCubes,vec4(shadowCoords[i].xyz-offsets[2],i),depth-bias);
+		shadowed -= (1.0/6.0)*texture(shadowCubes,vec4(shadowCoords[i].xyz-offsets[3],i),depth-bias);
+		shadowed -= (1.0/6.0)*texture(shadowCubes,vec4(shadowCoords[i].xyz-offsets[4],i),depth-bias);
+		shadowed -= (1.0/6.0)*texture(shadowCubes,vec4(shadowCoords[i].xyz-offsets[5],i),depth-bias);
 		lightCoefficient += (abs(min(shadowed,1.0)-1.0))*(1000.0/(4.0*3.14159265359*pow(distance(lightPositions[i],coord3d_f),2.0)));
 	}
 	lightCoefficient = max(lightCoefficient,0.01f);
