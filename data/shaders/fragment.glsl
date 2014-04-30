@@ -15,15 +15,12 @@ uniform mat4 pointProj;
 
 out vec4 outColour;
 
-float offset = 1.0/1024.0+0.05;
+float offset = 1.0/512.0+0.07;
 
-vec3 offsets[6] = vec3[](
-	vec3(-offset,0.0,0.0),
-	vec3(0.0,-offset,0.0),
-	vec3(0.0,0.0,-offset),
+vec3 offsets[3] = vec3[](
 	vec3(offset,0.0,0.0),
-	vec3(0.0,offset,0.0),
-	vec3(0.0,0.0,offset)
+	vec3(0.0,0.0,-offset),
+	vec3(0.0,offset,0.0)
 );
 
 uniform Light {
@@ -48,9 +45,6 @@ void main(){
 		shadowed -= (1.0/6.0)*texture(shadowCubes,vec4(shadowCoords[i].xyz-offsets[0],i),depth-bias);
 		shadowed -= (1.0/6.0)*texture(shadowCubes,vec4(shadowCoords[i].xyz-offsets[1],i),depth-bias);
 		shadowed -= (1.0/6.0)*texture(shadowCubes,vec4(shadowCoords[i].xyz-offsets[2],i),depth-bias);
-		shadowed -= (1.0/6.0)*texture(shadowCubes,vec4(shadowCoords[i].xyz-offsets[3],i),depth-bias);
-		shadowed -= (1.0/6.0)*texture(shadowCubes,vec4(shadowCoords[i].xyz-offsets[4],i),depth-bias);
-		shadowed -= (1.0/6.0)*texture(shadowCubes,vec4(shadowCoords[i].xyz-offsets[5],i),depth-bias);
 		lightCoefficient += (abs(min(shadowed,1.0)-1.0))*(1000.0/(4.0*3.14159265359*pow(distance(lightPositions[i],coord3d_f),2.0)));
 	}
 	lightCoefficient = max(lightCoefficient,0.01f);

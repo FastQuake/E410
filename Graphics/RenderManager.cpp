@@ -11,7 +11,7 @@ GameObject *RenderManager::getId(uint32_t id){
 	return NULL;
 }
 void RenderManager::renderDepth(ShaderProgram *prg, float dt, int lightIndex){
-	glViewport(0,0,1024,1024);
+	glViewport(0,0,512,512);
 	Light *light = lights[lightIndex];
 
 	if(light->type == DIRECTIONAL_LIGHT){

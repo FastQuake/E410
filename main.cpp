@@ -183,7 +183,7 @@ int main(int argc, char *argv[]){
 
 	glGenTextures(1,&rendman.depthCubemaps);
 	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, rendman.depthCubemaps);
-	glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY_ARB,0,GL_DEPTH_COMPONENT,1024,1024,MAX_LIGHTS*6,0,GL_DEPTH_COMPONENT,GL_FLOAT,NULL);
+	glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY_ARB,0,GL_DEPTH_COMPONENT16,512,512,MAX_LIGHTS*6,0,GL_DEPTH_COMPONENT,GL_FLOAT,NULL);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -233,16 +233,17 @@ int main(int argc, char *argv[]){
 //	rendman.currentCam->pos = glm::vec3(-9, 11, 5);
 	//TODO: Move this to main.lua and all that that implies
 	PLight light1;
-	DLight light2;
+	PLight light2;
 	PLight light3;
+	PLight light4;
 	light1.pos = glm::vec3(-18, 12, -11);
-//	light1.rot = glm::vec3(-40,60,0);
 	light2.pos = glm::vec3(-9,11,5);
-	light2.rot = glm::vec3(-37,124,0);
 	light3.pos = glm::vec3(0,11,-2);
+	light4.pos = glm::vec3(15,12,5);
 	rendman.lights.push_back(&light1);
-//	rendman.lights.push_back(&light2);
+	rendman.lights.push_back(&light2);
 	rendman.lights.push_back(&light3);
+	rendman.lights.push_back(&light4);
 	int majv;
 	int minv;
 	glGetIntegerv(GL_MAJOR_VERSION, &majv);
