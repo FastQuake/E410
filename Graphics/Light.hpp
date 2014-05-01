@@ -7,8 +7,6 @@
 
 #define LIGHT_MAGIC "LIGH"
 
-//TODO: Directional and point light classes (and the corresponding implementations of these types of lights)
-
 enum{
 	POINT_LIGHT,
 	DIRECTIONAL_LIGHT

@@ -10,6 +10,33 @@ GameObject *RenderManager::getId(uint32_t id){
 	}
 	return NULL;
 }
+
+void RenderManager::drawScene(ShaderProgram *prg, float dt, bool texture, bool normal){
+	for(int i=0;i<this->drawList.size();i++){
+		if(drawList[i]->animate){
+			drawList[i]->aTime += dt;
+			drawList[i]->model->animate(drawList[i]->currentAnimation,
+					drawList[i]->aTime,&drawList[i]->outframe);
+			drawList[i]->aTime -=dt;
+		}
+
+		glm::mat4 scale = glm::scale(glm::mat4(1),drawList[i]->scale);
+		glm::mat4 rot = \
+			glm::rotate(glm::mat4(1),drawList[i]->rotation.x,glm::vec3(1.0,0,0)) *
+			glm::rotate(glm::mat4(1),drawList[i]->rotation.y,glm::vec3(0,1.0,0)) *
+			glm::rotate(glm::mat4(1),drawList[i]->rotation.z,glm::vec3(0,0,1.0));
+		glm::mat4 trans = glm::translate(glm::mat4(1), drawList[i]->position);
+		glm::mat4 modelMat = rot * scale * trans;
+		modelMat *= glm::rotate(glm::mat4(1),-90.0f,glm::vec3(1.0,0,0)); //Rotate everything -90deg on x axis
+		glUniformMatrix4fv(prg->getUniform("modelMat"),1,GL_FALSE,glm::value_ptr(modelMat));
+		if(texture){
+			glm::mat4 modelMatIT = glm::inverse(glm::transpose(modelMat));
+			glUniformMatrix4fv(prg->getUniform("modelMatIT"),1,GL_FALSE,glm::value_ptr(modelMatIT));
+		}
+		drawList[i]->model->draw(prg,drawList[i]->outframe, texture, normal);
+	}
+}
+
 void RenderManager::renderDepth(ShaderProgram *prg, float dt, int lightIndex){
 	#ifdef WINDOWS
 		glDrawBuffer(GL_NONE);
@@ -25,25 +52,7 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt, int lightIndex){
 		glm::mat4 depthMVP = myLight.mvp();
 		glUniformMatrix4fv(prg->getUniform("pv"), 1, GL_FALSE, glm::value_ptr(depthMVP));
 
-		for(int i=0;i<this->drawList.size();i++){
-			if(drawList[i]->animate){
-				drawList[i]->aTime += dt;
-				drawList[i]->model->animate(drawList[i]->currentAnimation,
-						drawList[i]->aTime,&drawList[i]->outframe);
-				drawList[i]->aTime -=dt;
-			}
-
-			glm::mat4 scale = glm::scale(glm::mat4(1),drawList[i]->scale);
-			glm::mat4 rot = \
-				glm::rotate(glm::mat4(1),drawList[i]->rotation.x,glm::vec3(1.0,0,0)) *
-				glm::rotate(glm::mat4(1),drawList[i]->rotation.y,glm::vec3(0,1.0,0)) *
-				glm::rotate(glm::mat4(1),drawList[i]->rotation.z,glm::vec3(0,0,1.0));
-			glm::mat4 trans = glm::translate(glm::mat4(1), drawList[i]->position);
-			glm::mat4 modelMat = rot * scale * trans;
-			modelMat *= glm::rotate(glm::mat4(1),-90.0f,glm::vec3(1.0,0,0)); //Rotate everything -90deg on x axis
-			glUniformMatrix4fv(prg->getUniform("modelMat"),1,GL_FALSE,glm::value_ptr(modelMat));
-			drawList[i]->model->draw(prg,drawList[i]->outframe, false, false);
-		}
+		drawScene(prg,dt,false,false);
 	}else if(light->type == POINT_LIGHT){
 		PLight myLight = *static_cast<PLight*>(light);
 		for(int i=0;i<6;i++){
@@ -51,25 +60,7 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt, int lightIndex){
 			glm::mat4 depthMVP = myLight.mvp(i);
 			glUniformMatrix4fv(prg->getUniform("pv"), 1, GL_FALSE, glm::value_ptr(depthMVP));
 			glClear(GL_DEPTH_BUFFER_BIT);
-			for(int j=0;j<this->drawList.size();j++){
-				if(drawList[j]->animate){
-					drawList[j]->aTime += dt;
-					drawList[j]->model->animate(drawList[j]->currentAnimation,
-							drawList[j]->aTime,&drawList[j]->outframe);
-					drawList[j]->aTime -=dt;
-				}
-
-				glm::mat4 scale = glm::scale(glm::mat4(1),drawList[j]->scale);
-				glm::mat4 rot = \
-					glm::rotate(glm::mat4(1),drawList[j]->rotation.x,glm::vec3(1.0,0,0)) *
-					glm::rotate(glm::mat4(1),drawList[j]->rotation.y,glm::vec3(0,1.0,0)) *
-					glm::rotate(glm::mat4(1),drawList[j]->rotation.z,glm::vec3(0,0,1.0));
-				glm::mat4 trans = glm::translate(glm::mat4(1), drawList[j]->position);
-				glm::mat4 modelMat = rot * scale * trans;
-				modelMat *= glm::rotate(glm::mat4(1),-90.0f,glm::vec3(1.0,0,0)); //Rotate everything -90deg on x axis
-				glUniformMatrix4fv(prg->getUniform("modelMat"),1,GL_FALSE,glm::value_ptr(modelMat));
-				drawList[j]->model->draw(prg,drawList[j]->outframe, false, false);
-			}
+			drawScene(prg,dt,false,false);
 		}
 	}
 	glViewport(0,0,width,height);
@@ -79,9 +70,10 @@ void RenderManager::renderDeferred(ShaderProgram *prg, float dt){
 	glViewport(0,0,width,height);
 	GLenum draw_bufs[] = {GL_COLOR_ATTACHMENT0};
 	glDrawBuffers(1,draw_bufs);
-	glFramebufferTexture(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,normalTex,0);
+	glm::mat4 view = currentCam->view();
+	glUniformMatrix4fv(prg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
 	glClear(GL_COLOR_BUFFER_BIT);
-
 }
 
 void RenderManager::render(ShaderProgram *prg, float dt){
@@ -115,30 +107,9 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 	//std::cout << lights.size() << std::endl;
 
 	glBufferSubDataARB(GL_UNIFORM_BUFFER,0,sizeof(data),&data);
-	for(int i=0;i<this->drawList.size();i++){
-		if(drawList[i]->animate){
-			drawList[i]->aTime += dt;
-			drawList[i]->model->animate(drawList[i]->currentAnimation,
-					drawList[i]->aTime,&drawList[i]->outframe);
-		}
-
-		glm::mat4 view = currentCam->view();
-	//	std::cout << currentCam->pos.x << "," << currentCam->pos.y << "," << currentCam->pos.z << "|" << currentCam->angle.x << "," << currentCam->angle.y << "," << currentCam->angle.z << std::endl;
-		glUniformMatrix4fv(prg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
-
-		glm::mat4 scale = glm::scale(glm::mat4(1),drawList[i]->scale);
-		glm::mat4 rot = \
-			glm::rotate(glm::mat4(1),drawList[i]->rotation.x,glm::vec3(1.0,0,0)) *
-			glm::rotate(glm::mat4(1),drawList[i]->rotation.y,glm::vec3(0,1.0,0)) *
-			glm::rotate(glm::mat4(1),drawList[i]->rotation.z,glm::vec3(0,0,1.0));
-		glm::mat4 trans = glm::translate(glm::mat4(1), drawList[i]->position);
-		glm::mat4 modelMat = rot * scale * trans;
-		modelMat *= glm::rotate(glm::mat4(1),-90.0f,glm::vec3(1.0,0,0)); //Rotate everything -90deg on x axis
-		glm::mat4 modelMatIT = glm::inverse(glm::transpose(modelMat));
-		glUniformMatrix4fv(prg->getUniform("modelMat"),1,GL_FALSE,glm::value_ptr(modelMat));
-		glUniformMatrix4fv(prg->getUniform("modelMatIT"),1,GL_FALSE,glm::value_ptr(modelMatIT));
-		drawList[i]->model->draw(prg,drawList[i]->outframe, true, true);
-	}
+	glm::mat4 view = currentCam->view();
+	glUniformMatrix4fv(prg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
+	drawScene(prg,dt,true,true);
 }
 
 void RenderManager::remove(GameObject *obj){

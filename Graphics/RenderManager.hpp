@@ -27,6 +27,8 @@ public:
 	void removeLight(Light *light);
 
 	FPSCamera *currentCam;
+private:
+	void drawScene(ShaderProgram *prg, float dt, bool texture, bool normal);
 };
 
 

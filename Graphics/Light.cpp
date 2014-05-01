@@ -4,7 +4,6 @@
 glm::mat4 PLight::pointProjection = glm::perspective(90.0f, 1.0f, 0.6f, 250.0f);
 
 glm::mat4 DLight::mvp(){
-	//TODO: Compute projection based on the camera frustum and light rotation, instead of using lookAt
 	glm::vec3 p;
 	p.x = sin(toRad(-rot.x+90.0f)) * cos(toRad(rot.y));
 	p.y = cos(toRad(-rot.x+90.0f));

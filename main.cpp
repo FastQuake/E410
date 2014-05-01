@@ -209,7 +209,6 @@ int main(int argc, char *argv[]){
 
 	window.setActive(true);
 
-//	rendman.currentCam->pos = glm::vec3(-9, 11, 5);
 	//TODO: Move this to main.lua and all that that implies
 	PLight light1;
 	PLight light2;
@@ -387,7 +386,6 @@ int main(int argc, char *argv[]){
 		glBindFramebuffer(GL_FRAMEBUFFER,rendman.framebuffer);
 		for(int i=0;i<rendman.lights.size();i++)
 			rendman.renderDepth(&depthPrg, dt.asSeconds(),i);
-
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glUseProgram(prg.getID());
