@@ -98,6 +98,11 @@ int main(int argc, char *argv[]){
 		cerr << "Cubemap arrays not supported!" << endl;
 		return EXIT_FAILURE;
 	}
+	if(GLEW_ARB_debug_output){
+
+	}else{
+		cout << "Warning: ARB_debug_output unsupported" << endl;
+	}
 	if(GLEW_VERSION_3_0 == false){
 		cerr << "OpenGL 3.0 not supported!" << endl;
 		return EXIT_FAILURE;
@@ -107,40 +112,22 @@ int main(int argc, char *argv[]){
 
 	ShaderProgram prg("./data/shaders/vertex.glsl",
 			"./data/shaders/fragment.glsl");
-	if(prg.good){
-		prg.setAttribute("coord3d");
-		prg.setAttribute("texcoord");
-		prg.setAttribute("vweight");
-		prg.setAttribute("vbones");
-		prg.setAttribute("normal");
-		prg.setUniform("projection");
-		prg.setUniform("bonemats");
-		prg.setUniform("inTexture");
-		prg.setUniform("modelMat");
-		prg.setUniform("modelMatIT");
-		prg.setUniform("skin");
-		prg.setUniform("view");
-//		prg.setUniform("shadowMaps");
-		prg.setUniform("shadowCubes");
-		prg.setUniform("pointProj");
-	}else{
+	if(!prg.good){
 		programsGood = false;
 		cerr << "Bad main shader program. Execution cannot continue." << endl;
 	}
 
 	ShaderProgram depthPrg("./data/shaders/depthv.glsl",
 			"./data/shaders/depthf.glsl");
-	if(depthPrg.good){
-		depthPrg.setAttribute("coord3d");
-		depthPrg.setAttribute("vweight");
-		depthPrg.setAttribute("vbones");
-		depthPrg.setUniform("skin");
-		depthPrg.setUniform("bonemats");
-		depthPrg.setUniform("pv");
-		depthPrg.setUniform("modelMat");
-	}else{
+	if(!depthPrg.good){
 		programsGood = false;
 		cerr << "Bad depth shader program. Execution cannot continue." << endl;
+	}
+
+	ShaderProgram deferredPrg("./data/shaders/deferredv.glsl","./data/shaders/deferredf.glsl");
+	if(!deferredPrg.good){
+		programsGood = false;
+		cerr << "Bad deferred shader program. Execution cannot continue." << endl;
 	}
 
 	if(!programsGood){
@@ -170,16 +157,14 @@ int main(int argc, char *argv[]){
 	cout << sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*(1+MAX_LIGHTS*2) << endl;
 	cout << sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*(MAX_LIGHTS*2) + sizeof(glm::vec4)<< endl;
 
-/*	glGenTextures(1,&rendman.depthTextures);
-	glBindTexture(GL_TEXTURE_2D_ARRAY, rendman.depthTextures);
-	//glTexStorage3D(GL_TEXTURE_2D_ARRAY_EXT,1,GL_DEPTH_COMPONENT24,1024,1024,2);
-	glTexImage3D(GL_TEXTURE_2D_ARRAY,0,GL_DEPTH_COMPONENT,1024,1024,MAX_LIGHTS,0,GL_DEPTH_COMPONENT,GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-	glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-	glBindTexture(GL_TEXTURE_2D_ARRAY, 0);*/
+	glGenTextures(1,&rendman.normalTex);
+	glBindTexture(GL_TEXTURE_2D,rendman.normalTex);
+	glTexImage2D(GL_TEXTURE_2D,0,GL_RGB16F,width,height,0,GL_RGB,GL_UNSIGNED_BYTE,NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glBindTexture(GL_TEXTURE_2D,0);
 
 	glGenTextures(1,&rendman.depthCubemaps);
 	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, rendman.depthCubemaps);
@@ -191,12 +176,6 @@ int main(int argc, char *argv[]){
 	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, 0);
-
-#ifdef WINDOWS
-	cout << "setting drawbufers to none" << endl;
-	glDrawBuffer(GL_NONE);
-	glReadBuffer(GL_NONE);
-#endif
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -408,6 +387,7 @@ int main(int argc, char *argv[]){
 		glBindFramebuffer(GL_FRAMEBUFFER,rendman.framebuffer);
 		for(int i=0;i<rendman.lights.size();i++)
 			rendman.renderDepth(&depthPrg, dt.asSeconds(),i);
+
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glUseProgram(prg.getID());

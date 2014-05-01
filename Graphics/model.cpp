@@ -318,7 +318,7 @@ void Model::animate(string animName, float curTime, std::vector<glm::mat4> *outf
 	}
 }
 
-void Model::draw(ShaderProgram *prg, vector<glm::mat4> outframe, bool texture){
+void Model::draw(ShaderProgram *prg, vector<glm::mat4> outframe, bool texture, bool normal){
 	bool skin = true;
 	glUseProgram(prg->getID());
 	glm::mat3x4 outframe3x4[outframe.size()];
@@ -351,6 +351,8 @@ void Model::draw(ShaderProgram *prg, vector<glm::mat4> outframe, bool texture){
 				GL_FALSE,
 				sizeof(vertex),
 				&vert->texcoord);
+	}
+	if(normal){
 		glVertexAttribPointer(
 				prg->getAttribute("normal"),
 				3,
@@ -376,10 +378,10 @@ void Model::draw(ShaderProgram *prg, vector<glm::mat4> outframe, bool texture){
 				&vert->blendindex);
 	}
 	glEnableVertexAttribArray(prg->getAttribute("coord3d"));
-	if(texture){
+	if(texture)
 		glEnableVertexAttribArray(prg->getAttribute("texcoord"));
+	if(normal)
 		glEnableVertexAttribArray(prg->getAttribute("normal"));
-	}
 	glEnableVertexAttribArray(prg->getAttribute("vweight"));
 	glEnableVertexAttribArray(prg->getAttribute("vbones"));
 
@@ -397,10 +399,10 @@ void Model::draw(ShaderProgram *prg, vector<glm::mat4> outframe, bool texture){
 	}
 
 	glDisableVertexAttribArray(prg->getAttribute("coord3d"));
-	if(texture){
+	if(texture)
 		glDisableVertexAttribArray(prg->getAttribute("texcoord"));
+	if(normal)
 		glDisableVertexAttribArray(prg->getAttribute("normal"));
-	}
 	glDisableVertexAttribArray(prg->getAttribute("vweight"));
 	glDisableVertexAttribArray(prg->getAttribute("vbones"));
 	glBindBuffer(GL_ARRAY_BUFFER,0);

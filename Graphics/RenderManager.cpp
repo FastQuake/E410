@@ -11,6 +11,10 @@ GameObject *RenderManager::getId(uint32_t id){
 	return NULL;
 }
 void RenderManager::renderDepth(ShaderProgram *prg, float dt, int lightIndex){
+	#ifdef WINDOWS
+		glDrawBuffer(GL_NONE);
+		glReadBuffer(GL_NONE);
+	#endif
 	glViewport(0,0,512,512);
 	Light *light = lights[lightIndex];
 
@@ -38,7 +42,7 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt, int lightIndex){
 			glm::mat4 modelMat = rot * scale * trans;
 			modelMat *= glm::rotate(glm::mat4(1),-90.0f,glm::vec3(1.0,0,0)); //Rotate everything -90deg on x axis
 			glUniformMatrix4fv(prg->getUniform("modelMat"),1,GL_FALSE,glm::value_ptr(modelMat));
-			drawList[i]->model->draw(prg,drawList[i]->outframe, false);
+			drawList[i]->model->draw(prg,drawList[i]->outframe, false, false);
 		}
 	}else if(light->type == POINT_LIGHT){
 		PLight myLight = *static_cast<PLight*>(light);
@@ -64,11 +68,20 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt, int lightIndex){
 				glm::mat4 modelMat = rot * scale * trans;
 				modelMat *= glm::rotate(glm::mat4(1),-90.0f,glm::vec3(1.0,0,0)); //Rotate everything -90deg on x axis
 				glUniformMatrix4fv(prg->getUniform("modelMat"),1,GL_FALSE,glm::value_ptr(modelMat));
-				drawList[j]->model->draw(prg,drawList[j]->outframe, false);
+				drawList[j]->model->draw(prg,drawList[j]->outframe, false, false);
 			}
 		}
 	}
 	glViewport(0,0,width,height);
+}
+
+void RenderManager::renderDeferred(ShaderProgram *prg, float dt){
+	glViewport(0,0,width,height);
+	GLenum draw_bufs[] = {GL_COLOR_ATTACHMENT0};
+	glDrawBuffers(1,draw_bufs);
+	glFramebufferTexture(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,0);
+	glClear(GL_COLOR_BUFFER_BIT);
+
 }
 
 void RenderManager::render(ShaderProgram *prg, float dt){
@@ -124,7 +137,7 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 		glm::mat4 modelMatIT = glm::inverse(glm::transpose(modelMat));
 		glUniformMatrix4fv(prg->getUniform("modelMat"),1,GL_FALSE,glm::value_ptr(modelMat));
 		glUniformMatrix4fv(prg->getUniform("modelMatIT"),1,GL_FALSE,glm::value_ptr(modelMatIT));
-		drawList[i]->model->draw(prg,drawList[i]->outframe, true);
+		drawList[i]->model->draw(prg,drawList[i]->outframe, true, true);
 	}
 }
 

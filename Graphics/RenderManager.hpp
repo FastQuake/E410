@@ -13,9 +13,11 @@ public:
 	GLuint framebuffer;
 	GLuint depthTextures;
 	GLuint depthCubemaps;
+	GLuint normalTex;
 	GLuint ubo;
 	void renderDepth(ShaderProgram *prg, float dt, int lightIndex);
 	void render(ShaderProgram *prg, float dt);
+	void renderDeferred(ShaderProgram *prg, float dt);
 	std::vector<GameObject*> drawList;
 	std::vector<FPSCamera*> cameras;
 	std::vector<Light*> lights;
