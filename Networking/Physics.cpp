@@ -12,4 +12,21 @@ PhysWorld::PhysWorld(){
 }
 
 PhysWorld::~PhysWorld(){
+	delete dynWorld;
+	delete solver;
+	delete dispatcher;
+	delete conf;
+	delete broadphase;
+}
+
+void PhysWorld::step(float dt){
+	dynWorld->stepSimulation(dt,0,0);
+}
+
+void PhysWorld::addBody(btRigidBody *body){
+	dynWorld->addRigidBody(body);
+}
+
+void PhysWorld::removeBody(btRigidBody *body){
+	dynWorld->removeRigidBody(body);
 }

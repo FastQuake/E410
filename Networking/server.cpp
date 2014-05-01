@@ -12,6 +12,7 @@ vector<Peer> peers;
 vector<Packet> serverPacketList;
 uint32_t serverID;
 uint64_t peerID = 0;
+PhysWorld physworld;
 
 int peerIndexByPeer(ENetPeer* checkPeer){
 	for(int i=0;i<peers.size();i++){

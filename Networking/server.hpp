@@ -4,7 +4,7 @@
 #include <SFML/System.hpp>
 #include <vector>
 #include <enet/enet.h>
-#include <bullet/btBulletDynamicsCommon.h>
+#include "Physics.hpp"
 #include "../Graphics/RenderManager.hpp"
 #include "../globals.hpp"
 
@@ -15,7 +15,7 @@ extern RenderManager serverRendMan;
 extern ENetPeer *serverPeer;
 extern ENetHost *client;
 extern uint32_t serverID;
-extern btDiscreteDynamicsWorld *dynWorld;
+extern PhysWorld physworld;
 
 struct Peer{
 	uint64_t id;

@@ -9,10 +9,14 @@ private:
 	btBroadphaseInterface *broadphase;
 	btDefaultCollisionConfiguration *conf;
 	btCollisionDispatcher *dispatcher;
-	btSequentialImpulseContraintSolver *solver;
+	btSequentialImpulseConstraintSolver *solver;
 public:
 	PhysWorld();
 	~PhysWorld();
+
+	void step(float dt);
+	void addBody(btRigidBody* body);
+	void removeBody(btRigidBody* body);
 };
 
 #endif

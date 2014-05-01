@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <glm/glm.hpp>
+#include <bullet/btBulletDynamicsCommon.h>
 #include "Graphics/model.hpp"
 #include "stdint.h"
 
@@ -29,6 +30,11 @@ public:
 	std::vector<GLuint> textures;
 	float aTime;
 
+	//Don't forget to delete pointers
+	btScalar mass;
+	btRigidBody *body;
+	btMotionState *motion;
+
 	bool visible, animate, hasAnimation;
 
 	GameObject();
@@ -38,6 +44,8 @@ public:
 	void strafe(float amount);
 	void turn(glm::vec2 amount);
 	void updateLookat();
+
+	void createRidgidBody();
 };
 
 #endif

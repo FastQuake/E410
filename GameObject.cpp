@@ -1,3 +1,4 @@
+#include "Networking/server.hpp"
 #include "GameObject.hpp"
 #include "globals.hpp"
 
@@ -46,4 +47,34 @@ void GameObject::updateLookat(){
 	lookat.z = sin(toRad(-rotation.z)) * sin(toRad(-rotation.y));
 	right = glm::cross(lookat,glm::vec3(0,1,0));
 	rotation.z += 90.0;
+}
+
+void GameObject::createRidgidBody(){
+	btTriangleMesh *trimesh = new btTriangleMesh();
+
+	for(int i=0;i<model->verts.size();i+=3){
+		btVector3 v1(model->verts[i].position[0],
+				model->verts[i].position[1],
+				model->verts[i].position[2]);
+		btVector3 v2(model->verts[i+1].position[0],
+				model->verts[i+1].position[1],
+				model->verts[i+1].position[2]);
+		btVector3 v3(model->verts[i+2].position[0],
+				model->verts[i+2].position[1],
+				model->verts[i+2].position[2]);
+
+		trimesh->addTriangle(v1,v2,v3);
+
+	}
+
+	btBvhTriangleMeshShape *trimeshshape = new btBvhTriangleMeshShape(trimesh,true);
+	/*motion = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),
+				btVector3(position.x,position.y,position.z)));
+	trimeshshape->calculateLocalIntertia(mass, btVector3(0,0,0));*/
+
+	physworld.removeBody(body);
+	body = new btRigidBody(mass,motion,trimeshshape,btVector3(0,0,0));
+
+	physworld.addBody(body);
+
 }
