@@ -1,6 +1,8 @@
+#include <iostream>
 #include "Networking/server.hpp"
 #include "GameObject.hpp"
 #include "globals.hpp"
+using namespace std;
 
 GameObject::GameObject():
 position(0,0,0), rotation(0,0,0), scale(1,1,1){
@@ -68,12 +70,11 @@ void GameObject::createRidgidBody(){
 	}
 
 	btBvhTriangleMeshShape *trimeshshape = new btBvhTriangleMeshShape(trimesh,true);
-	/*motion = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),
-				btVector3(position.x,position.y,position.z)));
-	trimeshshape->calculateLocalIntertia(mass, btVector3(0,0,0));*/
+	motion = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),
+			btVector3(0,0,0)));
 
-	physworld.removeBody(body);
-	body = new btRigidBody(mass,motion,trimeshshape,btVector3(0,0,0));
+	//physworld.removeBody(body);
+	body = new btRigidBody(btScalar(0),motion,trimeshshape,btVector3(0,0,0));
 
 	physworld.addBody(body);
 

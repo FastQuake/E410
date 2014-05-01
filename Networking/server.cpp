@@ -1,4 +1,5 @@
 #include <sstream>
+#include <glm/gtx/quaternion.hpp>
 #include <lua.hpp>
 #include "server.hpp"
 #include "../Lua/luabinding.hpp"
@@ -208,14 +209,23 @@ void serverMain(){
 			global_con->out.println("[SERVER] "+error);
 		}
 
+		//do physics
+		physworld.step(dt.asSeconds());
+
 		for(int i=0;i<serverRendMan.drawList.size();i++){
 			ENetPeer p;
 			p.address.host = -1;
-			if(serverRendMan.drawList[i]->moved == true){
+			btTransform trans;
+			serverRendMan.drawList[i]->motion->getWorldTransform(trans);
+			glm::vec3 newPos(trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z());
+			btQuaternion newRot = trans.getRotation();
+			if(serverRendMan.drawList[i]->oldPos != newPos){
+				serverRendMan.drawList[i]->position = newPos;
 				sendMovePacket(&p,serverRendMan.drawList[i]);
 				serverRendMan.drawList[i]->moved = false;
 			}
-			if(serverRendMan.drawList[i]->rotated == true){
+			if(serverRendMan.drawList[i]->rot != newRot){
+				serverRendMan.drawList[i]->rot = newRot;
 				sendRotatePacket(&p,serverRendMan.drawList[i]);
 				serverRendMan.drawList[i]->rotated = false;
 			}

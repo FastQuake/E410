@@ -35,6 +35,12 @@ public:
 	btRigidBody *body;
 	btMotionState *motion;
 
+	btQuaternion rot;
+	//variables for checking if the object has moved
+	glm::vec3 oldPos;
+	btQuaternion oldRot;
+
+
 	bool visible, animate, hasAnimation;
 
 	GameObject();

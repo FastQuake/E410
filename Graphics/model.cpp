@@ -34,7 +34,7 @@ glm::mat4 makeBoneMat(glm::quat rot, glm::vec3 trans, glm::vec3 scale){
 	return out;
 }
 
-bool loadIQMMesh(string filename, iqmheader header, Model &target, unsigned char *buf){
+bool loadIQMMesh(string filename, iqmheader header, Model &target, unsigned char *buf, bool GL){
 
 	iqmvertexarray *iva = (iqmvertexarray *)&buf[header.ofs_vertexarrays];
 	float *inposition = NULL, *intexcoord = NULL, *innormal=NULL, *intangent=NULL;
@@ -85,24 +85,26 @@ bool loadIQMMesh(string filename, iqmheader header, Model &target, unsigned char
 	iqmmesh *meshes = (iqmmesh*)&buf[header.ofs_meshes];
 
 	GLuint texid;
-	for(int i=0;i<(int)header.num_meshes;i++){
-		iqmmesh &m = meshes[i];
-		cout << "LOADING MESH: " << &str[m.name] << endl;
-		cout << "WITH TEXTURE: " << &str[m.material] << endl;
-		//string texture = "./data/textures/";
-		string texture = &str[m.material];
-		texid =	resman.loadTexture(texture);
-		
-		if(texid == -1){
-			cout << "Could not find " << texture <<endl;
-			texid = resman.loadTexture("default.png");
+	if(GL){
+		for(int i=0;i<(int)header.num_meshes;i++){
+			iqmmesh &m = meshes[i];
+			cout << "LOADING MESH: " << &str[m.name] << endl;
+			cout << "WITH TEXTURE: " << &str[m.material] << endl;
+			//string texture = "./data/textures/";
+			string texture = &str[m.material];
+			texid =	resman.loadTexture(texture);
+			
+			if(texid == -1){
+				cout << "Could not find " << texture <<endl;
+				texid = resman.loadTexture("default.png");
+			}
+
+			target.setTEXID(texid);
+			target.textureIDS.push_back(texid);
+			target.meshes.push_back(m);
+
+			//cout << "IMAGE X:"<<img.getSize().x << " IMAGE Y:" << img.getSize().y << endl;
 		}
-
-		target.setTEXID(texid);
-		target.textureIDS.push_back(texid);
-		target.meshes.push_back(m);
-
-		//cout << "IMAGE X:"<<img.getSize().x << " IMAGE Y:" << img.getSize().y << endl;
 	}
 
 	//load joints
@@ -135,14 +137,16 @@ bool loadIQMMesh(string filename, iqmheader header, Model &target, unsigned char
 
 	//Load triangles;
 	GLuint ebo;
-	iqmtriangle *tris = (iqmtriangle *)&buf[header.ofs_triangles];
-	glGenBuffers(1,&ebo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-			header.num_triangles*sizeof(iqmtriangle), tris, GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	if(GL){
+		iqmtriangle *tris = (iqmtriangle *)&buf[header.ofs_triangles];
+		glGenBuffers(1,&ebo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+				header.num_triangles*sizeof(iqmtriangle), tris, GL_STATIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	target.setEBO(ebo);
+		target.setEBO(ebo);
+	}
 
 	for(int i=0;i<(int)header.num_vertexes;i++){
 		vertex v;
@@ -162,16 +166,17 @@ bool loadIQMMesh(string filename, iqmheader header, Model &target, unsigned char
 		target.verts.push_back(v);
 	}
 
-	GLuint vbo;
-	glGenBuffers(1,&vbo);
-	glBindBuffer(GL_ARRAY_BUFFER,vbo);
-	target.setVBO(vbo);
-	glBufferData(GL_ARRAY_BUFFER,header.num_vertexes*sizeof(vertex),
-			&target.verts[0],GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER,0);
+	if(GL){
+		GLuint vbo;
+		glGenBuffers(1,&vbo);
+		glBindBuffer(GL_ARRAY_BUFFER,vbo);
+		target.setVBO(vbo);
+		glBufferData(GL_ARRAY_BUFFER,header.num_vertexes*sizeof(vertex),
+				&target.verts[0],GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER,0);
 
-	cout << "VBO: " << vbo << " EBO: " << ebo << " ID " << texid << endl;
-
+		cout << "VBO: " << vbo << " EBO: " << ebo << " ID " << texid << endl;
+	}
 	return true;
 }
 
@@ -250,8 +255,42 @@ bool loadIQM(string filename, Model &target){
 
 		file.close();
 
-		loadIQMMesh(filename, header, target, buf);
+		loadIQMMesh(filename, header, target, buf, true);
 		loadIQMAnim(filename, header, target, buf);
+		delete[] buf;
+
+		return true;
+	}else{
+		cout << "Could not open file: " << filename << endl;
+		return false;
+	}
+
+	return false;
+}
+bool noGLLoadIQM(std::string filename, Model &target){
+	ifstream file;
+	iqmheader header;
+	file.open(filename.c_str(), ios::binary);
+	if(file.is_open()){
+		file.read((char*)&header,sizeof(iqmheader));
+		if(strcmp(header.magic,IQM_MAGIC) == true || header.version != IQM_VERSION){
+			cout << "Invalid IQM model: " << filename << endl;
+			return false;
+		}
+		if(header.filesize > (16<<20)){
+			cout << "IQM model: " << filename << " is over 16mb not loading" << endl;
+			return false;
+		}
+
+		cout << "Loading valid IQM model: " << filename << endl;
+
+
+		unsigned char *buf = new unsigned char[header.filesize];
+		file.read((char*)buf+sizeof(header),header.filesize - sizeof(header));
+
+		file.close();
+
+		loadIQMMesh(filename, header, target, buf, false);
 		delete[] buf;
 
 		return true;

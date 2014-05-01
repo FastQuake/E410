@@ -49,9 +49,11 @@ class Model {
 
 bool loadIQM(std::string filename, Model &target);
 bool loadIQMMesh(std::string filename, iqmheader header, 
-		Model &target ,unsigned char *buf);
+		Model &target ,unsigned char *buf, bool GL);
 bool loadIQMAnim(std::string filename, iqmheader header,
 		Model &target, unsigned char *buf);
+
+bool noGLLoadIQM(std::string filename, Model &target);
 
 
 

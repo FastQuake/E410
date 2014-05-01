@@ -42,10 +42,18 @@ int l_serverLoadIQM(lua_State *l){
 	string model = l_toString(l, 1);
 	string tag = l_toString(l, 2);
 
+	Model *mod = resman.loadNoGLModel(model); 
+	if(mod == NULL){
+		lua_pushstring(l,("Could not load model "+model).c_str());
+		lua_error(l);
+	}
+
 	GameObject *out = new (lua_newuserdata(l, sizeof(GameObject))) GameObject;
+	out->setModel(mod);
 	out->modelName = model;
 	out->id = serverID++;
 	out->tag = tag;
+	out->createRidgidBody();
 	serverRendMan.drawList.push_back(out);
 	luaL_getmetatable(l, "MetaGO");
 	lua_setmetatable(l, -2);
