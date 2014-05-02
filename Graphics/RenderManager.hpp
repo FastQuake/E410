@@ -11,6 +11,7 @@
 class RenderManager{
 public:
 	GLuint framebuffer;
+	GLuint renderbuffer;
 	GLuint depthTextures;
 	GLuint depthCubemaps;
 	GLuint normalTex;

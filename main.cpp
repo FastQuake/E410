@@ -175,6 +175,11 @@ int main(int argc, char *argv[]){
 	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, 0);
 
+	glGenRenderbuffers(1,&rendman.renderbuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER,rendman.renderbuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER,GL_DEPTH_COMPONENT24,width,height);
+	glBindRenderbuffer(GL_RENDERBUFFER,0);
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	lua_getglobal(l, "init");
