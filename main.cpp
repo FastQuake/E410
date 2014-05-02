@@ -154,12 +154,10 @@ int main(int argc, char *argv[]){
 	glBindBufferBase(GL_UNIFORM_BUFFER,0,rendman.ubo);
 	glBufferDataARB(GL_UNIFORM_BUFFER,sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*(1+MAX_LIGHTS*2),NULL,GL_DYNAMIC_DRAW);
 	glBindBufferARB(GL_UNIFORM_BUFFER,0);
-	cout << sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*(1+MAX_LIGHTS*2) << endl;
-	cout << sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*(MAX_LIGHTS*2) + sizeof(glm::vec4)<< endl;
 
 	glGenTextures(1,&rendman.normalTex);
 	glBindTexture(GL_TEXTURE_2D,rendman.normalTex);
-	glTexImage2D(GL_TEXTURE_2D,0,GL_RGB16F,width,height,0,GL_RGB,GL_UNSIGNED_BYTE,NULL);
+	glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -266,6 +264,9 @@ int main(int argc, char *argv[]){
 					con.visible = !con.visible;
 					con.updates = !con.updates;
 					im->setGuiMousePos(sf::Vector2i(width/2,height/2));
+				}
+				if(event.key.code == sf::Keyboard::F2){
+					rendman.faku = true; //screenshot; for debugging fbo only; doesn't really work, will remove later
 				}
 			}
 		}
@@ -387,6 +388,10 @@ int main(int argc, char *argv[]){
 		for(int i=0;i<rendman.lights.size();i++)
 			rendman.renderDepth(&depthPrg, dt.asSeconds(),i);
 
+		glUseProgram(deferredPrg.getID());
+		glUniformMatrix4fv(deferredPrg.getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
+		rendman.renderDeferred(&deferredPrg,dt.asSeconds());
+
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glUseProgram(prg.getID());
 		glUniformMatrix4fv(prg.getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
@@ -399,6 +404,8 @@ int main(int argc, char *argv[]){
 
 		window.display();
 		dt = dtTimer.restart();
+		if(rendman.faku) //screenshot thing; for fbo debug only; doesn't work, will remove later
+			rendman.faku = false;
 	}
 
 	enet_host_destroy(client);

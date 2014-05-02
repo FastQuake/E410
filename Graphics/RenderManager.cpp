@@ -63,17 +63,38 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt, int lightIndex){
 			drawScene(prg,dt,false,false);
 		}
 	}
+	glFramebufferTextureLayer(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,0,0,0);
 	glViewport(0,0,width,height);
 }
 
 void RenderManager::renderDeferred(ShaderProgram *prg, float dt){
-	glViewport(0,0,width,height);
-	GLenum draw_bufs[] = {GL_COLOR_ATTACHMENT0};
-	glDrawBuffers(1,draw_bufs);
 	glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,normalTex,0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+#ifdef WINDOWS
+	GLenum draw_bufs[] = {GL_COLOR_ATTACHMENT0};
+	glDrawBuffers(draw_bufs);
+	glReadBuffer(GL_COLOR_ATTACHMENT0);
+#endif
 	glm::mat4 view = currentCam->view();
 	glUniformMatrix4fv(prg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
-	glClear(GL_COLOR_BUFFER_BIT);
+	drawScene(prg,dt,false,true);
+	if(faku){ //doesn't work, will remove this later
+		std::cout << "screenshot" << std::endl;
+		sf::Image depthimg;
+		GLubyte *pixels = new GLubyte[width*height*4];
+		glReadPixels(0,0,width,height,GL_RGBA,GL_UNSIGNED_BYTE,pixels);
+		depthimg.create(width,height,sf::Color::Black);
+		for(unsigned int i=0,x=0,y=0;i<width*height;i++){
+			x = i%(width);
+			if(x == 0 && i>0)
+				y++;
+			depthimg.setPixel(x,y,sf::Color(ceil((double)(pixels[y*width+x]*255.0f)),
+			ceil((double)(pixels[y*width+x+1]*255.0f)),
+			ceil((double)(pixels[y*width+x+2]*255.0f)),255));
+		}
+		depthimg.saveToFile("asdf.png");
+		delete[] pixels;
+	}
 }
 
 void RenderManager::render(ShaderProgram *prg, float dt){
@@ -81,8 +102,9 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 
 	glActiveTexture(GL_TEXTURE1);
 	//glBindTexture(GL_TEXTURE_2D_ARRAY, depthTextures);
-	//glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, depthCubemaps);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D,normalTex);
 	//glUniform1i(prg->getUniform("shadowMaps"), 1);
 	glUniform1i(prg->getUniform("shadowCubes"), 1);
 
