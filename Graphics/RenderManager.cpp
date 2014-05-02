@@ -108,6 +108,7 @@ void RenderManager::render(ShaderProgram *prg, float dt){
 	glBindTexture(GL_TEXTURE_2D,normalTex);
 	//glUniform1i(prg->getUniform("shadowMaps"), 1);
 	glUniform1i(prg->getUniform("shadowCubes"), 1);
+	glUniform1i(prg->getUniform("normalTex"), 2);
 
 	struct toUBO{
 		glm::mat4 depthMVPs[MAX_LIGHTS];

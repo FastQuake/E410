@@ -7,11 +7,15 @@ in vec3 normalCam;
 in vec2 texcoord_f;
 in vec4 shadowCoords[MAX_LIGHTS];
 in vec4 coord3d_f;
+in vec3 normal_f;
+in vec2 normalLookup;
 
 uniform sampler2D inTexture;
+uniform sampler2D normalTex;
 uniform sampler2DArrayShadow shadowMaps;
 uniform samplerCubeArrayShadow shadowCubes;
 uniform mat4 pointProj;
+uniform mat4 view;
 
 out vec4 outColour;
 
@@ -29,6 +33,19 @@ uniform Light {
 	vec4 lightTypes[MAX_LIGHTS];
 	vec4 numLights;
 };
+
+float specular(float lc){
+	float specularReflection = 0.0;
+	vec3 normalVector = texelFetch(normalTex,ivec2(gl_FragCoord.xy),0).rgb;
+	vec3 surfaceCamVector = -normalize(((view*coord3d_f).xyz));
+	for(int i=0;i<numLights.x;i++){
+		vec3 incidenceVector = vec3(lightPositions[i]-coord3d_f);
+		float attenuation = (1000.0/(4.0*3.14159265359*pow(length(incidenceVector),2.0)));
+		vec3 reflectionVector = reflect(normalize(incidenceVector),normalVector);
+		specularReflection += attenuation*pow(max(0.0, dot(surfaceCamVector, reflectionVector)),0.5);
+	}
+	return specularReflection*max(lc,0.0);
+}
 
 void main(){
 	float lightCoefficient = 0.0f;
@@ -49,5 +66,5 @@ void main(){
 	}
 	lightCoefficient = max(lightCoefficient,0.01f);
 	vec3 texColour = texture2D(inTexture,texcoord_f).rgb;
-	outColour = vec4(lightCoefficient*texColour,1.0);
+	outColour = vec4((specular(lightCoefficient)+lightCoefficient)*texColour,1.0);
 }
