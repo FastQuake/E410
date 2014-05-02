@@ -73,7 +73,7 @@ void RenderManager::renderDeferred(ShaderProgram *prg, float dt){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 #ifdef WINDOWS
 	GLenum draw_bufs[] = {GL_COLOR_ATTACHMENT0};
-	glDrawBuffers(draw_bufs);
+	glDrawBuffers(1,draw_bufs);
 	glReadBuffer(GL_COLOR_ATTACHMENT0);
 #endif
 	glm::mat4 view = currentCam->view();
