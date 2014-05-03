@@ -12,11 +12,11 @@ state = states.title
 player = {}
 player.model = nil
 player.id = -1
-player.height = 7
+player.height = 8
 function createObject(obj)
 	if obj:getTag() == "player"..player.id then
 		player.model = obj
-		player.model:setVisible(false)
+		--player.model:setVisible(false)
 	end
 end
 
@@ -49,7 +49,7 @@ function update(dt)
 	if state == states.play then
 		if player.model ~= nil then
 			x,y,z = player.model:getPos()
-			cam:setPos(x,y+player.height,z)
+			cam:setPos(x-2,y+player.height,z)
 		end
 		local mousex, mousey = input.getMousePos()
 		mousex = mousex - (width/2)

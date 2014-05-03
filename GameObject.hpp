@@ -57,7 +57,7 @@ public:
 
 private:
 	btTriangleMesh *trimesh;
-	btBvhTriangleMeshShape *trimeshshape;
+	btCollisionShape *trimeshshape;
 };
 
 #endif

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <bullet/BulletCollision/CollisionShapes/btShapeHull.h>
 #include "Networking/server.hpp"
 #include "GameObject.hpp"
 #include "globals.hpp"
@@ -74,8 +75,21 @@ void GameObject::createRidgidBody(){
 	if(trimesh != NULL)
 		delete trimesh;
 	trimesh = new btTriangleMesh();
+	btConvexHullShape  *o = new btConvexHullShape();
 
-	for(int i=0;i<model->triangles.size();i++){
+	for(int i=0;i<model->verts.size();i++){
+		o->addPoint(btVector3(model->verts[i].position[0],
+					model->verts[i].position[1],
+					model->verts[i].position[2]),true);
+	}
+	o->recalcLocalAabb();
+
+	btShapeHull *hull = new btShapeHull(o);
+	btScalar margin = o->getMargin();
+	hull->buildHull(margin);
+	o->setUserPointer(hull);
+
+	/*for(int i=0;i<model->triangles.size();i++){
 		int p1 = model->triangles[i].vertex[0];
 		int p2 = model->triangles[i].vertex[1];
 		int p3 = model->triangles[i].vertex[2];
@@ -91,11 +105,17 @@ void GameObject::createRidgidBody(){
 
 		trimesh->addTriangle(v1,v2,v3);
 
-	}
+	}*/
 
 	if(trimeshshape != NULL)
 		delete trimeshshape;
-	trimeshshape = new btBvhTriangleMeshShape(trimesh,true);
+	//trimeshshape = new btBvhTriangleMeshShape(trimesh,true);
+	trimeshshape = new btConvexHullShape();
+	btConvexHullShape *tmp = (btConvexHullShape *)trimeshshape; 
+	for(int i=0;i<hull->numVertices();i++){
+		tmp->addPoint(hull->getVertexPointer()[i],true);
+	}
+	tmp->recalcLocalAabb();
 	if(motion != NULL)
 		delete motion;
 	motion = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),
