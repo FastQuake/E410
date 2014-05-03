@@ -201,6 +201,7 @@ int main(int argc, char *argv[]){
 					pstr[enetEvent.packet->dataLength] = 0;
 					string input = pstr;
 					vector<string> pdata = breakString(input);
+					cout << "got packet: " << input << endl;
 					if(pdata[0] == "create"){
 						//Push the object to lua so
 						//lua side code can control it if it wants to

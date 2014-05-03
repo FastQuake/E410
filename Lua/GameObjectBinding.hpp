@@ -15,21 +15,26 @@ int l_setCurAnim(lua_State *l);
 int l_setAnim(lua_State *l);
 int l_setTexture(lua_State *l);
 int l_setVisible(lua_State *l);
+int l_setV(lua_State *l);
+int l_setMass(lua_State *l);
+int l_serverSetPos(lua_State *l);
+int l_serverSetScale(lua_State *l);
 //getters
 int l_getPos(lua_State *l);
+int l_getLookat(lua_State *l);
 int l_getTag(lua_State *l);
 
 int l_delete(lua_State *l);
 int l_serverDelete(lua_State *l);
 
-static struct luaL_Reg GO_funcs[] = {
+const static struct luaL_Reg GO_funcs[] = {
 	{"loadIQM", l_loadIQM},
 	{NULL, NULL}
 };
 
-static struct luaL_Reg GO_methods[] = {
-	{"__gc", l_delete}, //Index 0
-	{"remove", l_delete}, //Index 1
+const static struct luaL_Reg GO_methods[] = {
+	{"__gc", l_delete},
+	{"remove", l_delete},
 	{"setPos", l_setPos},
 	{"setRot", l_setRot},
 	{"move", l_move},
@@ -39,6 +44,31 @@ static struct luaL_Reg GO_methods[] = {
 	{"setCurAnim", l_setCurAnim},
 	{"setTexture", l_setTexture},
 	{"setVisible", l_setVisible},
+	{"animate", l_setAnim},
+	{"getPos", l_getPos},
+	{"getTag", l_getTag},
+	{NULL,NULL}
+};
+
+const static struct luaL_Reg Server_GO_funcs[]={
+	{"loadIQM", l_serverLoadIQM},	
+	{NULL,NULL}
+};
+
+const static struct luaL_Reg Server_GO_methods[]={
+	{"__gc", l_serverDelete},
+	{"remove", l_serverDelete},
+	{"setPos", l_serverSetPos},
+	{"setRot", l_setRot},
+	{"move", l_move},
+	{"strafe", l_strafe},
+	{"turn", l_turn},
+	{"setScale", l_serverSetScale},
+	{"setCurAnim", l_setCurAnim},
+	{"setTexture", l_setTexture},
+	{"setVisible", l_setVisible},
+	{"setVelocity", l_setV},
+	{"setMass", l_setMass},
 	{"animate", l_setAnim},
 	{"getPos", l_getPos},
 	{"getTag", l_getTag},

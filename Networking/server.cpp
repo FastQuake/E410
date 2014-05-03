@@ -221,11 +221,13 @@ void serverMain(){
 			btQuaternion newRot = trans.getRotation();
 			if(serverRendMan.drawList[i]->oldPos != newPos){
 				serverRendMan.drawList[i]->position = newPos;
+				serverRendMan.drawList[i]->oldPos = newPos;
 				sendMovePacket(&p,serverRendMan.drawList[i]);
 				serverRendMan.drawList[i]->moved = false;
 			}
 			if(serverRendMan.drawList[i]->rot != newRot){
 				serverRendMan.drawList[i]->rot = newRot;
+				serverRendMan.drawList[i]->oldRot = newRot;
 				sendRotatePacket(&p,serverRendMan.drawList[i]);
 				serverRendMan.drawList[i]->rotated = false;
 			}

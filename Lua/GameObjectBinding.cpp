@@ -200,3 +200,56 @@ int l_serverDelete(lua_State *l){
 	serverRendMan.remove(obj);
 	return 0;
 }
+int l_setV(lua_State *l){
+	GameObject *obj = l_toGO(l,1);
+	float x = l_toNumber(l,2);
+	float y = l_toNumber(l,3);
+	float z = l_toNumber(l,4);
+
+	if(obj->body != NULL)
+		obj->body->setLinearVelocity(btVector3(x,y,z));
+
+	return 0;
+}
+int l_setMass(lua_State *l){
+	GameObject *obj = l_toGO(l,1);
+	float mass = l_toNumber(l,2);
+	obj->updateMass(mass);
+	return 0;
+}
+int l_serverSetPos(lua_State *l){
+	GameObject *obj = l_toGO(l,1);
+	float x = l_toNumber(l,2);
+	float y = l_toNumber(l,3);
+	float z = l_toNumber(l,4);
+
+	if(obj->motion != NULL){
+		obj->motion->setWorldTransform(btTransform(btQuaternion(0,0,0,1),
+					btVector3(x,y,z)));
+		obj->body->setMotionState(obj->motion);
+	}
+	obj->position = glm::vec3(x,y,z);
+	obj->moved = true;
+	return 0;
+}
+int l_getLookat(lua_State *l){
+	GameObject *obj = l_toGO(l,1);
+	lua_pushnumber(l, obj->lookat.x);
+	lua_pushnumber(l, obj->lookat.y);
+	lua_pushnumber(l, obj->lookat.z);
+	return 3;
+}
+
+int l_serverSetScale(lua_State *l){
+	GameObject *obj = l_toGO(l,1);
+	float x = l_toNumber(l,2);
+	float y = l_toNumber(l,3);
+	float z = l_toNumber(l,4);
+
+	if(obj->body != NULL){
+		obj->body->getCollisionShape()->setLocalScaling(btVector3(x,y,z));
+	}
+	obj->scale = glm::vec3(x,y,z);
+	obj->scaled = true;
+	return 0;
+}

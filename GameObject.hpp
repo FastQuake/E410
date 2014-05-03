@@ -44,6 +44,7 @@ public:
 	bool visible, animate, hasAnimation;
 
 	GameObject();
+	~GameObject();
 
 	void setModel(Model *model);
 	void move(float amount);
@@ -52,6 +53,11 @@ public:
 	void updateLookat();
 
 	void createRidgidBody();
+	void updateMass(float mass);
+
+private:
+	btTriangleMesh *trimesh;
+	btBvhTriangleMeshShape *trimeshshape;
 };
 
 #endif

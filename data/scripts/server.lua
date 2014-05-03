@@ -8,6 +8,8 @@ function onPeerConnect(id)
 	local p = {}
 	p.id = id
 	p.model = GO.loadIQM("mr_fixit.iqm","player".. peerID)
+	p.model:setMass(1)
+	p.model:setPos(0,10,0)
 	peerID = peerID + 1
 	table.insert(peers,p)
 end
@@ -39,6 +41,10 @@ function onPeerDisconnect(address, port)
 end
 
 function init()
+	floor = GO.loadIQM("cube.iqm","cube")
+	floor:setMass(0)
+	floor:setScale(5,1,5)
+	floor:setPos(0,-5.5,0)
 end
 
 delta = 0

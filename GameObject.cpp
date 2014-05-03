@@ -17,9 +17,28 @@ position(0,0,0), rotation(0,0,0), scale(1,1,1){
 	animate = false;
 	hasAnimation = false;
 	aTime = 0;
+	mass = 0;
 
 	lookat = glm::vec3(1, 0, 0);
 	right = glm::vec3(0, 0 ,1);
+
+	body = NULL;
+	trimesh = NULL;
+	trimeshshape = NULL;
+	motion = NULL;
+}
+
+GameObject::~GameObject(){
+	if(body != NULL){
+		physworld.removeBody(body);
+		delete body;
+	}
+	if(trimesh != NULL)
+		delete trimesh;
+	if(trimeshshape != NULL)
+		delete trimeshshape;
+	if(motion != NULL)
+		delete motion;
 }
 
 void GameObject::setModel(Model *model){
@@ -52,7 +71,9 @@ void GameObject::updateLookat(){
 }
 
 void GameObject::createRidgidBody(){
-	btTriangleMesh *trimesh = new btTriangleMesh();
+	if(trimesh != NULL)
+		delete trimesh;
+	trimesh = new btTriangleMesh();
 
 	for(int i=0;i<model->verts.size();i+=3){
 		btVector3 v1(model->verts[i].position[0],
@@ -69,13 +90,29 @@ void GameObject::createRidgidBody(){
 
 	}
 
-	btBvhTriangleMeshShape *trimeshshape = new btBvhTriangleMeshShape(trimesh,true);
+	if(trimeshshape != NULL)
+		delete trimeshshape;
+	trimeshshape = new btBvhTriangleMeshShape(trimesh,true);
+	if(motion != NULL)
+		delete motion;
 	motion = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),
 			btVector3(0,0,0)));
 
-	//physworld.removeBody(body);
-	body = new btRigidBody(btScalar(0),motion,trimeshshape,btVector3(0,0,0));
+	if(body != NULL){
+		physworld.removeBody(body);
+		delete body;
+	}
+	body = new btRigidBody(1,motion,trimeshshape,btVector3(0,0,0));
 
 	physworld.addBody(body);
+}
 
+void GameObject::updateMass(float mass){
+	this->mass = btScalar(mass);
+	btVector3 intertia(0,0,0);
+	trimeshshape->calculateLocalInertia(mass, intertia);
+	if(body != NULL)
+		body->setMassProps(this->mass, intertia);
+	else
+		cout << "body is null" << endl;
 }
