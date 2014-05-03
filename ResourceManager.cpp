@@ -31,15 +31,15 @@ Model *ResourceManager::loadModel(string name){
 }
 
 Model *ResourceManager::loadNoGLModel(std::string name){
-	map<string,Model>::iterator it = models.find(name);
+	map<string,Model>::iterator it = noGLModels.find(name);
 	//If model is not loaded, load it
-	if(it == models.end()){
+	if(it == noGLModels.end()){
 		Model model;
 		if(noGLLoadIQM(modelDir+name,model) == false){
 			return NULL;
 		};
-		models[name] = model;
-		return &models[name];
+		noGLModels[name] = model;
+		return &noGLModels[name];
 	}else{
 		return &it->second;
 	}

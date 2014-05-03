@@ -12,11 +12,11 @@ state = states.title
 player = {}
 player.model = nil
 player.id = -1
-player.height = 8
+player.height = 7
 function createObject(obj)
 	if obj:getTag() == "player"..player.id then
 		player.model = obj
-		--player.model:setVisible(false)
+		player.model:setVisible(false)
 	end
 end
 
