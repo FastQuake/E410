@@ -31,6 +31,7 @@ int l_lightCreate(lua_State *l){
 		i = new (lua_newuserdata(l,sizeof(DLight))) DLight;
 	i->magic = LIGHT_MAGIC;
 	rendman.lights.push_back(i);
+	rendman.updateUBO();
 	luaL_getmetatable(l, "MetaLight");
 	lua_setmetatable(l, -2);
 	return 1;

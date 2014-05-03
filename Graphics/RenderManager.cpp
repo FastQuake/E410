@@ -101,39 +101,29 @@ void RenderManager::renderDeferred(ShaderProgram *prg, float dt){
 void RenderManager::render(ShaderProgram *prg, float dt){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glActiveTexture(GL_TEXTURE1);
-	//glBindTexture(GL_TEXTURE_2D_ARRAY, depthTextures);
-	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, depthCubemaps);
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D,normalTex);
-	//glUniform1i(prg->getUniform("shadowMaps"), 1);
-	glUniform1i(prg->getUniform("shadowCubes"), 1);
-	glUniform1i(prg->getUniform("normalTex"), 2);
-
-	struct toUBO{
-		glm::mat4 depthMVPs[MAX_LIGHTS];
-		glm::vec4 lightPositions[MAX_LIGHTS];
-		glm::vec4 lightTypes[MAX_LIGHTS];
-		glm::vec4 numLights;
-	};
-
-	toUBO data;
-	glBindBufferARB(GL_UNIFORM_BUFFER, ubo);
-	glUniformBlockBinding(prg->getID(),glGetUniformBlockIndex(prg->getID(), "Light"),0);
-
-	for(int i=0;i<lights.size();i++){
-		glm::mat4 mv = lights[i]->mvp();
-		data.depthMVPs[i] = mv;
-		data.lightPositions[i] = glm::vec4(lights[i]->pos,1.0);
-		data.lightTypes[i].x = lights[i]->type;
-	}
-	data.numLights.x = lights.size();
-	//std::cout << lights.size() << std::endl;
-
-	glBufferSubDataARB(GL_UNIFORM_BUFFER,0,sizeof(data),&data);
 	glm::mat4 view = currentCam->view();
 	glUniformMatrix4fv(prg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
 	drawScene(prg,dt,true,true);
+}
+
+void RenderManager::updateUBO(){
+	struct toUBO{
+			glm::mat4 depthMVPs[MAX_LIGHTS];
+			glm::vec4 lightPositions[MAX_LIGHTS];
+			glm::vec4 lightTypes[MAX_LIGHTS];
+			glm::vec4 numLights;
+		};
+	toUBO data;
+	for(int i=0;i<lights.size();i++){
+			glm::mat4 mv = lights[i]->mvp();
+			data.depthMVPs[i] = mv;
+			data.lightPositions[i] = glm::vec4(lights[i]->pos,1.0);
+			data.lightTypes[i].x = lights[i]->type;
+	}
+	data.numLights.x = lights.size();
+	glBindBufferARB(GL_UNIFORM_BUFFER,ubo);
+	glBufferSubDataARB(GL_UNIFORM_BUFFER,0,sizeof(data),&data);
+	glBindBufferARB(GL_UNIFORM_BUFFER,0);
 }
 
 void RenderManager::remove(GameObject *obj){

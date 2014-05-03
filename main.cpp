@@ -148,23 +148,25 @@ int main(int argc, char *argv[]){
 	}
 
 	glGenFramebuffers(1,&rendman.framebuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, rendman.framebuffer);
-
+	glGenRenderbuffers(1,&rendman.renderbuffer);
 	glGenBuffers(1, &rendman.ubo);
+
+
 	glBindBufferBase(GL_UNIFORM_BUFFER,0,rendman.ubo);
 	glBufferDataARB(GL_UNIFORM_BUFFER,sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*(1+MAX_LIGHTS*2),NULL,GL_DYNAMIC_DRAW);
 	glBindBufferARB(GL_UNIFORM_BUFFER,0);
 
 	glGenTextures(1,&rendman.normalTex);
+	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D,rendman.normalTex);
 	glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glBindTexture(GL_TEXTURE_2D,0);
 
 	glGenTextures(1,&rendman.depthCubemaps);
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, rendman.depthCubemaps);
 	glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY_ARB,0,GL_DEPTH_COMPONENT16,512,512,MAX_LIGHTS*6,0,GL_DEPTH_COMPONENT,GL_FLOAT,NULL);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -173,14 +175,15 @@ int main(int argc, char *argv[]){
 	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, 0);
 
-	glGenRenderbuffers(1,&rendman.renderbuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER,rendman.renderbuffer);
 	glRenderbufferStorage(GL_RENDERBUFFER,GL_DEPTH_COMPONENT24,width,height);
 	glBindRenderbuffer(GL_RENDERBUFFER,0);
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glUseProgram(prg.getID());
+	glUniform1i(prg.getUniform("shadowCubes"), 1);
+	glUniform1i(prg.getUniform("normalTex"), 2);
+	glUniformBlockBinding(prg.getID(),glGetUniformBlockIndex(prg.getID(), "Light"),0);
 
 	lua_getglobal(l, "init");
 	status = lua_pcall(l,0,0,0);
@@ -225,11 +228,13 @@ int main(int argc, char *argv[]){
 	rendman.lights.push_back(&light2);
 	rendman.lights.push_back(&light3);
 	rendman.lights.push_back(&light4);
+	rendman.updateUBO();
 	int majv;
 	int minv;
 	glGetIntegerv(GL_MAJOR_VERSION, &majv);
 	glGetIntegerv(GL_MINOR_VERSION, &minv);
 	cout << "GL Version: "<< majv << "." << minv << endl;
+
 	while(window.isOpen()){
 		while(window.pollEvent(event)){
 			if(event.type == sf::Event::Closed){

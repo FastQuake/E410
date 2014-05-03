@@ -19,6 +19,7 @@ public:
 	void renderDepth(ShaderProgram *prg, float dt, int lightIndex);
 	void render(ShaderProgram *prg, float dt);
 	void renderDeferred(ShaderProgram *prg, float dt);
+	void updateUBO();
 	std::vector<GameObject*> drawList;
 	std::vector<FPSCamera*> cameras;
 	std::vector<Light*> lights;
