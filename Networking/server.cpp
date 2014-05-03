@@ -217,7 +217,7 @@ void serverMain(){
 			p.address.host = -1;
 			btTransform trans;
 			serverRendMan.drawList[i]->motion->getWorldTransform(trans);
-			glm::vec3 newPos(trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z());
+			glm::vec3 newPos = glm::vec3(trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z());
 			btQuaternion newRot = trans.getRotation();
 			if(serverRendMan.drawList[i]->oldPos != newPos){
 				serverRendMan.drawList[i]->position = newPos;
