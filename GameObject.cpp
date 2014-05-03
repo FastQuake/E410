@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include <bullet/BulletCollision/CollisionShapes/btShapeHull.h>
 #include "Networking/server.hpp"
 #include "GameObject.hpp"
@@ -70,26 +71,11 @@ void GameObject::updateLookat(){
 	right = glm::cross(lookat,glm::vec3(0,1,0));
 	rotation.z += 90.0;
 }
-
-void GameObject::createRidgidBody(){
+void GameObject::createTriangleRidgidBody(){
 	if(trimesh != NULL)
 		delete trimesh;
 	trimesh = new btTriangleMesh();
-	btConvexHullShape  *o = new btConvexHullShape();
-
-	for(int i=0;i<model->verts.size();i++){
-		o->addPoint(btVector3(model->verts[i].position[0],
-					model->verts[i].position[1],
-					model->verts[i].position[2]),true);
-	}
-	o->recalcLocalAabb();
-
-	btShapeHull *hull = new btShapeHull(o);
-	btScalar margin = o->getMargin();
-	hull->buildHull(margin);
-	o->setUserPointer(hull);
-
-	/*for(int i=0;i<model->triangles.size();i++){
+	for(int i=0;i<model->triangles.size();i++){
 		int p1 = model->triangles[i].vertex[0];
 		int p2 = model->triangles[i].vertex[1];
 		int p3 = model->triangles[i].vertex[2];
@@ -105,11 +91,44 @@ void GameObject::createRidgidBody(){
 
 		trimesh->addTriangle(v1,v2,v3);
 
-	}*/
+	}
 
 	if(trimeshshape != NULL)
 		delete trimeshshape;
-	//trimeshshape = new btBvhTriangleMeshShape(trimesh,true);
+	trimeshshape = new btBvhTriangleMeshShape(trimesh,true);
+	if(motion != NULL)
+		delete motion;
+	motion = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),
+			btVector3(0,0,0)));
+
+	if(body != NULL){
+		physworld.removeBody(body);
+		delete body;
+	}
+	btVector3 intertia;
+	trimeshshape->calculateLocalInertia(mass, intertia);
+	btRigidBody::btRigidBodyConstructionInfo ci(mass,motion,trimeshshape,intertia);
+	body = new btRigidBody(ci);
+
+	physworld.addBody(body);
+}
+void GameObject::createConvexRidgidBody(){
+	btConvexHullShape  *o = new btConvexHullShape();
+
+	for(int i=0;i<model->verts.size();i++){
+		o->addPoint(btVector3(model->verts[i].position[0],
+					model->verts[i].position[1],
+					model->verts[i].position[2]),true);
+	}
+	o->recalcLocalAabb();
+
+	btShapeHull *hull = new btShapeHull(o);
+	btScalar margin = o->getMargin();
+	hull->buildHull(margin);
+	o->setUserPointer(hull);
+
+	if(trimeshshape != NULL)
+		delete trimeshshape;
 	trimeshshape = new btConvexHullShape();
 	btConvexHullShape *tmp = (btConvexHullShape *)trimeshshape; 
 	for(int i=0;i<hull->numVertices();i++){
@@ -131,6 +150,22 @@ void GameObject::createRidgidBody(){
 	body = new btRigidBody(ci);
 
 	physworld.addBody(body);
+}
+void GameObject::createCubeRidgidBody(){
+	float minx = model->verts[0].position[0];
+	float miny = model->verts[0].position[1];
+	float minz = model->verts[0].position[2];
+	float maxx = minx;
+	float maxy = miny;
+	float maxz = minz;
+	for(int i=0;i<model->verts.size();i++){
+		minx = min(minx, model->verts[0].position[0]);
+		maxx = max(maxx, model->verts[0].position[0]);
+		miny = min(miny, model->verts[0].position[1]);
+		maxy = max(maxy, model->verts[0].position[1]);
+		minz = min(minz, model->verts[0].position[2]);
+		maxz = max(maxz, model->verts[0].position[2]);
+	}
 }
 
 void GameObject::updateMass(float mass){

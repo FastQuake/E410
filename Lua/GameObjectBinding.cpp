@@ -53,7 +53,7 @@ int l_serverLoadIQM(lua_State *l){
 	out->modelName = model;
 	out->id = serverID++;
 	out->tag = tag;
-	out->createRidgidBody();
+	out->createConvexRidgidBody();
 	serverRendMan.drawList.push_back(out);
 	luaL_getmetatable(l, "MetaGO");
 	lua_setmetatable(l, -2);
@@ -251,5 +251,15 @@ int l_serverSetScale(lua_State *l){
 	}
 	obj->scale = glm::vec3(x,y,z);
 	obj->scaled = true;
+	return 0;
+}
+int l_setConvexBody(lua_State *l){
+	GameObject *obj = l_toGO(l,1);
+	obj->createConvexRidgidBody();
+	return 0;
+}
+int l_setTriangleBody(lua_State *l){
+	GameObject *obj = l_toGO(l,1);
+	obj->createTriangleRidgidBody();
 	return 0;
 }

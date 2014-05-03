@@ -8,7 +8,8 @@ function onPeerConnect(id)
 	local p = {}
 	p.id = id
 	p.model = GO.loadIQM("mr_fixit.iqm","player".. peerID)
-	p.model:setMass(1)
+	p.model:setConvexBody()
+	p.model:setMass(100)
 	p.model:setPos(0,10,0)
 	peerID = peerID + 1
 	table.insert(peers,p)

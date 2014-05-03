@@ -19,6 +19,8 @@ int l_setV(lua_State *l);
 int l_setMass(lua_State *l);
 int l_serverSetPos(lua_State *l);
 int l_serverSetScale(lua_State *l);
+int l_setConvexBody(lua_State *l);
+int l_setTriangleBody(lua_State *l);
 //getters
 int l_getPos(lua_State *l);
 int l_getLookat(lua_State *l);
@@ -68,6 +70,8 @@ const static struct luaL_Reg Server_GO_methods[]={
 	{"setTexture", l_setTexture},
 	{"setVisible", l_setVisible},
 	{"setVelocity", l_setV},
+	{"setConvexBody",l_setConvexBody},
+	{"setTriangleBody",l_setTriangleBody},
 	{"setMass", l_setMass},
 	{"animate", l_setAnim},
 	{"getPos", l_getPos},
