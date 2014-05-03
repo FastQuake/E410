@@ -17,7 +17,7 @@ position(0,0,0), rotation(0,0,0), scale(1,1,1){
 	animate = false;
 	hasAnimation = false;
 	aTime = 0;
-	mass = 0;
+	mass = 1;
 
 	lookat = glm::vec3(1, 0, 0);
 	right = glm::vec3(0, 0 ,1);
@@ -75,16 +75,19 @@ void GameObject::createRidgidBody(){
 		delete trimesh;
 	trimesh = new btTriangleMesh();
 
-	for(int i=0;i<model->verts.size();i+=3){
-		btVector3 v1(model->verts[i].position[0],
-				model->verts[i].position[1],
-				model->verts[i].position[2]);
-		btVector3 v2(model->verts[i+1].position[0],
-				model->verts[i+1].position[1],
-				model->verts[i+1].position[2]);
-		btVector3 v3(model->verts[i+2].position[0],
-				model->verts[i+2].position[1],
-				model->verts[i+2].position[2]);
+	for(int i=0;i<model->triangles.size();i++){
+		int p1 = model->triangles[i].vertex[0];
+		int p2 = model->triangles[i].vertex[1];
+		int p3 = model->triangles[i].vertex[2];
+		btVector3 v1(model->verts[p1].position[0],
+				model->verts[p1].position[1],
+				model->verts[p1].position[2]);
+		btVector3 v2(model->verts[p2].position[0],
+				model->verts[p2].position[1],
+				model->verts[p2].position[2]);
+		btVector3 v3(model->verts[p3].position[0],
+				model->verts[p3].position[1],
+				model->verts[p3].position[2]);
 
 		trimesh->addTriangle(v1,v2,v3);
 
@@ -102,17 +105,23 @@ void GameObject::createRidgidBody(){
 		physworld.removeBody(body);
 		delete body;
 	}
-	body = new btRigidBody(1,motion,trimeshshape,btVector3(0,0,0));
+	btVector3 intertia;
+	trimeshshape->calculateLocalInertia(mass, intertia);
+	btRigidBody::btRigidBodyConstructionInfo ci(mass,motion,trimeshshape,intertia);
+	body = new btRigidBody(ci);
 
 	physworld.addBody(body);
 }
 
 void GameObject::updateMass(float mass){
 	this->mass = btScalar(mass);
-	btVector3 intertia(0,0,0);
-	trimeshshape->calculateLocalInertia(mass, intertia);
-	if(body != NULL)
+	btVector3 intertia;
+	if(body != NULL){
+		physworld.removeBody(body);
+		body->getCollisionShape()->calculateLocalInertia(this->mass, intertia);
 		body->setMassProps(this->mass, intertia);
+		physworld.addBody(body);
+	}
 	else
 		cout << "body is null" << endl;
 }

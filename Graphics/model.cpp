@@ -137,8 +137,11 @@ bool loadIQMMesh(string filename, iqmheader header, Model &target, unsigned char
 
 	//Load triangles;
 	GLuint ebo;
+	iqmtriangle *tris = (iqmtriangle *)&buf[header.ofs_triangles];
+	target.triangles.resize(header.num_triangles);
+	memcpy(&target.triangles[0],tris,header.num_triangles*sizeof(iqmtriangle));
+		
 	if(GL){
-		iqmtriangle *tris = (iqmtriangle *)&buf[header.ofs_triangles];
 		glGenBuffers(1,&ebo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER,

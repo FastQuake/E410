@@ -28,6 +28,7 @@ class Model {
 		GLuint textureID;
 	public:
 		std::vector<vertex> verts;
+		std::vector<iqmtriangle> triangles;
 		std::vector<iqmmesh> meshes;
 		std::vector<iqmjoint> joints;
 		std::vector<GLuint> textureIDS;
