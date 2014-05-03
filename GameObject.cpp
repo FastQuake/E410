@@ -26,7 +26,7 @@ position(0,0,0), rotation(0,0,0), scale(1,1,1){
 
 	body = NULL;
 	trimesh = NULL;
-	trimeshshape = NULL;
+	collisionshape = NULL;
 	motion = NULL;
 }
 
@@ -37,8 +37,8 @@ GameObject::~GameObject(){
 	}
 	if(trimesh != NULL)
 		delete trimesh;
-	if(trimeshshape != NULL)
-		delete trimeshshape;
+	if(collisionshape != NULL)
+		delete collisionshape;
 	if(motion != NULL)
 		delete motion;
 }
@@ -51,6 +51,7 @@ void GameObject::setModel(Model *model){
 		hasAnimation = true;
 	}
 	textures = model->textureIDS;
+	extents extents = getExtents();
 }
 
 void GameObject::move(float amount){
@@ -93,9 +94,9 @@ void GameObject::createTriangleRidgidBody(){
 
 	}
 
-	if(trimeshshape != NULL)
-		delete trimeshshape;
-	trimeshshape = new btBvhTriangleMeshShape(trimesh,true);
+	if(collisionshape != NULL)
+		delete collisionshape;
+	collisionshape = new btBvhTriangleMeshShape(trimesh,true);
 	if(motion != NULL)
 		delete motion;
 	motion = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),
@@ -106,8 +107,8 @@ void GameObject::createTriangleRidgidBody(){
 		delete body;
 	}
 	btVector3 intertia;
-	trimeshshape->calculateLocalInertia(mass, intertia);
-	btRigidBody::btRigidBodyConstructionInfo ci(mass,motion,trimeshshape,intertia);
+	collisionshape->calculateLocalInertia(mass, intertia);
+	btRigidBody::btRigidBodyConstructionInfo ci(mass,motion,collisionshape,intertia);
 	body = new btRigidBody(ci);
 
 	physworld.addBody(body);
@@ -127,10 +128,10 @@ void GameObject::createConvexRidgidBody(){
 	hull->buildHull(margin);
 	o->setUserPointer(hull);
 
-	if(trimeshshape != NULL)
-		delete trimeshshape;
-	trimeshshape = new btConvexHullShape();
-	btConvexHullShape *tmp = (btConvexHullShape *)trimeshshape; 
+	if(collisionshape != NULL)
+		delete collisionshape;
+	collisionshape = new btConvexHullShape();
+	btConvexHullShape *tmp = (btConvexHullShape *)collisionshape;
 	for(int i=0;i<hull->numVertices();i++){
 		tmp->addPoint(hull->getVertexPointer()[i],true);
 	}
@@ -145,27 +146,37 @@ void GameObject::createConvexRidgidBody(){
 		delete body;
 	}
 	btVector3 intertia;
-	trimeshshape->calculateLocalInertia(mass, intertia);
-	btRigidBody::btRigidBodyConstructionInfo ci(mass,motion,trimeshshape,intertia);
+	collisionshape->calculateLocalInertia(mass, intertia);
+	btRigidBody::btRigidBodyConstructionInfo ci(mass,motion,collisionshape,intertia);
 	body = new btRigidBody(ci);
 
 	physworld.addBody(body);
 }
 void GameObject::createCubeRidgidBody(){
-	float minx = model->verts[0].position[0];
-	float miny = model->verts[0].position[1];
-	float minz = model->verts[0].position[2];
-	float maxx = minx;
-	float maxy = miny;
-	float maxz = minz;
-	for(int i=0;i<model->verts.size();i++){
-		minx = min(minx, model->verts[0].position[0]);
-		maxx = max(maxx, model->verts[0].position[0]);
-		miny = min(miny, model->verts[0].position[1]);
-		maxy = max(maxy, model->verts[0].position[1]);
-		minz = min(minz, model->verts[0].position[2]);
-		maxz = max(maxz, model->verts[0].position[2]);
+	extents extents = getExtents();
+	float xsize,ysize,zsize;
+	xsize = extents.maxx-extents.minx;
+	ysize = extents.maxy-extents.miny;
+	zsize = extents.maxz-extents.minz;
+	btVector3 boxVector(xsize/2.0,ysize/2.0,zsize/2.0);
+
+	if(collisionshape != NULL)
+		delete collisionshape;
+	collisionshape = new btBoxShape(boxVector);
+
+	if(motion != NULL)
+		delete motion;
+	motion = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,0,0)));
+
+	btVector3 inertia;
+	collisionshape->calculateLocalInertia(mass,inertia);
+	btRigidBody::btRigidBodyConstructionInfo ci(mass,motion,collisionshape,inertia);
+	if(body != NULL){
+		physworld.removeBody(body);
+		delete body;
 	}
+	body = new btRigidBody(ci);
+	physworld.addBody(body);
 }
 
 void GameObject::updateMass(float mass){
@@ -179,4 +190,23 @@ void GameObject::updateMass(float mass){
 	}
 	else
 		cout << "body is null" << endl;
+}
+
+extents GameObject::getExtents(){
+	extents out;
+	out.minx = model->verts[0].position[0];
+	out.miny = model->verts[0].position[1];
+	out.minz = model->verts[0].position[2];
+	out.maxx = out.minx;
+	out.maxy = out.miny;
+	out.maxz = out.minz;
+	for(int i=0;i<model->verts.size();i++){
+		out.minx = min(out.minx, model->verts[i].position[0]);
+		out.maxx = max(out.maxx, model->verts[i].position[0]);
+		out.miny = min(out.miny, model->verts[i].position[1]);
+		out.maxy = max(out.maxy, model->verts[i].position[1]);
+		out.minz = min(out.minz, model->verts[i].position[2]);
+		out.maxz = max(out.maxz, model->verts[i].position[2]);
+	}
+	return out;
 }

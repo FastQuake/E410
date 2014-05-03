@@ -263,3 +263,11 @@ int l_setTriangleBody(lua_State *l){
 	obj->createTriangleRidgidBody();
 	return 0;
 }
+int l_setBoxBody(lua_State *l){
+	GameObject *obj = l_toGO(l,1);
+	obj->createCubeRidgidBody();
+	return 0;
+}
+
+
+
