@@ -3,6 +3,7 @@ require "vector"
 
 peers = {}
 peerID = 0
+playerSpeed = 10
 function onPeerConnect(id)
 	print("Got connection from peer "..id)
 	network.sendPacket(id, "player".. peerID)
@@ -24,15 +25,15 @@ function onReceivePacket(id, data)
 	--print(out)
 	local p = Peer.getPeer(peers, id)
 	fwd = Vector.create(p.model:getLookat())
-	right = Vector.cross(fwd, Vector.create(0,1,0))
+	right = Vector.cross(Vector.create(0,1,0),fwd)
 	if data[1] == "forward" then
-		p.model:setVelocity(fwd:get())
+		p.model:setVelocity(Vector.scalarMul(playerSpeed,fwd):get())
 	elseif data[1] == "backward" then
-		p.model:setVelocity(Vector.scalarMul(-1,fwd):get())
+		p.model:setVelocity(Vector.scalarMul(-playerSpeed,fwd):get())
 	elseif data[1] == "right" then
-		p.model:setVelocity(right:get())
+		p.model:setVelocity(Vector.scalarMul(playerSpeed,right):get())
 	elseif data[1] == "left" then
-		p.model:setVelocity(Vector.scalarMul(-1,right):get())
+		p.model:setVelocity(Vector.scalarMul(-playerSpeed,right):get())
 	elseif data[1] == "stop" then
 		p.model:setVelocity(0,0,0)
 	elseif data[1] == "turn" then

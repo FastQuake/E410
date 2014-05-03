@@ -207,7 +207,7 @@ int l_setV(lua_State *l){
 	float z = l_toNumber(l,4);
 
 	if(obj->body != NULL)
-		obj->body->setLinearVelocity(btVector3(x,y,z));
+		obj->body->setLinearVelocity(btVector3(x,y,-z));
 
 	return 0;
 }
@@ -239,8 +239,10 @@ int l_serverSetRot(lua_State *l){
 	float z = l_toNumber(l,4);
 
 	if(obj->motion != NULL){
+		btTransform trans;
+		obj->motion->getWorldTransform(trans);
 		obj->motion->setWorldTransform(btTransform(btQuaternion(toRad(z),toRad(y),toRad(x)),
-					btVector3(obj->position.x, obj->position.y, obj->position.z)));
+					trans.getOrigin()));
 		obj->body->setMotionState(obj->motion);
 	}
 	obj->rotation.x = x;
