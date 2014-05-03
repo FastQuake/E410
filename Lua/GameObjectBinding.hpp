@@ -20,6 +20,7 @@ int l_setMass(lua_State *l);
 int l_serverSetPos(lua_State *l);
 int l_serverSetScale(lua_State *l);
 int l_serverSetRot(lua_State *l);
+int l_serverLockAxis(lua_State *l);
 int l_setConvexBody(lua_State *l);
 int l_setTriangleBody(lua_State *l);
 int l_setBoxBody(lua_State *l);
@@ -77,6 +78,7 @@ const static struct luaL_Reg Server_GO_methods[]={
 	{"setTriangleBody",l_setTriangleBody},
 	{"setBoxBody",l_setBoxBody},
 	{"setMass", l_setMass},
+	{"lockAxis",l_serverLockAxis},
 	{"animate", l_setAnim},
 	{"getPos", l_getPos},
 	{"getLookat", l_getLookat},

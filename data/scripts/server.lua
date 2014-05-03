@@ -13,6 +13,7 @@ function onPeerConnect(id)
 	p.model:setBoxBody()
 	p.model:setMass(10)
 	p.model:setPos(0,10,0)
+	p.model:lockAxis(0,0,0)
 	peerID = peerID + 1
 	table.insert(peers,p)
 end

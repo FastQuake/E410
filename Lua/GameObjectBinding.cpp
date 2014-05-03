@@ -289,5 +289,14 @@ int l_setBoxBody(lua_State *l){
 	return 0;
 }
 
-
+int l_serverLockAxis(lua_State *l){
+	GameObject *obj = l_toGO(l,1);
+	float x = l_toNumber(l,2);
+	float y = l_toNumber(l,3);
+	float z = l_toNumber(l,4);
+	if(obj->body != NULL){
+		obj->body->setAngularFactor(btVector3(-x,-y,-z));
+	}
+	return 0;
+}
 
