@@ -138,6 +138,11 @@ bool loadIQMMesh(string filename, iqmheader header, Model &target, unsigned char
 	//Load triangles;
 	GLuint ebo;
 	iqmtriangle *tris = (iqmtriangle *)&buf[header.ofs_triangles];
+	for(int i=0;i<header.num_triangles;i++){
+		int t1=tris[i].vertex[0], t3=tris[i].vertex[2];
+		tris[i].vertex[0] = t3;
+		tris[i].vertex[2] = t1;
+	}
 	target.triangles.resize(header.num_triangles);
 	memcpy(&target.triangles[0],tris,header.num_triangles*sizeof(iqmtriangle));
 		
