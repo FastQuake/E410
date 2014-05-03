@@ -1,4 +1,5 @@
 require "title"
+require "vector"
 sensitvity = 0.75
 speed = 10
 
@@ -12,17 +13,35 @@ state = states.title
 player = {}
 player.model = nil
 player.id = -1
-player.height = 8
+player.height = 7
 function createObject(obj)
 	if obj:getTag() == "player"..player.id then
 		player.model = obj
-		--player.model:setVisible(false)
+		player.model:setVisible(false)
 	end
 end
 
 function onReceivePacket(data)
 	if data[1]:sub(1,6) == "player" then	
 		player.id = data[1]:sub(7)
+	end
+end
+
+function onKeyDown(key)
+	if key == keys.W then
+		network.sendPacket("forward")
+	elseif key == keys.S then
+		network.sendPacket("backward")
+	elseif key == keys.A then
+		network.sendPacket("left")
+	elseif key == keys.D then
+		network.sendPacket("right")
+	end
+end
+
+function onKeyRelease(key)
+	if key == keys.W or key == keys.S or key == keys.A or key == keys.D then
+		network.sendPacket("stop")
 	end
 end
 
@@ -34,6 +53,8 @@ function init()
 	camera.setCam(cam)
 end
 
+player.oldRot = 0
+player.newRot = 0
 function update(dt)
 	title:update(dt)
 	if title.state == tstates.play then
@@ -48,8 +69,9 @@ function update(dt)
 	end
 	if state == states.play then
 		if player.model ~= nil then
-			x,y,z = player.model:getPos()
-			cam:setPos(x-2,y+player.height,z)
+			pos = Vector.create(player.model:getPos())
+			pos = pos+Vector.create(0,player.height,0)
+			cam:setPos(pos:get())
 		end
 		local mousex, mousey = input.getMousePos()
 		mousex = mousex - (width/2)
@@ -57,30 +79,10 @@ function update(dt)
 		cam:turn(mousex*sensitvity,
 		-mousey*sensitvity)
 		input.setMousePos(width/2, height/2)
-
-		local camx,camy,camz = cam:getRot()
-		dir = camx.." "..camy
-		if input.isKeyDown(keys.W) then
-			network.sendPacket("forward "..dir)
+		player.newRot = player.oldRot+mousex*sensitvity
+		if player.newRot ~= player.oldRot then
+			network.sendPacket("turn "..player.newRot)
 		end
-		if input.isKeyDown(keys.S) then
-			network.sendPacket("backward "..dir)
-		end
-		if input.isKeyDown(keys.A) then
-			network.sendPacket("left "..dir)
-		end
-		if input.isKeyDown(keys.D) then
-			network.sendPacket("right "..dir)
-		end
-		--[[if input.isKeyDown(keys.Up) then
-			network.sendPacket("forward")
-		end
-		if input.isKeyDown(keys.Right) then
-			network.sendPacket("right")
-		end
-		if input.isKeyDown(keys.Left) then
-			network.sendPacket("left")
-		end]]--
-
+		player.oldRot = player.newRot
 	end
 end

@@ -24,6 +24,8 @@ position(0,0,0), rotation(0,0,0), scale(1,1,1){
 	lookat = glm::vec3(1, 0, 0);
 	right = glm::vec3(0, 0 ,1);
 
+	rot = btQuaternion(0,0,0,1);
+
 	body = NULL;
 	trimesh = NULL;
 	trimeshshape = NULL;
@@ -60,7 +62,7 @@ void GameObject::strafe(float amount){
 	position += amount*glm::normalize(right);
 }
 void GameObject::turn(glm::vec2 amount){
-	rotation += glm::vec3(0, -amount.x, amount.y);
+	rotation += glm::vec3(amount.y, -amount.x, 0);
 	updateLookat();
 }
 void GameObject::updateLookat(){

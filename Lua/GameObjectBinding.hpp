@@ -19,6 +19,7 @@ int l_setV(lua_State *l);
 int l_setMass(lua_State *l);
 int l_serverSetPos(lua_State *l);
 int l_serverSetScale(lua_State *l);
+int l_serverSetRot(lua_State *l);
 int l_setConvexBody(lua_State *l);
 int l_setTriangleBody(lua_State *l);
 //getters
@@ -49,6 +50,7 @@ const static struct luaL_Reg GO_methods[] = {
 	{"animate", l_setAnim},
 	{"getPos", l_getPos},
 	{"getTag", l_getTag},
+	{"getLookat",l_getLookat},
 	{NULL,NULL}
 };
 
@@ -61,7 +63,7 @@ const static struct luaL_Reg Server_GO_methods[]={
 	{"__gc", l_serverDelete},
 	{"remove", l_serverDelete},
 	{"setPos", l_serverSetPos},
-	{"setRot", l_setRot},
+	{"setRot", l_serverSetRot},
 	{"move", l_move},
 	{"strafe", l_strafe},
 	{"turn", l_turn},
@@ -75,6 +77,7 @@ const static struct luaL_Reg Server_GO_methods[]={
 	{"setMass", l_setMass},
 	{"animate", l_setAnim},
 	{"getPos", l_getPos},
+	{"getLookat", l_getLookat},
 	{"getTag", l_getTag},
 	{NULL,NULL}
 };

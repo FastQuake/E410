@@ -189,7 +189,23 @@ int main(int argc, char *argv[]){
 					con.visible = !con.visible;
 					con.updates = !con.updates;
 					im->setGuiMousePos(sf::Vector2i(width/2,height/2));
+				} else {
+					lua_getglobal(l, "onKeyDown");
+					lua_pushnumber(l, event.key.code);
+					if(lua_pcall(l,1,0,0)){
+						cout << lua_tostring(l, -1) << endl;
+						global_con->out.println(lua_tostring(l, -1));
+					}
+
 				}
+			}
+			if(event.type == sf::Event::KeyReleased){
+				lua_getglobal(l, "onKeyRelease");
+				lua_pushnumber(l, event.key.code);
+				if(lua_pcall(l,1,0,0)){
+						cout << lua_tostring(l, -1) << endl;
+						global_con->out.println(lua_tostring(l, -1));
+				}	
 			}
 		}
 		//Handle input packets and send buffered packets
@@ -201,7 +217,6 @@ int main(int argc, char *argv[]){
 					pstr[enetEvent.packet->dataLength] = 0;
 					string input = pstr;
 					vector<string> pdata = breakString(input);
-					cout << "got packet: " << input << endl;
 					if(pdata[0] == "create"){
 						//Push the object to lua so
 						//lua side code can control it if it wants to
@@ -256,6 +271,7 @@ int main(int argc, char *argv[]){
 						obj->rotation.x = stringToFloat(pdata[2]);
 						obj->rotation.y = stringToFloat(pdata[3]);
 						obj->rotation.z = stringToFloat(pdata[4]);
+						obj->updateLookat();
 					}
 					else if(pdata[0] == "scale"){
 						uint32_t id = stringToInt(pdata[1]);

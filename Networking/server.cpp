@@ -226,6 +226,8 @@ void serverMain(){
 				serverRendMan.drawList[i]->moved = false;
 			}
 			if(serverRendMan.drawList[i]->rot != newRot){
+				serverRendMan.drawList[i]->rotation = quatToEuler(glm::quat(newRot.x(),newRot.y(),newRot.z(),newRot.w()));
+				serverRendMan.drawList[i]->updateLookat();
 				serverRendMan.drawList[i]->rot = newRot;
 				serverRendMan.drawList[i]->oldRot = newRot;
 				sendRotatePacket(&p,serverRendMan.drawList[i]);

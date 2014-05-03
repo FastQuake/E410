@@ -224,12 +224,30 @@ int l_serverSetPos(lua_State *l){
 	float z = l_toNumber(l,4);
 
 	if(obj->motion != NULL){
-		obj->motion->setWorldTransform(btTransform(btQuaternion(0,0,0,1),
+		obj->motion->setWorldTransform(btTransform(obj->rot,
 					btVector3(x,y,z)));
 		obj->body->setMotionState(obj->motion);
 	}
 	obj->position = glm::vec3(x,y,z);
 	obj->moved = true;
+	return 0;
+}
+int l_serverSetRot(lua_State *l){
+	GameObject *obj = l_toGO(l, 1);
+	float x = l_toNumber(l,2);
+	float y = l_toNumber(l,3);
+	float z = l_toNumber(l,4);
+
+	if(obj->motion != NULL){
+		obj->motion->setWorldTransform(btTransform(btQuaternion(toRad(z),toRad(y),toRad(x)),
+					btVector3(obj->position.x, obj->position.y, obj->position.z)));
+		obj->body->setMotionState(obj->motion);
+	}
+	obj->rotation.x = x;
+	obj->rotation.y = y;
+	obj->rotation.z = z;
+	obj->rotated = true;
+	obj->updateLookat();
 	return 0;
 }
 int l_getLookat(lua_State *l){

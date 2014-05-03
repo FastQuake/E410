@@ -46,4 +46,5 @@ std::string intToString(int input);
 std::string floatToString(float input);
 float toDegrees(float rad);
 float toRad(float degrees);
+glm::vec3 quatToEuler(glm::quat quat);
 #endif
