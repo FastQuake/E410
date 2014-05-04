@@ -11,6 +11,7 @@ function onPeerConnect(id)
 	p.id = id
 	p.model = GO.loadIQM("mr_fixit.iqm","player".. peerID)
 	p.model:setBoxBody()
+	p.model:setActivation(true)
 	p.model:setMass(10)
 	p.model:setPos(0,10,0)
 	p.model:lockAxis(0,0,0)

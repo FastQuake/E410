@@ -206,8 +206,11 @@ int l_setV(lua_State *l){
 	float y = l_toNumber(l,3);
 	float z = l_toNumber(l,4);
 
-	if(obj->body != NULL)
+	if(obj->body != NULL){
+		physworld.removeBody(obj->body);
 		obj->body->setLinearVelocity(btVector3(x,y,-z));
+		physworld.addBody(obj->body);
+	}
 
 	return 0;
 }
@@ -239,11 +242,13 @@ int l_serverSetRot(lua_State *l){
 	float z = l_toNumber(l,4);
 
 	if(obj->motion != NULL){
+		physworld.removeBody(obj->body);
 		btTransform trans;
 		obj->motion->getWorldTransform(trans);
 		obj->motion->setWorldTransform(btTransform(btQuaternion(toRad(x),toRad(y),toRad(z)),
 					trans.getOrigin()));
 		obj->body->setMotionState(obj->motion);
+		physworld.addBody(obj->body);
 	}
 	obj->rotation.x = x;
 	obj->rotation.y = y;
@@ -298,6 +303,18 @@ int l_serverLockAxis(lua_State *l){
 		physworld.removeBody(obj->body);
 		obj->body->setAngularFactor(btVector3(x,y,z));
 		physworld.addBody(obj->body);
+	}
+	return 0;
+}
+int l_setActivation(lua_State *l){
+	GameObject *obj = l_toGO(l,1);
+	bool activate = l_toBool(l,2);
+	if(obj->body != NULL){
+		if(activate){
+			obj->body->setActivationState(DISABLE_DEACTIVATION);
+		} else {
+			obj->body->setActivationState(ACTIVE_TAG);
+		}
 	}
 	return 0;
 }
