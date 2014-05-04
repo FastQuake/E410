@@ -61,9 +61,9 @@ public:
 	void turn(glm::vec2 amount);
 	void updateLookat();
 
-	void createTriangleRidgidBody();
-	void createConvexRidgidBody();
-	void createCubeRidgidBody();
+	void createTriangleRigidBody();
+	void createConvexRigidBody();
+	void createCubeRigidBody();
 	void updateMass(float mass);
 
 	extents getExtents();

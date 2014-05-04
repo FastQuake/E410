@@ -74,7 +74,7 @@ void GameObject::updateLookat(){
 	right = glm::cross(lookat,glm::vec3(0,1,0));
 	rotation.x -= 90.0;
 }
-void GameObject::createTriangleRidgidBody(){
+void GameObject::createTriangleRigidBody(){
 	if(trimesh != NULL)
 		delete trimesh;
 	trimesh = new btTriangleMesh();
@@ -108,14 +108,14 @@ void GameObject::createTriangleRidgidBody(){
 		physworld.removeBody(body);
 		delete body;
 	}
-	btVector3 intertia;
-	collisionshape->calculateLocalInertia(mass, intertia);
-	btRigidBody::btRigidBodyConstructionInfo ci(mass,motion,collisionshape,intertia);
+	btVector3 inertia;
+	collisionshape->calculateLocalInertia(mass, inertia);
+	btRigidBody::btRigidBodyConstructionInfo ci(mass,motion,collisionshape,inertia);
 	body = new btRigidBody(ci);
 
 	physworld.addBody(body);
 }
-void GameObject::createConvexRidgidBody(){
+void GameObject::createConvexRigidBody(){
 	btConvexHullShape  *o = new btConvexHullShape();
 
 	for(int i=0;i<model->verts.size();i++){
@@ -147,14 +147,16 @@ void GameObject::createConvexRidgidBody(){
 		physworld.removeBody(body);
 		delete body;
 	}
-	btVector3 intertia;
-	collisionshape->calculateLocalInertia(mass, intertia);
-	btRigidBody::btRigidBodyConstructionInfo ci(mass,motion,collisionshape,intertia);
+	btVector3 inertia;
+	collisionshape->calculateLocalInertia(mass, inertia);
+	btRigidBody::btRigidBodyConstructionInfo ci(mass,motion,collisionshape,inertia);
 	body = new btRigidBody(ci);
 
 	physworld.addBody(body);
+	delete hull;
+	delete o;
 }
-void GameObject::createCubeRidgidBody(){
+void GameObject::createCubeRigidBody(){
 	extents extents = getExtents();
 	float xsize,ysize,zsize;
 	xsize = extents.maxx-extents.minx;
@@ -183,11 +185,11 @@ void GameObject::createCubeRidgidBody(){
 
 void GameObject::updateMass(float mass){
 	this->mass = btScalar(mass);
-	btVector3 intertia;
+	btVector3 inertia;
 	if(body != NULL){
 		physworld.removeBody(body);
-		body->getCollisionShape()->calculateLocalInertia(this->mass, intertia);
-		body->setMassProps(this->mass, intertia);
+		body->getCollisionShape()->calculateLocalInertia(this->mass, inertia);
+		body->setMassProps(this->mass, inertia);
 		physworld.addBody(body);
 	}
 	else

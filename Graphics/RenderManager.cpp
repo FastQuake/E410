@@ -15,7 +15,6 @@ GameObject *RenderManager::getId(uint32_t id){
 }
 
 void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg, float dt){
-	
 	if(currentCam == NULL){
 		return;
 	}
