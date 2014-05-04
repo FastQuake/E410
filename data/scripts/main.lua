@@ -13,11 +13,11 @@ state = states.title
 player = {}
 player.model = nil
 player.id = -1
-player.height = 7
+player.height = 9
 function createObject(obj)
 	if obj:getTag() == "player"..player.id then
 		player.model = obj
-		player.model:setVisible(false)
+		--player.model:setVisible(false)
 	end
 end
 
@@ -79,7 +79,7 @@ function update(dt)
 		cam:turn(mousex*sensitvity,
 		-mousey*sensitvity)
 		input.setMousePos(width/2, height/2)
-		player.newRot = player.oldRot+mousex*sensitvity
+		player.newRot = player.oldRot-mousex*sensitvity
 		if player.newRot ~= player.oldRot then
 			network.sendPacket("turn "..player.newRot)
 		end

@@ -46,10 +46,19 @@ void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg, float dt){
 		glUniformMatrix4fv(prg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
 
 		glm::mat4 scale = glm::scale(glm::mat4(1),drawList[i]->scale);
-		glm::mat4 rot = \
-			glm::rotate(glm::mat4(1),drawList[i]->rotation.x,glm::vec3(1.0,0,0)) *
-			glm::rotate(glm::mat4(1),drawList[i]->rotation.y,glm::vec3(0,1.0,0)) *
-			glm::rotate(glm::mat4(1),drawList[i]->rotation.z,glm::vec3(0,0,1.0));
+		glm::mat4 rot;//
+		float absz = abs(drawList[i]->rotation.z);
+		if(absz >= 90 || (absz >= 270)){
+			rot = \
+			glm::rotate(glm::mat4(1),drawList[i]->rotation.z,glm::vec3(0,0,1)) *
+			glm::rotate(glm::mat4(1),drawList[i]->rotation.y,glm::vec3(0,1,0)) *
+			glm::rotate(glm::mat4(1),drawList[i]->rotation.x,glm::vec3(1,0,0));
+		} else {
+			rot = \
+			glm::rotate(glm::mat4(1),drawList[i]->rotation.x,glm::vec3(1,0,0)) *
+			glm::rotate(glm::mat4(1),drawList[i]->rotation.y,glm::vec3(0,1,0)) *
+			glm::rotate(glm::mat4(1),drawList[i]->rotation.z,glm::vec3(0,0,1));
+		}
 		glm::mat4 trans = glm::translate(glm::mat4(1), drawList[i]->position);
 		glm::mat4 modelMat = trans * rot * scale;
 		modelMat *= glm::rotate(glm::mat4(1),-90.0f,glm::vec3(1.0,0,0)); //Rotate everything -90deg on x axis

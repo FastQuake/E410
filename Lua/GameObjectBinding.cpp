@@ -241,7 +241,7 @@ int l_serverSetRot(lua_State *l){
 	if(obj->motion != NULL){
 		btTransform trans;
 		obj->motion->getWorldTransform(trans);
-		obj->motion->setWorldTransform(btTransform(btQuaternion(toRad(z),toRad(y),toRad(x)),
+		obj->motion->setWorldTransform(btTransform(btQuaternion(toRad(x),toRad(y),toRad(z)),
 					trans.getOrigin()));
 		obj->body->setMotionState(obj->motion);
 	}
@@ -295,7 +295,9 @@ int l_serverLockAxis(lua_State *l){
 	float y = l_toNumber(l,3);
 	float z = l_toNumber(l,4);
 	if(obj->body != NULL){
-		obj->body->setAngularFactor(btVector3(-x,-y,-z));
+		physworld.removeBody(obj->body);
+		obj->body->setAngularFactor(btVector3(x,y,z));
+		physworld.addBody(obj->body);
 	}
 	return 0;
 }

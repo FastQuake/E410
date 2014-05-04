@@ -6,15 +6,17 @@ GLDebugDrawer debugDraw;
 glm::vec3 quatToEuler(glm::quat quat){
 	glm::vec3 angle(0,0,0);
 	angle.x = asin(2*quat.x*quat.y + 2*quat.z*quat.w);
-	angle.y = atan2(2*quat.x*quat.w - 2*quat.y*quat.z,
-					1 - 2*quat.x*quat.x - 2*quat.z*quat.z);
-	angle.z = atan2(2*quat.y*quat.w - 2*quat.x*quat.z,
-					1 - 2*quat.y*quat.y - 2*quat.z*quat.z);
+	angle.y = atan2(2*quat.y*quat.w-2*quat.x*quat.z,
+					1-2*quat.y*quat.y-2*quat.z*quat.z);
+	angle.z = atan2(2*quat.x*quat.w-2*quat.y*quat.z,
+					1-2*quat.x*quat.x-2*quat.z*quat.z);
 
 	angle.x = toDegrees(angle.x);
 	angle.y = toDegrees(angle.y);
 	angle.z = toDegrees(angle.z);
-	angle.x += 180.0f;
+	//angle.x += 180.0f;
+	angle.y -= 180.0f;
+	angle.z -= 180.0f;
 	return angle;
 }
 
