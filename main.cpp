@@ -29,6 +29,8 @@ ENetPeer *serverPeer;
 ENetHost *client;
 sf::RenderWindow *gwindow;
 vector<string> packetList;
+ShaderProgram *debugprg;
+GLuint debugvbo;
 
 int width, height;
 
@@ -114,6 +116,9 @@ int main(int argc, char *argv[]){
 
 	ShaderProgram skyprg("./data/shaders/skyvertex.glsl",
 			"./data/shaders/skyfragment.glsl");
+
+	debugprg = new ShaderProgram("./data/shaders/debuglinesv.glsl","./data/shaders/debuglinesf.glsl");
+	glGenBuffers(1,&debugvbo);
 
 	//Load the skybox
 	rendman.skybox.setModel(resman.loadModel("skybox.iqm"));

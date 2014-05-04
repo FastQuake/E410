@@ -5,12 +5,12 @@
 
 class PhysWorld {
 private:
-	btDiscreteDynamicsWorld *dynWorld;
 	btBroadphaseInterface *broadphase;
 	btDefaultCollisionConfiguration *conf;
 	btCollisionDispatcher *dispatcher;
 	btSequentialImpulseConstraintSolver *solver;
 public:
+	btDiscreteDynamicsWorld *dynWorld;
 	PhysWorld();
 	~PhysWorld();
 

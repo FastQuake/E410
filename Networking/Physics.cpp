@@ -1,6 +1,8 @@
 #include "Physics.hpp"
 #include "../globals.hpp"
 
+GLDebugDrawer debugDraw;
+
 glm::vec3 quatToEuler(glm::quat quat){
 	glm::vec3 angle(0,0,0);
 	angle.x = asin(2*quat.x*quat.y + 2*quat.z*quat.w);
@@ -25,6 +27,8 @@ PhysWorld::PhysWorld(){
 	solver = new btSequentialImpulseConstraintSolver();
 	dynWorld = new btDiscreteDynamicsWorld(dispatcher,broadphase,solver,conf);
 	dynWorld->setGravity(btVector3(0,-9.81,0));
+	debugDraw.setDebugMode(1);
+	dynWorld->setDebugDrawer(&debugDraw);
 }
 
 PhysWorld::~PhysWorld(){

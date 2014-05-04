@@ -1,6 +1,8 @@
 #include <iostream>
 #include "RenderManager.hpp"
 #include "../globals.hpp"
+#include "../Networking/Physics.hpp"
+#include "../Networking/server.hpp"
 using namespace std;
 
 GameObject *RenderManager::getId(uint32_t id){
@@ -40,7 +42,6 @@ void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg, float dt){
 			drawList[i]->model->animate(drawList[i]->currentAnimation,
 					drawList[i]->aTime,&drawList[i]->outframe);
 		}
-
 		glm::mat4 view = currentCam->view();
 		glUniformMatrix4fv(prg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
 
@@ -55,6 +56,11 @@ void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg, float dt){
 		glUniformMatrix4fv(prg->getUniform("modelMat"),1,GL_FALSE,glm::value_ptr(modelMat));
 		drawList[i]->model->draw(prg,drawList[i]->textures,drawList[i]->outframe);
 	}
+	glUseProgram(debugprg->getID());
+	view = currentCam->view();
+	glUniformMatrix4fv(debugprg->getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
+	glUniformMatrix4fv(debugprg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
+	physworld.dynWorld->debugDrawWorld();
 }
 
 void RenderManager::remove(GameObject *obj){
@@ -65,3 +71,36 @@ void RenderManager::remove(GameObject *obj){
 	}
 }
 
+GLDebugDrawer::GLDebugDrawer(){
+}
+
+GLDebugDrawer::~GLDebugDrawer(){}
+void GLDebugDrawer::drawLine(const btVector3& from,const btVector3& to,const btVector3&  fromColor, const btVector3& toColor){
+	glm::vec3 line[2];
+	line[0] = glm::vec3(from.getX(),from.getY(),from.getZ());
+	line[1] = glm::vec3(to.getX(),to.getY(),to.getZ());
+	glBindBuffer(GL_ARRAY_BUFFER,debugvbo);
+	glBufferData(GL_ARRAY_BUFFER,sizeof(glm::vec3)*2,&line[0],GL_STATIC_DRAW);
+	glEnableVertexAttribArray(debugprg->getAttribute("vertpos"));
+	glVertexAttribPointer(debugprg->getAttribute("vertpos"),3,GL_FLOAT,GL_FALSE,0,0);
+	glDrawArrays( GL_POINTS, 0, 2 );
+	glDrawArrays(GL_LINES,0,2);
+	glDisableVertexAttribArray(debugprg->getAttribute("vertpos"));
+	glBindBuffer(GL_ARRAY_BUFFER,0);
+}
+
+void GLDebugDrawer::setDebugMode(int debugMode){
+	m_debugMode = debugMode;
+}
+
+void GLDebugDrawer::drawLine(const btVector3& from,const btVector3& to,const btVector3& color){drawLine(from,to,color,color);}
+void GLDebugDrawer::drawSphere (const btVector3& p, btScalar radius, const btVector3& color){}
+void GLDebugDrawer::drawTriangle(const btVector3& a,const btVector3& b,const btVector3& c,const btVector3& color,btScalar alpha){
+	drawLine(a,b,color,color);
+	drawLine(b,c,color,color);
+	drawLine(c,a,color,color);
+}
+void GLDebugDrawer::drawContactPoint(const btVector3& PointOnB,const btVector3& normalOnB,btScalar distance,int lifeTime,const btVector3& color){}
+void GLDebugDrawer::reportErrorWarning(const char* warningString){std::cout << warningString << std::endl;}
+void GLDebugDrawer::draw3dText(const btVector3& location,const char* textString){}
+int GLDebugDrawer::getDebugMode() const {return m_debugMode;}
