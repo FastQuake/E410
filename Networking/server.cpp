@@ -120,6 +120,7 @@ void serverMain(){
 	}
 
 
+	serverPacketList.clear();
 	sf::Clock timer;
 	sf::Time dt = timer.restart();
 	ENetEvent event;

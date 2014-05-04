@@ -13,7 +13,7 @@ function onPeerConnect(id)
 	p.model:setBoxBody()
 	p.model:setMass(10)
 	p.model:setPos(0,10,0)
-	p.model:lockAxis(0,0,0)
+	p.model:lockAxis(1,1,1)
 	peerID = peerID + 1
 	table.insert(peers,p)
 end
@@ -51,6 +51,10 @@ function init()
 	floor:setMass(0.0)
 	floor:setScale(15,0.3,15)
 	floor:setPos(0,-25.5,0)
+
+	shit = GO.loadIQM("monkey.iqm","monkey")
+	shit:setMass(1.0)
+	shit:setPos(3,5,0)
 end
 
 delta = 0
