@@ -100,6 +100,8 @@ void serverMain(){
 	lua_State *l = luaL_newstate();
 	luaL_openlibs(l);
 	serverBindFunctions(l);
+	lua_newtable(l);
+	lua_setglobal(l,"serverObjects");
 
 	//load main server lua function
 	if(luaL_dofile(l,"./data/scripts/server.lua")){

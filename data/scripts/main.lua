@@ -36,6 +36,10 @@ function onKeyDown(key)
 		network.sendPacket("left")
 	elseif key == keys.D then
 		network.sendPacket("right")
+	elseif key == keys.P then
+		local pos = Vector.create(cam:getPos())
+		local dir = Vector.create(cam:getLookat())
+		network.sendPacket("cast "..(pos+dir).." "..dir)
 	end
 end
 

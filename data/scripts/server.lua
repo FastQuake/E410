@@ -40,6 +40,11 @@ function onReceivePacket(id, data)
 		p.model:setVelocity(0,0,0)
 	elseif data[1] == "turn" then
 		p.model:setRot(data[2],0,0)
+	elseif data[1] == "cast" then
+		local obj = GO.castRay(data[2],data[3],data[4],data[5],data[6],data[7],50)
+		if obj ~= nil then
+			print("Looking at: "..obj:getTag())
+		end
 	end
 end
 

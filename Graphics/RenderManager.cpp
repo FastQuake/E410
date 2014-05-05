@@ -79,6 +79,15 @@ void RenderManager::remove(GameObject *obj){
 	}
 }
 
+GameObject *RenderManager::getBody(const btCollisionObject *body){
+	for(int i=0;i<drawList.size();i++){
+		if(drawList[i]->body->upcast(body) == drawList[i]->body){
+			return drawList[i];
+		}
+	}
+	return NULL;
+}
+
 GLDebugDrawer::GLDebugDrawer(){
 }
 

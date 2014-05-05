@@ -48,6 +48,9 @@ int l_serverLoadIQM(lua_State *l){
 		lua_error(l);
 	}
 
+	//TODO This is a very ugly hack to keep track of objects
+	//Fix it after the contest when you have time
+	lua_getglobal(l, "serverObjects");
 	GameObject *out = new (lua_newuserdata(l, sizeof(GameObject))) GameObject;
 	out->setModel(mod);
 	out->modelName = model;
@@ -57,6 +60,9 @@ int l_serverLoadIQM(lua_State *l){
 	serverRendMan.drawList.push_back(out);
 	luaL_getmetatable(l, "MetaGO");
 	lua_setmetatable(l, -2);
+	lua_rawseti(l,-2,out->id); //set serverObjects[id] to GO
+
+	lua_rawgeti(l,-1,out->id); //return serverObjects[id]
 
 	ENetPeer peer;
 	peer.address.host = -1;
@@ -317,5 +323,22 @@ int l_setActivation(lua_State *l){
 		}
 	}
 	return 0;
+}
+
+int l_raycast(lua_State *l){
+	btVector3 pos(l_toNumber(l,1),l_toNumber(l,2),l_toNumber(l,3));
+	btVector3 dir(l_toNumber(l,4),l_toNumber(l,5),l_toNumber(l,6));
+	float dis = l_toNumber(l,7);
+
+	dir = dis*dir.normalize();
+	btCollisionWorld::ClosestRayResultCallback rayCallback(pos, pos+dir);
+	physworld.dynWorld->rayTest(pos, pos+dir, rayCallback);
+	if(rayCallback.hasHit()){
+		GameObject *obj = serverRendMan.getBody(rayCallback.m_collisionObject);
+		lua_getglobal(l, "serverObjects");
+		lua_rawgeti(l, -1, obj->id);
+		return 1;
+	}
+	return 0;	
 }
 

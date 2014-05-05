@@ -194,7 +194,7 @@ int main(int argc, char *argv[]){
 					con.visible = !con.visible;
 					con.updates = !con.updates;
 					im->setGuiMousePos(sf::Vector2i(width/2,height/2));
-				} else {
+				} else if(im->isGuiLocked() == false){
 					lua_getglobal(l, "onKeyDown");
 					lua_pushnumber(l, event.key.code);
 					if(lua_pcall(l,1,0,0)){
@@ -205,12 +205,14 @@ int main(int argc, char *argv[]){
 				}
 			}
 			if(event.type == sf::Event::KeyReleased){
-				lua_getglobal(l, "onKeyRelease");
-				lua_pushnumber(l, event.key.code);
-				if(lua_pcall(l,1,0,0)){
-						cout << lua_tostring(l, -1) << endl;
-						global_con->out.println(lua_tostring(l, -1));
-				}	
+				if(im->isGuiLocked() == false){
+					lua_getglobal(l, "onKeyRelease");
+					lua_pushnumber(l, event.key.code);
+					if(lua_pcall(l,1,0,0)){
+							cout << lua_tostring(l, -1) << endl;
+							global_con->out.println(lua_tostring(l, -1));
+					}
+				}
 			}
 		}
 		//Handle input packets and send buffered packets

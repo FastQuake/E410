@@ -10,6 +10,14 @@ function Vector.create(x,y,z)
 	return vector
 end
 
+function Vector.__tostring(vec)
+	return vec.x .. " " .. vec.y .. " " .. vec.z
+end
+
+function Vector.__concat(lhs,rhs)
+	return tostring(lhs)..tostring(rhs)
+end
+
 function Vector.__add(lhs,rhs)
 	local vector = Vector.create(0,0,0)
 	vector.x = lhs.x + rhs.x

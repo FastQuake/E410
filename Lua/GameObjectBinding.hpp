@@ -33,6 +33,9 @@ int l_getTag(lua_State *l);
 int l_delete(lua_State *l);
 int l_serverDelete(lua_State *l);
 
+//Game object functions
+int l_raycast(lua_State *l);
+
 const static struct luaL_Reg GO_funcs[] = {
 	{"loadIQM", l_loadIQM},
 	{NULL, NULL}
@@ -59,6 +62,7 @@ const static struct luaL_Reg GO_methods[] = {
 
 const static struct luaL_Reg Server_GO_funcs[]={
 	{"loadIQM", l_serverLoadIQM},	
+	{"castRay", l_raycast},
 	{NULL,NULL}
 };
 

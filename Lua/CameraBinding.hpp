@@ -18,6 +18,7 @@ int l_camDelete(lua_State *l);
 
 int l_camGetPos(lua_State *l);
 int l_camGetRot(lua_State *l);
+int l_camGetLookat(lua_State *l);
 
 static const struct luaL_Reg cam_funcs[] = {
 	{"createCam", l_createCam},
@@ -34,6 +35,7 @@ static const struct luaL_Reg cam_methods[] = {
 	{"strafe", l_camStrafe},
 	{"getPos",l_camGetPos},
 	{"getRot",l_camGetRot},
+	{"getLookat", l_camGetLookat},
 	{NULL, NULL}
 };
 

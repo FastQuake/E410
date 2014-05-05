@@ -102,3 +102,12 @@ int l_camGetRot(lua_State *l){
 
 	return 3;
 }
+int l_camGetLookat(lua_State *l){
+	FPSCamera *cam = l_toCam(l,1);
+
+	lua_pushnumber(l,cam->getLookat().x);
+	lua_pushnumber(l,cam->getLookat().y);
+	lua_pushnumber(l,cam->getLookat().z);
+
+	return 3;
+}

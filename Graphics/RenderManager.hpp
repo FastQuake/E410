@@ -2,6 +2,7 @@
 #define RENDERMANAGER_HPP_
 
 #include <map>
+#include <bullet/btBulletDynamicsCommon.h>
 #include "model.hpp"
 #include "FPSCamera.hpp"
 #include "../GameObject.hpp"
@@ -14,6 +15,7 @@ public:
 	GameObject skybox;
 
 	GameObject* getId(uint32_t id);
+	GameObject* getBody(const btCollisionObject *body);
 	void render(ShaderProgram *prg, ShaderProgram *skyprg,float curTime);
 	void remove(GameObject* obj);
 };
