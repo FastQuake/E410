@@ -27,7 +27,9 @@ function onReceivePacket(id, data)
 	--print(out)
 	local p = Peer.getPeer(peers, id)
 	fwd = Vector.create(p.model:getLookat())
+	fwd.y = 0
 	right = Vector.cross(Vector.create(0,1,0),fwd)
+	right.y = 0
 	if data[1] == "forward" then
 		p.model:setVelocity(Vector.scalarMul(playerSpeed,fwd):get())
 	elseif data[1] == "backward" then
