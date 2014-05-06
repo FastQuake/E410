@@ -65,10 +65,13 @@ function onPeerDisconnect(id)
 end
 
 function init()
-	floor = GO.loadIQM("cube.iqm","cube")
+	--[[floor = GO.loadIQM("cube.iqm","cube")
 	floor:setMass(0.0)
 	floor:setScale(15,0.3,15)
-	floor:setPos(0,-25.5,0)
+	floor:setPos(0,-25.5,0) ]]--
+	ship = GO.loadIQM("ship.iqm","ship")
+	ship:setMass(0)
+	ship:setTriangleBody()
 
 	shit = GO.loadIQM("monkey.iqm","monkey")
 	shit:setMass(1.0)
