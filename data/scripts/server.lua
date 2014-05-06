@@ -72,6 +72,8 @@ function init()
 	ship = GO.loadIQM("ship.iqm","ship")
 	ship:setMass(0)
 	ship:setTriangleBody()
+	--ship:setRot(90,0,0)
+	ship:setPos(0,-2,0)
 
 	shit = GO.loadIQM("monkey.iqm","monkey")
 	shit:setMass(1.0)

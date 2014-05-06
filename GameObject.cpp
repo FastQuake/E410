@@ -78,21 +78,31 @@ void GameObject::createTriangleRigidBody(){
 	if(trimesh != NULL)
 		delete trimesh;
 	trimesh = new btTriangleMesh();
+	//we need to rotate the triangles -90 on the x axis to fix the orientation
+	glm::mat4 rot = glm::rotate(glm::mat4(1),-90.0f,glm::vec3(1,0,0));
 	for(int i=0;i<model->triangles.size();i++){
 		int p1 = model->triangles[i].vertex[0];
 		int p2 = model->triangles[i].vertex[1];
 		int p3 = model->triangles[i].vertex[2];
-		btVector3 v1(model->verts[p1].position[0],
+		glm::vec4 v1(model->verts[p1].position[0],
 				model->verts[p1].position[1],
-				model->verts[p1].position[2]);
-		btVector3 v2(model->verts[p2].position[0],
+				model->verts[p1].position[2],1);
+		glm::vec4 v2(model->verts[p2].position[0],
 				model->verts[p2].position[1],
-				model->verts[p2].position[2]);
-		btVector3 v3(model->verts[p3].position[0],
+				model->verts[p2].position[2],1);
+		glm::vec4 v3(model->verts[p3].position[0],
 				model->verts[p3].position[1],
-				model->verts[p3].position[2]);
+				model->verts[p3].position[2],1);
 
-		trimesh->addTriangle(v1,v2,v3);
+		v1 = rot*v1;
+		v2 = rot*v2;
+		v3 = rot*v3;
+
+		btVector3 bV1(v1.x,v1.y,v1.z);
+		btVector3 bV2(v2.x,v2.y,v2.z);
+		btVector3 bV3(v3.x,v3.y,v3.z);
+
+		trimesh->addTriangle(bV1,bV2,bV3);
 
 	}
 
