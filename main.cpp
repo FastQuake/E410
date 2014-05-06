@@ -290,6 +290,10 @@ int main(int argc, char *argv[]){
 						obj->scale.x = stringToFloat(pdata[2]);
 						obj->scale.y = stringToFloat(pdata[3]);
 						obj->scale.z = stringToFloat(pdata[4]);
+					}else if(pdata[0] == "delete") {
+						uint32_t id = stringToInt(pdata[1]);
+						GameObject *obj = rendman.getId(id);
+						rendman.remove(obj);
 					}else {
 						lua_getglobal(l,"onReceivePacket");
 						l_pushStringVector(l,pdata);

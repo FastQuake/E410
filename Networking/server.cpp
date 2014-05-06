@@ -150,10 +150,10 @@ void serverMain(){
 					}
 					break;
 				case ENET_EVENT_TYPE_DISCONNECT:
+					index = peerIndexByPeer(event.peer);
 					lua_getglobal(l, "onPeerDisconnect");
-					lua_pushnumber(l, event.peer->address.host);
-					lua_pushnumber(l, event.peer->address.port);
-					if(lua_pcall(l, 2, 0, 0)){
+					lua_pushnumber(l, peers[index].id);
+					if(lua_pcall(l, 1, 0, 0)){
 						string error = "[SERVER] " + string(lua_tostring(l,-1));
 						cout << error << endl;
 						global_con->out.println("[SERVER] "+error);

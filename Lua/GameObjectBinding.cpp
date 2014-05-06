@@ -204,6 +204,12 @@ int l_serverDelete(lua_State *l){
 	GameObject *obj = l_toGO(l, 1);
 
 	serverRendMan.remove(obj);
+	physworld.removeBody(obj->body);
+	Packet p;
+	p.addr = -1;
+	p.port = -1;
+	p.data = "delete " + intToString(obj->id);
+	serverPacketList.push_back(p);
 	return 0;
 }
 int l_setV(lua_State *l){
@@ -213,9 +219,7 @@ int l_setV(lua_State *l){
 	float z = l_toNumber(l,4);
 
 	if(obj->body != NULL){
-		physworld.removeBody(obj->body);
 		obj->body->setLinearVelocity(btVector3(x,y,-z));
-		physworld.addBody(obj->body);
 	}
 
 	return 0;
@@ -256,13 +260,11 @@ int l_serverSetRot(lua_State *l){
 	float z = l_toNumber(l,4);
 
 	if(obj->motion != NULL){
-		physworld.removeBody(obj->body);
 		btTransform trans;
 		obj->motion->getWorldTransform(trans);
 		obj->motion->setWorldTransform(btTransform(btQuaternion(toRad(x),toRad(y),toRad(z)),
 					trans.getOrigin()));
 		obj->body->setMotionState(obj->motion);
-		physworld.addBody(obj->body);
 	}
 	obj->rotation.x = x;
 	obj->rotation.y = y;
@@ -314,9 +316,7 @@ int l_serverLockAxis(lua_State *l){
 	float y = l_toNumber(l,3);
 	float z = l_toNumber(l,4);
 	if(obj->body != NULL){
-		physworld.removeBody(obj->body);
 		obj->body->setAngularFactor(btVector3(x,y,z));
-		physworld.addBody(obj->body);
 	}
 	return 0;
 }

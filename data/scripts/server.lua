@@ -58,8 +58,10 @@ function onReceivePacket(id, data)
 	end
 end
 
-function onPeerDisconnect(address, port)
-	print("peer "..address..":"..port.." disconnected\n")
+function onPeerDisconnect(id)
+	print("peer "..id.." disconnected")
+	local p = Peer.getPeer(peers, id)
+	p.model:remove()
 end
 
 function init()
