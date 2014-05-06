@@ -220,6 +220,14 @@ int l_setV(lua_State *l){
 
 	return 0;
 }
+int l_getV(lua_State *l){
+	GameObject *obj = l_toGO(l,1);
+	btVector3 vel = obj->body->getLinearVelocity();
+	lua_pushnumber(l,vel.getX());
+	lua_pushnumber(l,vel.getY());
+	lua_pushnumber(l,vel.getZ());
+	return 3;
+}
 int l_setMass(lua_State *l){
 	GameObject *obj = l_toGO(l,1);
 	float mass = l_toNumber(l,2);

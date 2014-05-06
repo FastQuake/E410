@@ -29,6 +29,7 @@ int l_setActivation(lua_State *l);
 int l_getPos(lua_State *l);
 int l_getLookat(lua_State *l);
 int l_getTag(lua_State *l);
+int l_getV(lua_State *l);
 
 int l_delete(lua_State *l);
 int l_serverDelete(lua_State *l);
@@ -89,6 +90,7 @@ const static struct luaL_Reg Server_GO_methods[]={
 	{"getPos", l_getPos},
 	{"getLookat", l_getLookat},
 	{"getTag", l_getTag},
+	{"getVelocity",l_getV},
 	{NULL,NULL}
 };
 

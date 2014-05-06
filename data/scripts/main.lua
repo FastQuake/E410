@@ -13,11 +13,11 @@ state = states.title
 player = {}
 player.model = nil
 player.id = -1
-player.height = 9
+player.height = 7
 function createObject(obj)
 	if obj:getTag() == "player"..player.id then
 		player.model = obj
-		--player.model:setVisible(false)
+		player.model:setVisible(false)
 	end
 end
 
@@ -29,13 +29,13 @@ end
 
 function onKeyDown(key)
 	if key == keys.W then
-		network.sendPacket("forward")
+		network.sendPacket("move forward")
 	elseif key == keys.S then
-		network.sendPacket("backward")
+		network.sendPacket("move backward")
 	elseif key == keys.A then
-		network.sendPacket("left")
+		network.sendPacket("move left")
 	elseif key == keys.D then
-		network.sendPacket("right")
+		network.sendPacket("move right")
 	elseif key == keys.P then
 		local pos = Vector.create(cam:getPos())
 		local dir = Vector.create(cam:getLookat())
@@ -44,8 +44,14 @@ function onKeyDown(key)
 end
 
 function onKeyRelease(key)
-	if key == keys.W or key == keys.S or key == keys.A or key == keys.D then
-		network.sendPacket("stop")
+	if key == keys.W then
+		network.sendPacket("stop forward")
+	elseif key == keys.S then
+		network.sendPacket("stop backward")
+	elseif key == keys.A then
+		network.sendPacket("stop left")
+	elseif key == keys.D then
+		network.sendPacket("stop right")
 	end
 end
 

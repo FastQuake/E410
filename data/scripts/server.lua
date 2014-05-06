@@ -9,10 +9,12 @@ function onPeerConnect(id)
 	network.sendPacket(id, "player".. peerID)
 	local p = {}
 	p.id = id
+	p.fwd = 0
+	p.right = 0
 	p.model = GO.loadIQM("mr_fixit.iqm","player".. peerID)
 	p.model:setBoxBody()
 	p.model:setActivation(true)
-	p.model:setMass(10)
+	p.model:setMass(100)
 	p.model:setPos(0,10,0)
 	p.model:lockAxis(0,0,0)
 	peerID = peerID + 1
@@ -20,26 +22,32 @@ function onPeerConnect(id)
 end
 
 function onReceivePacket(id, data)
-	out = ""
+	local out = ""
 	for k,v in pairs(data) do
 		out = out.." "..v
 	end
 	--print(out)
 	local p = Peer.getPeer(peers, id)
-	fwd = Vector.create(p.model:getLookat())
-	fwd.y = 0
-	right = Vector.cross(Vector.create(0,1,0),fwd)
-	right.y = 0
-	if data[1] == "forward" then
-		p.model:setVelocity(Vector.scalarMul(playerSpeed,fwd):get())
-	elseif data[1] == "backward" then
-		p.model:setVelocity(Vector.scalarMul(-playerSpeed,fwd):get())
-	elseif data[1] == "right" then
-		p.model:setVelocity(Vector.scalarMul(playerSpeed,right):get())
-	elseif data[1] == "left" then
-		p.model:setVelocity(Vector.scalarMul(-playerSpeed,right):get())
+	if data[1] == "move" then
+		if data[2] == "forward" then
+			p.fwd = 1
+		elseif data[2] == "backward" then
+			p.fwd = -1
+		elseif data[2] == "right" then
+			p.right = 1
+		elseif data[2] == "left" then
+			p.right = -1
+		end
 	elseif data[1] == "stop" then
-		p.model:setVelocity(0,0,0)
+		if data[2] == "forward" then
+			p.fwd = 0
+		elseif data[2] == "backward" then
+			p.fwd = -0
+		elseif data[2] == "right" then
+			p.right = 0
+		elseif data[2] == "left" then
+			p.right = -0
+		end
 	elseif data[1] == "turn" then
 		p.model:setRot(data[2],0,0)
 	elseif data[1] == "cast" then
@@ -69,4 +77,18 @@ end
 delta = 0
 function update(dt)
 	delta = dt
+	for k,v in pairs(peers) do
+		local fwd = Vector.create(v.model:getLookat())
+		local right = Vector.cross(Vector.create(0,1,0),fwd)
+		local out = Vector.scalarMul(v.fwd,fwd) + Vector.scalarMul(v.right,right)
+		local vel = Vector.create(v.model:getVelocity())
+		if out ~= Vector.create(0,0,0) then
+			out = out:normalize()
+			out = Vector.scalarMul(playerSpeed, out)
+			out.y = vel.y
+			v.model:setVelocity(out:get())
+		else
+			v.model:setVelocity(0,vel.y,0)
+		end
+	end
 end
