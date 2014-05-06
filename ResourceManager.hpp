@@ -21,6 +21,7 @@ public:
 	sf::Font *loadFont(std::string name);
 	sf::Image *loadImage(std::string name);
 	GLuint loadTexture(std::string name);
+	GLuint loadTexture(std::string name, int *width, int *height);
 };
 
 #endif

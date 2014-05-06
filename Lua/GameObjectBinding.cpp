@@ -179,14 +179,12 @@ int l_getTag(lua_State *l){
 	return 1;
 }
 int l_delete(lua_State *l){
-	lua_pushnil(l);
 	GameObject *obj = l_toGO(l, 1);
 
 	rendman.remove(obj);
 	return 0;
 }
 int l_serverDelete(lua_State *l){
-	lua_pushnil(l);
 	GameObject *obj = l_toGO(l, 1);
 
 	serverRendMan.remove(obj);

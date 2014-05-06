@@ -318,7 +318,7 @@ void Model::animate(string animName, float curTime, std::vector<glm::mat4> *outf
 	}
 }
 
-void Model::draw(ShaderProgram *prg, vector<GLuint> textures,vector<glm::mat4> outframe){
+void Model::draw(ShaderProgram *prg, vector<GLuint> textures, vector<glm::mat4> outframe, bool texture, bool normal){
 	bool skin = true;
 	glUseProgram(prg->getID());
 	glm::mat3x4 outframe3x4[outframe.size()];
@@ -328,9 +328,9 @@ void Model::draw(ShaderProgram *prg, vector<GLuint> textures,vector<glm::mat4> o
 	GLsizei arrsize = outframe.size(); //OpenGL will complain if I feed it a size_t
 	if(frames.size() > 0)
 		glUniformMatrix3x4fv(prg->getUniform("bonemats"), arrsize, GL_FALSE, glm::value_ptr(outframe3x4[0]));
-	else 
+	else
 		skin = false;
-		
+
 	glUniform1i(prg->getUniform("skin"),skin);
 
 	glBindBuffer(GL_ARRAY_BUFFER,verts_vbo);
@@ -343,13 +343,24 @@ void Model::draw(ShaderProgram *prg, vector<GLuint> textures,vector<glm::mat4> o
 			GL_FALSE,
 			sizeof(vertex),
 			&vert->position);
-	glVertexAttribPointer(
-			prg->getAttribute("texcoord"),
-			2,
-			GL_FLOAT,
-			GL_FALSE,
-			sizeof(vertex),
-			&vert->texcoord);
+	if(texture){
+		glVertexAttribPointer(
+				prg->getAttribute("texcoord"),
+				2,
+				GL_FLOAT,
+				GL_FALSE,
+				sizeof(vertex),
+				&vert->texcoord);
+	}
+	if(normal){
+		glVertexAttribPointer(
+				prg->getAttribute("normal"),
+				3,
+				GL_FLOAT,
+				GL_FALSE,
+				sizeof(vertex),
+				&vert->normal);
+	}
 	if(frames.size() > 0){
 		glVertexAttribPointer(
 				prg->getAttribute("vweight"),
@@ -367,7 +378,10 @@ void Model::draw(ShaderProgram *prg, vector<GLuint> textures,vector<glm::mat4> o
 				&vert->blendindex);
 	}
 	glEnableVertexAttribArray(prg->getAttribute("coord3d"));
-	glEnableVertexAttribArray(prg->getAttribute("texcoord"));
+	if(texture)
+		glEnableVertexAttribArray(prg->getAttribute("texcoord"));
+	if(normal)
+		glEnableVertexAttribArray(prg->getAttribute("normal"));
 	if(frames.size() > 0){
 		glEnableVertexAttribArray(prg->getAttribute("vweight"));
 		glEnableVertexAttribArray(prg->getAttribute("vbones"));
@@ -376,13 +390,21 @@ void Model::draw(ShaderProgram *prg, vector<GLuint> textures,vector<glm::mat4> o
 	iqmtriangle *tris = NULL;
 	for(int i=0;i<meshes.size();i++){
 		iqmmesh &m = meshes[i];
-		glBindTexture(GL_TEXTURE_2D, textures[i]);
-		glUniform1i(prg->getUniform("mTexture"),0);
+		if(texture){
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, textures[i]);
+			glUniform1i(prg->getUniform("inTexture"),0);
+		}
 		glDrawElements(GL_TRIANGLES, 3*m.num_triangles, GL_UNSIGNED_INT, &tris[m.first_triangle]);
+		if(texture)
+			glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	glDisableVertexAttribArray(prg->getAttribute("coord3d"));
-	glDisableVertexAttribArray(prg->getAttribute("texcoord"));
+	if(texture)
+		glDisableVertexAttribArray(prg->getAttribute("texcoord"));
+	if(normal)
+		glDisableVertexAttribArray(prg->getAttribute("normal"));
 	if(frames.size() > 0){
 		glDisableVertexAttribArray(prg->getAttribute("vweight"));
 		glDisableVertexAttribArray(prg->getAttribute("vbones"));

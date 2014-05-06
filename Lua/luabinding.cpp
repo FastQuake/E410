@@ -6,6 +6,7 @@
 #include "CameraBinding.hpp"
 #include "GuiBinding.hpp"
 #include "NetworkBinding.hpp"
+#include "LightBinding.hpp"
 #include "mathbinding.hpp"
 #include "SettingsBinding.hpp"
 using namespace std;
@@ -30,8 +31,28 @@ void bindFunctions(lua_State *l){
 	lua_pushvalue(l, -1);
 	lua_setfield(l, -1,"__index");
 
-	luaL_newlib(l,GO_funcs);
+	//create camera binding
+	luaL_newmetatable(l, "MetaCam");
+	luaL_setfuncs(l, cam_methods, 0);
+	lua_pushvalue(l, -1);
+	lua_setfield(l, -1,"__index");
+
+	//create camera binding
+	luaL_newmetatable(l, "MetaLight");
+	luaL_setfuncs(l, Light_methods, 0);
+	lua_pushvalue(l, -1);
+	lua_setfield(l, -1,"__index");
+
+	//create entity namespace
+	//luaL_newlib(l,GO_funcs);
+	//luaL_newlib(l,Light_funcs);
+	//luaL_newlib(l,cam_funcs);
+	lua_newtable(l);
+	luaL_setfuncs(l,GO_funcs,0);
+	luaL_setfuncs(l,Light_funcs,0);
+	luaL_setfuncs(l,cam_funcs,0);
 	lua_setglobal(l, "GO");
+
 
 
 	//create inputmanager register

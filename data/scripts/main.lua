@@ -1,5 +1,5 @@
 require "title"
-sensitvity = 0.75
+sensitvity = 0.50
 speed = 10
 
 states = {
@@ -28,11 +28,18 @@ end
 
 function init()
 	title = Title.create()
+	--Create stuff for GUI
+	fpsCounter = GUI.createText()
+	fpsCounter:setCharSize(26)
+	fpsCounter:setString("FPS: ".. 0)
+	--Create stuff for scene
 	cam = camera.createCam()
-	cam:setPos(0,0,0)
-	cam:setRot(0,0,0)
+	cam:setPos(0, 0, 0)
 	camera.setCam(cam)
 end
+
+time = 0
+frames = 0;
 
 function update(dt)
 	title:update(dt)
@@ -54,8 +61,8 @@ function update(dt)
 		local mousex, mousey = input.getMousePos()
 		mousex = mousex - (width/2)
 		mousey = mousey - (height/2)
-		cam:turn(mousex*sensitvity,
-		-mousey*sensitvity)
+		cam:turn(mousey*sensitvity,
+		mousex*sensitvity)
 		input.setMousePos(width/2, height/2)
 
 		local camx,camy,camz = cam:getRot()

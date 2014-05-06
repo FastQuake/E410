@@ -9,6 +9,7 @@
 #include "GUI/Console.hpp"
 
 #define PI 3.14159265359 
+#define MAX_LIGHTS 12
 
 extern Console *global_con;
 extern InputManager *im;
@@ -44,6 +45,9 @@ int stringToInt(std::string input);
 float stringToFloat(std::string input);
 std::string intToString(int input);
 std::string floatToString(float input);
+float toDegrees(float rad);
+float toRad(float degrees);
+
 float toDegrees(float rad);
 float toRad(float degrees);
 #endif
