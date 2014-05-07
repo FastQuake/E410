@@ -140,7 +140,7 @@ void GameObject::createConvexRigidBody(){
 	btShapeHull *hull = new btShapeHull(o);
 	btScalar margin = o->getMargin();
 	hull->buildHull(margin);
-	//o->setUserPointer(hull);
+	o->setUserPointer(hull);
 
 	if(collisionshape != NULL)
 		delete collisionshape;

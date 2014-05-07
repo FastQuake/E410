@@ -80,7 +80,7 @@ function init()
 	shit:setPos(3,5,0)
 
 	e = GO.loadIQM("ship_ext.iqm","eship")
-	--e:setBoxBody()
+	e:setBoxBody()
 	e:setMass(0)
 	e:setPos(-150,0,0)
 end
