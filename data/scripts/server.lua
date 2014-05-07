@@ -3,7 +3,7 @@ require "vector"
 
 peers = {}
 peerID = 0
-playerSpeed = 10
+playerSpeed = 15
 function onPeerConnect(id)
 	print("Got connection from peer "..id)
 	network.sendPacket(id, "player".. peerID)
@@ -70,15 +70,19 @@ function init()
 	floor:setScale(15,0.3,15)
 	floor:setPos(0,-25.5,0) ]]--
 	ship = GO.loadIQM("ship.iqm","ship")
-	ship:setMass(0)
 	ship:setTriangleBody()
-	--ship:setRot(90,0,0)
+	ship:setMass(0)
 	ship:setPos(0,-2,0)
 
 	shit = GO.loadIQM("monkey.iqm","monkey")
+	shit:setBoxBody()
 	shit:setMass(1.0)
 	shit:setPos(3,5,0)
-	shit:setBoxBody()
+
+	e = GO.loadIQM("ship_ext.iqm","eship")
+	--e:setBoxBody()
+	e:setMass(0)
+	e:setPos(-150,0,0)
 end
 
 delta = 0

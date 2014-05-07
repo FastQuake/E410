@@ -127,18 +127,20 @@ void GameObject::createTriangleRigidBody(){
 }
 void GameObject::createConvexRigidBody(){
 	btConvexHullShape  *o = new btConvexHullShape();
-
+	glm::mat4 rot = glm::rotate(glm::mat4(1),-90.0f,glm::vec3(1,0,0));
 	for(int i=0;i<model->verts.size();i++){
-		o->addPoint(btVector3(model->verts[i].position[0],
+		glm::vec4 p(model->verts[i].position[0],
 					model->verts[i].position[1],
-					model->verts[i].position[2]),true);
+					model->verts[i].position[2],1.0);
+		p = rot*p;
+		o->addPoint(btVector3(p.x,p.y,p.z),true);
 	}
 	o->recalcLocalAabb();
 
 	btShapeHull *hull = new btShapeHull(o);
 	btScalar margin = o->getMargin();
 	hull->buildHull(margin);
-	o->setUserPointer(hull);
+	//o->setUserPointer(hull);
 
 	if(collisionshape != NULL)
 		delete collisionshape;
@@ -208,19 +210,28 @@ void GameObject::updateMass(float mass){
 
 extents GameObject::getExtents(){
 	extents out;
-	out.minx = model->verts[0].position[0];
-	out.miny = model->verts[0].position[1];
-	out.minz = model->verts[0].position[2];
+	glm::mat4 rot = glm::rotate(glm::mat4(1),-90.0f,glm::vec3(1,0,0));
+	glm::vec4 p1(model->verts[0].position[0],
+			model->verts[0].position[1],
+			model->verts[0].position[2],1.0);
+	p1 = rot*p1;
+	out.minx = p1.x;
+	out.miny = p1.y;
+	out.minz = p1.z;
 	out.maxx = out.minx;
 	out.maxy = out.miny;
 	out.maxz = out.minz;
 	for(int i=0;i<model->verts.size();i++){
-		out.minx = min(out.minx, model->verts[i].position[0]);
-		out.maxx = max(out.maxx, model->verts[i].position[0]);
-		out.miny = min(out.miny, model->verts[i].position[1]);
-		out.maxy = max(out.maxy, model->verts[i].position[1]);
-		out.minz = min(out.minz, model->verts[i].position[2]);
-		out.maxz = max(out.maxz, model->verts[i].position[2]);
+		glm::vec4 p2(model->verts[i].position[0],
+			model->verts[i].position[1],
+			model->verts[i].position[2],1.0);
+		p2 = rot * p2;
+		out.minx = min(out.minx, p2.x);
+		out.maxx = max(out.maxx, p2.x);
+		out.miny = min(out.miny, p2.y);
+		out.maxy = max(out.maxy, p2.y);
+		out.minz = min(out.minz, p2.z);
+		out.maxz = max(out.maxz, p2.z);
 	}
 	return out;
 }
