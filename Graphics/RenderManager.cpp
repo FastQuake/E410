@@ -86,18 +86,24 @@ void RenderManager::renderDeferred(ShaderProgram *prg, float dt){
 
 void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg, float dt){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glm::mat4 view = currentCam->view();
-	glUniformMatrix4fv(prg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
-	drawScene(prg,dt,true,true);
+	glm::mat4 projection = glm::perspective(45.0f, 1.0f*width/height, 0.01f, 1000.0f);
+	glm::mat4 view = glm::lookAt(glm::vec3(0,0,0), currentCam->getLookat(),glm::vec3(0,1,0));
 
 	//Draw the skybox without writing any depth information
-	glDepthMask(0);
 	glUseProgram(skyprg->getID());
+	glDepthMask(0);
+	glUniformMatrix4fv(skyprg->getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
 	view *= glm::scale(glm::mat4(1),glm::vec3(50,50,50));
 	glUniformMatrix4fv(skyprg->getUniform("view"),1,GL_FALSE,glm::value_ptr(view));
 	skybox.model->draw(skyprg,skybox.textures,skybox.outframe,true,false);
 	glDepthMask(1);
+
+	view = currentCam->view();
+	glUseProgram(prg->getID());
+	glUniformMatrix4fv(skyprg->getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
+	glUniformMatrix4fv(prg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
+	drawScene(prg,dt,true,true);
+
 }
 
 void RenderManager::updateUBO(){

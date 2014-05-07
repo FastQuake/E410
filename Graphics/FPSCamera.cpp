@@ -60,5 +60,8 @@ glm::mat4 FPSCamera::view(){
 	glm::mat4 trans = glm::translate(glm::mat4(1), -pos);
 	out = rot * trans;
 	return out;
-	//return glm::lookAt(pos,lookat+pos,up);
+}
+
+glm::vec3 FPSCamera::getLookat(){
+	return lookat;
 }
