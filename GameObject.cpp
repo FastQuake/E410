@@ -36,14 +36,14 @@ void GameObject::strafe(float amount){
 	position += amount*glm::normalize(right);
 }
 void GameObject::turn(glm::vec2 amount){
-	rotation += glm::vec3(0, -amount.x, amount.y);
+	rotation += glm::vec3(amount.x, amount.y, 0);
 	updateLookat();
 }
 void GameObject::updateLookat(){
-	rotation.z -= 90.0;
-	lookat.x = sin(toRad(-rotation.z)) * cos(toRad(-rotation.y));
-	lookat.y = cos(toRad(-rotation.z));
-	lookat.z = sin(toRad(-rotation.z)) * sin(toRad(-rotation.y));
+	rotation.x += 90.0;
+	lookat.x = sin(toRad(rotation.x)) * cos(toRad(-rotation.y));
+	lookat.y = cos(toRad(rotation.x));
+	lookat.z = sin(toRad(rotation.x)) * sin(toRad(-rotation.y));
 	right = glm::cross(lookat,glm::vec3(0,1,0));
-	rotation.z += 90.0;
+	rotation.x -= 90.0;
 }

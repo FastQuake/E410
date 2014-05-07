@@ -42,6 +42,13 @@ time = 0
 frames = 0;
 
 function update(dt)
+	if time > 1 then
+		fpsCounter:setString("FPS: "..frames)
+		frames = 0
+		time = 0
+	end
+	time = time + dt
+	frames = frames + 1
 	title:update(dt)
 	if title.state == tstates.play then
 		title:show(false)
@@ -56,12 +63,13 @@ function update(dt)
 	if state == states.play then
 		if player.model ~= nil then
 			x,y,z = player.model:getPos()
+			--print("cam pos "..x.." "..z)
 			cam:setPos(x,y+player.height,z)
 		end
 		local mousex, mousey = input.getMousePos()
 		mousex = mousex - (width/2)
 		mousey = mousey - (height/2)
-		cam:turn(mousey*sensitvity,
+		cam:turn(-mousey*sensitvity,
 		mousex*sensitvity)
 		input.setMousePos(width/2, height/2)
 

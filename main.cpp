@@ -367,6 +367,7 @@ int main(int argc, char *argv[]){
 						obj->rotation.x = stringToFloat(pdata[2]);
 						obj->rotation.y = stringToFloat(pdata[3]);
 						obj->rotation.z = stringToFloat(pdata[4]);
+						obj->updateLookat();
 					}
 					else if(pdata[0] == "scale"){
 						uint32_t id = stringToInt(pdata[1]);

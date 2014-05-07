@@ -20,16 +20,16 @@ function onReceivePacket(id, data)
 	--print(out)
 	local p = Peer.getPeer(peers, id)
 	if data[1] == "forward" then
-		p.model:setRot(0,data[2],0)
+		p.model:setRot(0,data[3],0)
 		p.model:move(10*delta)
 	elseif data[1] == "backward" then
-		p.model:setRot(0,data[2],0)
+		p.model:setRot(0,data[3],0)
 		p.model:move(-10*delta)
 	elseif data[1] == "right" then
-		p.model:setRot(0,data[2],0)
+		p.model:setRot(0,data[3],0)
 		p.model:strafe(10*delta)
 	elseif data[1] == "left" then
-		p.model:setRot(0,data[2],0)
+		p.model:setRot(0,data[3],0)
 		p.model:strafe(-10*delta)
 	end
 end
