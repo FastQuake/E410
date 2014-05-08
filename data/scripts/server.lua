@@ -7,17 +7,7 @@ playerSpeed = 15
 function onPeerConnect(id)
 	print("Got connection from peer "..id)
 	network.sendPacket(id, "player".. peerID)
-	local p = {}
-	p.id = id
-	p.fwd = 0
-	p.right = 0
-	p.model = GO.loadIQM("guy.iqm","player".. peerID)
-	p.model:setBoxBody()
-	p.model:setActivation(true)
-	p.model:setMass(100)
-	p.model:setPos(0,10,0)
-	p.model:lockAxis(0,0,0)
-	peerID = peerID + 1
+	local p = Peer.create("guy.iqm", "player"..peerID)
 	table.insert(peers,p)
 end
 
@@ -82,7 +72,15 @@ function init()
 	e = GO.loadIQM("ship_ext.iqm","eship")
 	e:setBoxBody()
 	e:setMass(0)
-	e:setPos(-150,0,0)
+	e:setPos(150,0,0)
+	e:setRot(180,0,0)
+
+	chair = GO.loadIQM("cube.iqm","chair")
+	chair:setBoxBody()
+	chair:setMass(0)
+	chair:setPos(23,4,0)
+	chair:setScale(2.8,6,2.5)
+	chair:setVisible(false)
 end
 
 delta = 0

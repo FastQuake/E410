@@ -298,6 +298,10 @@ int main(int argc, char *argv[]){
 						uint32_t id = stringToInt(pdata[1]);
 						GameObject *obj = rendman.getId(id);
 						rendman.remove(obj);
+					}else if(pdata[0] == "visible") {
+						uint32_t id = stringToInt(pdata[1]);
+						GameObject *obj = rendman.getId(id);
+						obj->visible = stringToInt(pdata[2]);
 					}else {
 						lua_getglobal(l,"onReceivePacket");
 						l_pushStringVector(l,pdata);

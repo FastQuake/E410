@@ -75,6 +75,12 @@ void sendSpawnPackets(ENetPeer *peer){
 		sendMovePacket(peer, serverRendMan.drawList[i]);
 		sendRotatePacket(peer, serverRendMan.drawList[i]);
 		sendScalePacket(peer, serverRendMan.drawList[i]);
+		//Send visible packet
+		Packet p;
+		p.addr = peer->address.host;
+		p.port = peer->address.port;
+		p.data = "visible " + intToString(serverRendMan.drawList[i]->id) + " " + intToString(serverRendMan.drawList[i]->visible);
+		serverPacketList.push_back(p);
 	}
 }
 

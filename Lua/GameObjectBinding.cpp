@@ -277,6 +277,18 @@ int l_serverSetRot(lua_State *l){
 	obj->updateLookat();
 	return 0;
 }
+int l_serverSetVisible(lua_State *l){
+	GameObject *obj = l_toGO(l,1);
+	bool vis = l_toBool(l,2);
+
+	obj->visible = vis;
+	Packet p;
+	p.addr = -1;
+	p.port = -1;
+	p.data = "visible " + intToString(obj->id) + " " + intToString(vis);
+	serverPacketList.push_back(p);
+	return 0;
+}
 int l_getLookat(lua_State *l){
 	GameObject *obj = l_toGO(l,1);
 	lua_pushnumber(l, obj->lookat.x);
