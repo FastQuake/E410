@@ -9,6 +9,6 @@ in float depth;
 
 void main(){
 	texColour = texture2D(mTexture,f_texcoord);
-	outColour = texColour*vec4(lightD,lightD,lightD,1.0);
 //	outColour = vec4(1.0)*depth*(texColour*0+1);
+	outColour = vec4(0.3*texColour.xyz,1.0);
 }

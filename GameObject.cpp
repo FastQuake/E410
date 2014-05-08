@@ -152,7 +152,7 @@ void GameObject::createConvexRigidBody(){
 
 		o->addPoint(btVector3(v1.x,v1.y,v1.z),false);
 		o->addPoint(btVector3(v2.x,v2.y,v2.z),false);
-		o->addPoint(btVector3(v3.x,v3.y,v3.z),true);
+		o->addPoint(btVector3(v3.x,v3.y,v3.z),false);
 
 	}
 	o->recalcLocalAabb();
@@ -167,7 +167,7 @@ void GameObject::createConvexRigidBody(){
 	collisionshape = new btConvexHullShape();
 	btConvexHullShape *tmp = (btConvexHullShape *)collisionshape;
 	for(int i=0;i<hull->numVertices();i++){
-		tmp->addPoint(hull->getVertexPointer()[i],true);
+		tmp->addPoint(hull->getVertexPointer()[i],false);
 	}
 	tmp->recalcLocalAabb();
 	if(motion != NULL)
