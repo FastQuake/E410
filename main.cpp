@@ -278,6 +278,10 @@ int main(int argc, char *argv[]){
 						obj->rotation.x = stringToFloat(pdata[2]);
 						obj->rotation.y = stringToFloat(pdata[3]);
 						obj->rotation.z = stringToFloat(pdata[4]);
+						obj->rot.setX(stringToFloat(pdata[5]));
+						obj->rot.setY(stringToFloat(pdata[6]));
+						obj->rot.setZ(stringToFloat(pdata[7]));
+						obj->rot.setW(stringToFloat(pdata[8]));
 						obj->updateLookat();
 					}
 					else if(pdata[0] == "scale"){

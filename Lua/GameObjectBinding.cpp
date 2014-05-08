@@ -98,6 +98,7 @@ int l_setRot(lua_State *l){
 	obj->rotation.z = z;
 	obj->rotated = true;
 	obj->updateLookat();
+	obj->rot = btQuaternion(toRad(y), toRad(x), toRad(z));
 	return 0;
 }
 
@@ -137,6 +138,7 @@ int l_turn(lua_State *l){
 
 	obj->turn(glm::vec2(x,y));
 	obj->rotated = true;
+	obj->rot = btQuaternion(toRad(obj->rotation.y), toRad(obj->rotation.x), toRad(obj->rotation.z));
 	return 0;
 }
 int l_setCurAnim(lua_State *l){

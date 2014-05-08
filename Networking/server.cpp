@@ -276,7 +276,9 @@ void sendMovePacket(ENetPeer *peer, GameObject *obj){
 void sendRotatePacket(ENetPeer *peer, GameObject *obj){
 	stringstream ss;
 	ss << "rotate" << " " << obj->id << " " << obj->rotation.x << " "
-		<< obj->rotation.y << " " << obj->rotation.z;
+		<< obj->rotation.y << " " << obj->rotation.z
+		<< " " << obj->rot.x() << " " << obj->rot.y()
+		<< " " << obj->rot.z() << " " << obj->rot.w();
 	Packet p;
 	p.addr = peer->address.host;
 	p.port = peer->address.port;
