@@ -69,6 +69,12 @@ function init()
 	floor:setMass(0.0)
 	floor:setScale(15,0.3,15)
 	floor:setPos(0,-25.5,0) ]]--
+
+	fixit = GO.loadIQM("mrfixit.iqm","fixit")
+	fixit:setBoxBody()
+	fixit:setMass(1.0)
+	fixit:setPos(0,0,1)
+
 	ship = GO.loadIQM("ship.iqm","ship")
 	ship:setTriangleBody()
 	ship:setMass(0)

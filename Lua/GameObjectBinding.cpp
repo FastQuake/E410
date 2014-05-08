@@ -248,10 +248,10 @@ int l_serverSetPos(lua_State *l){
 
 	if(obj->motion != NULL){
 		obj->motion->setWorldTransform(btTransform(obj->rot,
-					btVector3(x,y,z)));
+					btVector3(x,y,z)+obj->originOffset));
 		obj->body->setMotionState(obj->motion);
 		obj->body->proceedToTransform(btTransform(obj->rot,
-					btVector3(x,y,z)));
+				btVector3(x,y,z)+obj->originOffset));
 	}
 	obj->position = glm::vec3(x,y,z);
 	obj->moved = true;

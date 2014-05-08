@@ -45,6 +45,7 @@ public:
 	btMotionState *motion;
 
 	btQuaternion rot;
+	btVector3 originOffset = btVector3(0,0,0); //For primative mesh types
 	//variables for checking if the object has moved
 	glm::vec3 oldPos;
 	btQuaternion oldRot;

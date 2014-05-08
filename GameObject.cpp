@@ -196,6 +196,10 @@ void GameObject::createCubeRigidBody(){
 	zsize = extents.maxz-extents.minz;
 	btVector3 boxVector(xsize/2.0,ysize/2.0,zsize/2.0);
 
+	originOffset.setX((extents.maxx+extents.minx)/2.0);
+	originOffset.setY((extents.maxy+extents.miny)/2.0);
+	originOffset.setZ((extents.maxz+extents.minz)/2.0);
+
 	if(collisionshape != NULL)
 		delete collisionshape;
 	collisionshape = new btBoxShape(boxVector);
