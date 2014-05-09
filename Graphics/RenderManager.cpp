@@ -50,8 +50,7 @@ void RenderManager::drawScene(ShaderProgram *prg, float dt, bool texture, bool n
 		drawList[i]->model->draw(prg, drawList[i]->textures, drawList[i]->outframe, texture, normal);
 	}
 	glUseProgram(debugprg->getID());
-	view = currentCam->view();
-	glUniformMatrix4fv(debugprg->getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
+	glm::mat4 view = currentCam->view();
 	glUniformMatrix4fv(debugprg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
 	physworld.dynWorld->debugDrawWorld();
 }

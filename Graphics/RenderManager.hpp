@@ -36,7 +36,8 @@ public:
 
 private:
 	void drawScene(ShaderProgram *prg, float dt, bool texture, bool normal);
-}
+};
+
 class GLDebugDrawer : public btIDebugDraw
 {
 	int m_debugMode;

@@ -138,7 +138,7 @@ int main(int argc, char *argv[]){
 
 	debugprg = new ShaderProgram("./data/shaders/debuglinesv.glsl","./data/shaders/debuglinesf.glsl");
 	glGenBuffers(1,&debugvbo);
-	if(!debugprg.good)
+	if(!debugprg->good)
 		cerr << "Bad physics debug shader program. No collision debug info will be rendered." << endl;
 
 	//Load the skybox
@@ -218,6 +218,14 @@ int main(int argc, char *argv[]){
 	glUniform1i(prg.getUniform("shadowCubes"), 1);
 	glUniform1i(prg.getUniform("normalTex"), 2);
 	glUniformBlockBinding(prg.getID(),glGetUniformBlockIndex(prg.getID(), "Light"),0);
+
+	//Create projection matrix for main render
+	glm::mat4 projection = glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
+
+	glUseProgram(skyprg.getID());
+	glUniformMatrix4fv(skyprg.getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
+	glUseProgram(debugprg->getID());
+	glUniformMatrix4fv(debugprg->getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
 
 	lua_getglobal(l, "init");
 	status = lua_pcall(l,0,0,0);
@@ -460,12 +468,6 @@ int main(int argc, char *argv[]){
 		}
 
 		gui->update();
-
-		//Create projection matrix for main render
-		glm::mat4 projection = glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
-
-		glUseProgram(skyprg.getID());
-		glUniformMatrix4fv(skyprg.getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
 
 		//Do all drawing here
 		glEnable(GL_TEXTURE_CUBE_MAP_ARB);

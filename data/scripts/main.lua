@@ -24,6 +24,7 @@ end
 function onReceivePacket(data)
 	if data[1]:sub(1,6) == "player" then	
 		player.id = data[1]:sub(7)
+	end
 end
 
 function onKeyDown(key)
@@ -71,6 +72,10 @@ end
 
 player.oldRot = 0
 player.newRot = 0
+
+frames = 0
+time = 0
+
 function update(dt)
 	if time > 1 then
 		fpsCounter:setString("FPS: "..frames)

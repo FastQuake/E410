@@ -47,13 +47,12 @@ void FPSCamera::turn(glm::vec2 amount){
 }
 void FPSCamera::updateLookat(){
 	angle.x += 90.0f;
-	lookat.x = sin(toRad(angle.y)) * cos(toRad(-angle.x));
-	lookat.y = cos(toRad(angle.y));
-	lookat.z = sin(toRad(angle.y)) * sin(toRad(-angle.x));
+	lookat.x = sin(toRad(angle.x)) * cos(toRad(-angle.y));
+	lookat.y = cos(toRad(angle.x));
+	lookat.z = sin(toRad(angle.x)) * sin(toRad(-angle.y));
 	right = glm::cross(lookat,up);
 	angle.x -= 90;
 }
-
 
 glm::mat4 FPSCamera::view(){
 	return glm::lookAt(pos,lookat+pos,up);
