@@ -116,6 +116,7 @@ function update(dt)
 				local out = Vector.scalarMul(v.fwd,fwd) + Vector.scalarMul(v.right,right)
 				out = Vector.scalarMul(v.fwd,fwd) + Vector.scalarMul(v.right,right)
 				ship.vel = Vector.scalarMul(50,out:normalize())
+				ship.vel.y = -ship.vel.y
 			else
 				v.model:setVelocity(out:get())
 			end
