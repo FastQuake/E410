@@ -15,6 +15,7 @@ player.model = nil
 player.id = -1
 player.height = 6
 player.flying = false
+player.shipRot = Vector.create(0,0,0)
 function createObject(obj)
 	if obj:getTag() == "player"..player.id then
 		player.model = obj
@@ -28,6 +29,10 @@ function onReceivePacket(data)
 	elseif data[1] == "fly" then
 		player.flying = true
 		print("FLY TIME")
+	elseif data[1] == "shiprot" then
+		player.shipRot.x = data[2]
+		player.shipRot.y = data[3]
+		player.shipRot.z = data[4]
 	end
 end
 
@@ -94,7 +99,7 @@ function update(dt)
 			cam:turn(mousex*sensitvity,
 			-mousey*sensitvity)
 		else
-			cam:setRot(0,0,0)
+			cam:setRot(-player.shipRot.y, player.shipRot.x, player.shipRot.z)
 		end
 		input.setMousePos(width/2, height/2)
 		player.newRot = player.oldRot-mousex*sensitvity

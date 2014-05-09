@@ -127,6 +127,7 @@ int l_serverSendPacket(lua_State *l){
 	if(id == -1){
 		p.addr = -1;
 		p.port = -1;
+		serverPacketList.push_back(p);
 		return 0;
 	}
 

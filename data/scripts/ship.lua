@@ -8,6 +8,7 @@ function PlayerShip.create()
 	ship.ship = GO.loadIQM("ship.iqm","ship")
 	ship.ship:setTriangleBody()
 	ship.ship:setMass(0)
+	ship.ship:setActivation(true)
 
 	ship.chair = GO.loadIQM("cube.iqm","chair")
 	ship.chair:setBoxBody()
@@ -22,7 +23,7 @@ function PlayerShip.create()
 	return ship
 end
 
-function PlayerShip:relativeMove(objectList)
+function PlayerShip:relativeMove(objectList, playerList)
 	for k,v in pairs(objectList) do
 		local pos = Vector.create(v:getPos())
 		local fwd = Vector.create(0,0,0)
@@ -54,5 +55,13 @@ function PlayerShip:relativeMove(objectList)
 		--v:setRot(Vector.scalarMul(0.5,self.rot):get())
 		self.ship:setRot(Vector.scalarMul(-1,self.rot):get())
 	end
+	local down = Vector.create(0,-9.81,0)
+	down = down:rotate(self.rot.y/2, Vector.create(1,0,0))
+	print(down)
+	for k,v in pairs(peers) do
+		v.model:setG(down:get())
+		v.model:setRot(self.rot:get())
+	end
+	self.ship:setRot(Vector.scalarMul(-1,self.rot):get())
 	self.deltaRot = Vector.create(0,0,0)
 end

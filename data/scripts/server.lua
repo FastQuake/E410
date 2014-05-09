@@ -43,6 +43,7 @@ function onReceivePacket(id, data)
 		if p.flying == true then
 			ship.rot = Vector.create(-data[3],data[2],0) + ship.rot
 			ship.deltaRot = Vector.create(data[3]/2,data[2]/2,0)
+			network.sendPacket(-1,"shiprot "..ship.rot)
 		else
 			local rot = Vector.create(p.model:getRot()) + Vector.create(0,-data[2],0) 
 			p.model:setRot(rot:get())
@@ -127,5 +128,5 @@ function update(dt)
 		end
 	end
 
-	ship:relativeMove(spaceObjects)
+	ship:relativeMove(spaceObjects, peers)
 end
