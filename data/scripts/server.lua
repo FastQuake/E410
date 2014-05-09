@@ -41,8 +41,8 @@ function onReceivePacket(id, data)
 		end
 	elseif data[1] == "turn" then
 		if p.flying == true then
-			ship.rot = Vector.create(0,data[2],0) + ship.rot
-			ship.deltaRot = Vector.create(0,data[2]/2,0)
+			ship.rot = Vector.create(data[3],data[2],0) + ship.rot
+			ship.deltaRot = Vector.create(data[3]/2,data[2]/2,0)
 		else
 			local rot = Vector.create(p.model:getRot()) + Vector.create(0,-data[2],0) 
 			p.model:setRot(rot:get())

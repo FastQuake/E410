@@ -98,7 +98,7 @@ int l_setRot(lua_State *l){
 	obj->rotation.z = z;
 	obj->rotated = true;
 	obj->updateLookat();
-	obj->rot = btQuaternion(toRad(y), toRad(x), toRad(z));
+	obj->rot = btQuaternion(toRad(y), toRad(z), toRad(x));
 	return 0;
 }
 
@@ -275,7 +275,7 @@ int l_serverSetRot(lua_State *l){
 	if(obj->motion != NULL){
 		btTransform trans;
 		obj->motion->getWorldTransform(trans);
-		obj->motion->setWorldTransform(btTransform(btQuaternion(toRad(y),toRad(x),toRad(z)),
+		obj->motion->setWorldTransform(btTransform(btQuaternion(toRad(y),toRad(z),toRad(x)),
 					trans.getOrigin()));
 		obj->body->setMotionState(obj->motion);
 	}

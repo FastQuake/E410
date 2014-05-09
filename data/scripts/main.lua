@@ -99,7 +99,7 @@ function update(dt)
 		input.setMousePos(width/2, height/2)
 		player.newRot = player.oldRot-mousex*sensitvity
 		if player.newRot ~= player.oldRot then
-			network.sendPacket("turn "..mousex*sensitvity)
+			network.sendPacket("turn "..mousex*sensitvity.." "..-mousey*sensitvity)
 		end
 		player.oldRot = player.newRot
 	end
