@@ -109,6 +109,7 @@ void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg, float dt){
 	glDepthMask(1);
 
 	view = currentCam->view();
+	cout << currentCam->pos.x << "," << currentCam->pos.y << "," << currentCam->pos.z << " | " << currentCam->angle.x << "," << currentCam->angle.y << "," << currentCam->angle.z << "," << endl;
 	glUseProgram(prg->getID());
 	glUniformMatrix4fv(prg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
 	drawScene(prg,dt,true,true);

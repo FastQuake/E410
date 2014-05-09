@@ -104,8 +104,8 @@ function update(dt)
 		local mousex, mousey = input.getMousePos()
 		mousex = mousex - (width/2)
 		mousey = mousey - (height/2)
-		cam:turn(mousex*sensitvity,
-		-mousey*sensitvity)
+		cam:turn(-mousey*sensitvity,
+		mousex*sensitvity)
 		input.setMousePos(width/2, height/2)
 		player.newRot = player.oldRot-mousex*sensitvity
 		if player.newRot ~= player.oldRot then
