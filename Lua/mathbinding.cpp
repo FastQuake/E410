@@ -1,4 +1,5 @@
 #include <sstream>
+#include <glm/gtc/matrix_transform.hpp>
 #include "luabinding.hpp"
 #include "mathbinding.hpp"
 using namespace std;
@@ -118,3 +119,20 @@ int l_vec3Dot(lua_State *l){
 	lua_pushnumber(l, out);
 	return 1;
 }
+
+int l_rotVec(lua_State *l){
+	glm::vec3 vec(l_toNumber(l,1),l_toNumber(l,2),l_toNumber(l,3));
+	glm::vec3 rot(l_toNumber(l,4),l_toNumber(l,5),l_toNumber(l,6));
+
+	glm::mat4 rm = glm::rotate(glm::mat4(1),rot.x,glm::vec3(1,0,0))*
+					glm::rotate(glm::mat4(1),rot.y,glm::vec3(0,1,0))*
+					glm::rotate(glm::mat4(1),rot.z,glm::vec3(0,0,1));
+	vec = glm::vec3(rm*glm::vec4(vec,1));
+
+	lua_pushnumber(l,vec.x);
+	lua_pushnumber(l,vec.y);
+	lua_pushnumber(l,vec.z);
+
+	return 3;
+}
+

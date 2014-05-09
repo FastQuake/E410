@@ -81,6 +81,7 @@ function init()
 	e:setPos(150,0,0)
 	e:setRot(180,0,0)
 	e:setActivation(true)
+	e:lockAxis(0,0,0)
 
 	e2 = GO.loadIQM("ship_ext.iqm","eship2")
 	e2:setBoxBody()
@@ -89,6 +90,7 @@ function init()
 	e2:setPos(-150,0,0)
 	--e2:setRot(180,0,0)
 	e2:setActivation(true)
+	e2:lockAxis(0,0,0)
 
 
 	table.insert(spaceObjects,e)

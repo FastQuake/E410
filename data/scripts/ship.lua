@@ -25,8 +25,11 @@ end
 function PlayerShip:relativeMove(objectList)
 	for k,v in pairs(objectList) do
 		local pos = Vector.create(v:getPos())
-		pos = pos:rotate(self.deltaRot.y, Vector.create(0,1,0))
-		pos = pos:rotate(-self.deltaRot.x, Vector.create(0,0,1))
+		x,y,z = pos:get()
+		dx,dy,dz = self.deltaRot:get()
+		pos = Vector.create(matRot(x,y,z,dz,dy,-dx))
+		--pos = pos:rotate(-self.deltaRot.x, Vector.create(0,0,1))
+		--pos = pos:rotate(self.deltaRot.y, Vector.create(0,1,0))
 		--pos = Vector.scalarMul(-delta, self.vel) + pos
 		v:setPos(pos:get())
 		v:setVelocity(Vector.scalarMul(-1,self.vel):get())

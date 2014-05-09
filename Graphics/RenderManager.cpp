@@ -67,7 +67,7 @@ void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg, float dt){
 	view = currentCam->view();
 	glUniformMatrix4fv(debugprg->getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
 	glUniformMatrix4fv(debugprg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
-	physworld.dynWorld->debugDrawWorld();
+	//physworld.dynWorld->debugDrawWorld();
 }
 
 void RenderManager::remove(GameObject *obj){
