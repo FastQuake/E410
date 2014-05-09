@@ -25,7 +25,7 @@ PhysWorld::PhysWorld(){
 	broadphase = new btDbvtBroadphase();
 	conf = new btDefaultCollisionConfiguration();
 		dispatcher = new btCollisionDispatcher(conf);
-	//btGImpactCollisionAlgorithm::registerAlgorithm(dispatcher);	
+	btGImpactCollisionAlgorithm::registerAlgorithm(dispatcher);
 	solver = new btSequentialImpulseConstraintSolver();
 	dynWorld = new btDiscreteDynamicsWorld(dispatcher,broadphase,solver,conf);
 	dynWorld->setGravity(btVector3(0,-9.81,0));

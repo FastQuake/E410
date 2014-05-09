@@ -70,7 +70,7 @@ function init()
 	ship = PlayerShip.create()
 
 	shit = GO.loadIQM("monkey.iqm","monkey")
-	shit:setBoxBody()
+	shit:setTriangleBody()
 	shit:setMass(1.0)
 	shit:setPos(3,5,0)
 
