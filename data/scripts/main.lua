@@ -46,6 +46,8 @@ function onKeyDown(key)
 		local pos = Vector.create(cam:getPos())
 		local dir = Vector.create(cam:getLookat())
 		network.sendPacket("cast "..(pos+dir).." "..dir)
+	elseif key == keys.Space then
+		network.sendPacket("jump")
 	end
 end
 

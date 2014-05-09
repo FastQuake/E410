@@ -50,6 +50,13 @@ function onReceivePacket(id, data)
 				network.sendPacket(id, "fly")
 			end
 		end
+	elseif data[1] == "jump" then
+		local x,y,z = p.model:getPos()
+		local obj = GO.castRay(x,y,z,0,-1,0,7)
+		if obj ~= nil then
+			x,y,z = p.model:getVelocity()
+			p.model:setVelocity(x,15,z)
+		end
 	end
 end
 
