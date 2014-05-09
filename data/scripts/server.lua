@@ -98,6 +98,9 @@ function update(dt)
 			out = Vector.scalarMul(playerSpeed, out)
 			out.y = vel.y
 			if v.flying == true then
+				local fwd = Vector.create(ship.ship:getLookat())
+				local right = Vector.cross(Vector.create(0,1,0),fwd)
+				local out = Vector.scalarMul(v.fwd,fwd) + Vector.scalarMul(v.right,right)
 				right = Vector.cross(Vector.create(0,1,0),fwd)
 				out = Vector.scalarMul(v.fwd,fwd) + Vector.scalarMul(v.right,right)
 				ship.vel = Vector.scalarMul(50,out:normalize())
