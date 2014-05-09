@@ -115,7 +115,9 @@ void GameObject::createTriangleRigidBody(){
 
 	if(collisionshape != NULL)
 		delete collisionshape;
-	collisionshape = new btBvhTriangleMeshShape(trimesh,true);
+	btGImpactMeshShape *gimpact = new btGImpactMeshShape(trimesh);
+	gimpact->updateBound();
+	collisionshape = gimpact;
 	if(motion != NULL)
 		delete motion;
 	motion = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),
