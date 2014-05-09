@@ -56,9 +56,13 @@ function PlayerShip:relativeMove(objectList, playerList)
 		self.ship:setRot(Vector.scalarMul(-1,self.rot):get())
 	end
 	local fwd = Vector.create(self.ship:getLookat())
-	local right = fwd:rotate(90, Vector.create(0,1,0))
-	local down = Vector.cross(right,fwd)
+	local right = Vector.cross(fwd, Vector.create(0,1,0))
+	local down = Vector.cross(fwd,right)
+	down = down:normalize()
 	down = Vector.scalarMul(9.81,down)
+	--down.x = -down.x
+	--down.z = -down.z
+	print(down)
 	for k,v in pairs(peers) do
 		v.model:setG(down:get())
 		--v.model:setRot(-self.rot.x/2,self.rot.y/2, self.rot.z/2)
