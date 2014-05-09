@@ -94,6 +94,8 @@ function update(dt)
 		--cam:setRot(0,90,0)
 		cam:setRot(0,0,0)
 		input.setGuiMousePos(width/2, height/2)
+		--lamp = GO.createLight("point")
+		--lamp:setPos(18,2.35,2.55)
 	end
 	if state == states.play then
 		if player.model ~= nil then
