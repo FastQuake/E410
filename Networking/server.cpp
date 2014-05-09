@@ -213,6 +213,7 @@ void serverMain(){
 		lua_getglobal(l,"update");
 		lua_pushnumber(l, dt.asSeconds());
 		if(lua_pcall(l,1,0,0)){
+			//luaL_traceback(l,l,lua_tostring(l,-1),1);
 			string error = "[SERVER] " + string(lua_tostring(l,-1));
 			cout << error << endl;
 			global_con->out.println("[SERVER] "+error);
