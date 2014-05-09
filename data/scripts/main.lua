@@ -14,6 +14,7 @@ player = {}
 player.model = nil
 player.id = -1
 player.height = 6
+player.flying = false
 function createObject(obj)
 	if obj:getTag() == "player"..player.id then
 		player.model = obj
@@ -24,6 +25,9 @@ end
 function onReceivePacket(data)
 	if data[1]:sub(1,6) == "player" then	
 		player.id = data[1]:sub(7)
+	elseif data[1] == "fly" then
+		player.flying = true
+		print("FLY TIME")
 	end
 end
 
@@ -36,7 +40,7 @@ function onKeyDown(key)
 		network.sendPacket("move left")
 	elseif key == keys.D then
 		network.sendPacket("move right")
-	elseif key == keys.P then
+	elseif key == keys.E then
 		local pos = Vector.create(cam:getPos())
 		local dir = Vector.create(cam:getLookat())
 		network.sendPacket("cast "..(pos+dir).." "..dir)
@@ -86,12 +90,16 @@ function update(dt)
 		local mousex, mousey = input.getMousePos()
 		mousex = mousex - (width/2)
 		mousey = mousey - (height/2)
-		cam:turn(mousex*sensitvity,
-		-mousey*sensitvity)
+		if player.flying == false then
+			cam:turn(mousex*sensitvity,
+			-mousey*sensitvity)
+		else
+			cam:setRot(0,0,0)
+		end
 		input.setMousePos(width/2, height/2)
 		player.newRot = player.oldRot-mousex*sensitvity
 		if player.newRot ~= player.oldRot then
-			network.sendPacket("turn "..player.newRot)
+			network.sendPacket("turn "..mousex*sensitvity)
 		end
 		player.oldRot = player.newRot
 	end

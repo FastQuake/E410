@@ -1,5 +1,6 @@
 require "networkutils"
 require "vector"
+require "ship"
 
 peers = {}
 peerID = 0
@@ -39,11 +40,21 @@ function onReceivePacket(id, data)
 			p.right = -0
 		end
 	elseif data[1] == "turn" then
-		p.model:setRot(data[2],0,0)
+		if p.flying == true then
+			ship.rot = Vector.create(0,data[2],0) + ship.rot
+			ship.deltaRot = Vector.create(0,data[2]/2,0)
+		else
+			local rot = Vector.create(p.model:getRot()) + Vector.create(0,-data[2],0) 
+			p.model:setRot(rot:get())
+		end
 	elseif data[1] == "cast" then
-		local obj = GO.castRay(data[2],data[3],data[4],data[5],data[6],data[7],50)
+		local obj = GO.castRay(data[2],data[3],data[4],data[5],data[6],data[7],15)
 		if obj ~= nil then
 			print("Looking at: "..obj:getTag())
+			if obj:getTag() == "chair" then
+				p.flying = true
+				network.sendPacket(id, "fly")
+			end
 		end
 	end
 end
@@ -54,15 +65,9 @@ function onPeerDisconnect(id)
 	p.model:remove()
 end
 
+spaceObjects = {}
 function init()
-	--[[floor = GO.loadIQM("cube.iqm","cube")
-	floor:setMass(0.0)
-	floor:setScale(15,0.3,15)
-	floor:setPos(0,-25.5,0) ]]--
-	ship = GO.loadIQM("ship.iqm","ship")
-	ship:setTriangleBody()
-	ship:setMass(0)
-	ship:setPos(0,-2,0)
+	ship = PlayerShip.create()
 
 	shit = GO.loadIQM("monkey.iqm","monkey")
 	shit:setBoxBody()
@@ -71,16 +76,13 @@ function init()
 
 	e = GO.loadIQM("ship_ext.iqm","eship")
 	e:setBoxBody()
-	e:setMass(0)
+	e:setMass(10)
+	e:setG(0,0,0)
 	e:setPos(150,0,0)
 	e:setRot(180,0,0)
+	e:setActivation(true)
 
-	chair = GO.loadIQM("cube.iqm","chair")
-	chair:setBoxBody()
-	chair:setMass(0)
-	chair:setPos(23,4,0)
-	chair:setScale(2.8,6,2.5)
-	chair:setVisible(false)
+	table.insert(spaceObjects,e)
 end
 
 delta = 0
@@ -95,9 +97,21 @@ function update(dt)
 			out = out:normalize()
 			out = Vector.scalarMul(playerSpeed, out)
 			out.y = vel.y
-			v.model:setVelocity(out:get())
+			if v.flying == true then
+				right = Vector.cross(Vector.create(0,1,0),fwd)
+				out = Vector.scalarMul(v.fwd,fwd) + Vector.scalarMul(v.right,right)
+				ship.vel = Vector.scalarMul(50,out:normalize())
+			else
+				v.model:setVelocity(out:get())
+			end
 		else
-			v.model:setVelocity(0,vel.y,0)
+			if v.flying == true then
+				ship.vel = Vector.create(0,0,0)
+			else
+				v.model:setVelocity(0,vel.y,0)
+			end
 		end
 	end
+
+	ship:relativeMove(spaceObjects)
 end

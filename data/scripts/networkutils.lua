@@ -7,6 +7,7 @@ function Peer.create(modelName, tag)
 	p.id = peerID
 	p.fwd = 0
 	p.right = 0
+	p.flying = false
 	p.model = GO.loadIQM("guy.iqm","player".. peerID)
 	p.model:setBoxBody()
 	p.model:setActivation(true)

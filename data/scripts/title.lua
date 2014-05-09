@@ -239,7 +239,7 @@ function Title.create()
 
 	--Add planet geometry
 	title.planet = GO.loadIQM("planet.iqm")
-	title.planet:setPos(0,0,-3)
+	title.planet:setPos(3,0,0)
 	title.planetspeed = 10
 	title.planetangle = 0
 	return title

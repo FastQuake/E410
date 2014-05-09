@@ -64,13 +64,23 @@ end
 
 function Vector.normalize(vec)
 	local vector = Vector.create(0,0,0)
-	mag = math.sqrt(vec.x*vec.x + vec.y*vec.y + vec.z*vec.z)
+	mag = vec:mag()
 	vector.x = vec.x/mag
 	vector.y = vec.y/mag
 	vector.z = vec.z/mag
 	return vector
 end
 
+function Vector:mag()
+	return math.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)  
+end
+
 function Vector:get()
 	return self.x, self.y, self.z
+end
+
+function Vector:rotate(angle, axis)
+	return Vector.scalarMul(math.cos(math.rad(angle)),self) 
+		+ Vector.scalarMul(math.sin(math.rad(angle)), (Vector.cross(axis,self))) 
+		+ Vector.scalarMul(Vector.dot(axis,self)*(1-math.cos(math.rad(angle))),axis)
 end

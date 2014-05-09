@@ -51,6 +51,7 @@ int l_camSetRot(lua_State *l){
 	cam->angle.x = x;
 	cam->angle.y = y;
 	cam->angle.z = z;
+	cam->updateLookat();
 
 	return 0;
 }

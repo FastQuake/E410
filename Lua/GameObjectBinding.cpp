@@ -194,6 +194,14 @@ int l_getTag(lua_State *l){
 	lua_pushstring(l,obj->tag.c_str());
 	return 1;
 }
+int l_getRot(lua_State *l){
+	GameObject *obj = l_toGO(l, 1);
+
+	lua_pushnumber(l, obj->rotation.x);
+	lua_pushnumber(l, obj->rotation.y);
+	lua_pushnumber(l, obj->rotation.z);
+	return 3;
+}
 int l_delete(lua_State *l){
 	lua_pushnil(l);
 	GameObject *obj = l_toGO(l, 1);
@@ -222,6 +230,7 @@ int l_setV(lua_State *l){
 
 	if(obj->body != NULL){
 		obj->body->setLinearVelocity(btVector3(x,y,-z));
+		obj->body->clearForces();
 	}
 
 	return 0;
@@ -266,7 +275,7 @@ int l_serverSetRot(lua_State *l){
 	if(obj->motion != NULL){
 		btTransform trans;
 		obj->motion->getWorldTransform(trans);
-		obj->motion->setWorldTransform(btTransform(btQuaternion(toRad(x),toRad(y),toRad(z)),
+		obj->motion->setWorldTransform(btTransform(btQuaternion(toRad(y),toRad(x),toRad(z)),
 					trans.getOrigin()));
 		obj->body->setMotionState(obj->motion);
 	}
@@ -348,7 +357,15 @@ int l_setActivation(lua_State *l){
 	}
 	return 0;
 }
-
+int l_setG(lua_State *l){
+	GameObject *obj = l_toGO(l,1);
+	float x = l_toNumber(l,2);
+	float y = l_toNumber(l,3);
+	float z = l_toNumber(l,4);
+	if(obj != NULL)
+		obj->body->setGravity(btVector3(x,y,z));
+	return 0;
+}
 int l_raycast(lua_State *l){
 	btVector3 pos(l_toNumber(l,1),l_toNumber(l,2),l_toNumber(l,3));
 	btVector3 dir(l_toNumber(l,4),l_toNumber(l,5),l_toNumber(l,6));
