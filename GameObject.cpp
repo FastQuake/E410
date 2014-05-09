@@ -54,6 +54,13 @@ void GameObject::setModel(Model *model){
 	}
 	textures = model->textureIDS;
 	extents extents = getExtents();
+	float oox = (extents.maxx+extents.minx)/2.0;
+	float ooy = (extents.maxy+extents.miny)/2.0;
+	float ooz = (extents.maxz+extents.minz)/2.0;
+
+	originOffset.setX(oox);
+	originOffset.setY(ooy);
+	originOffset.setZ(ooz);
 }
 
 void GameObject::move(float amount){
@@ -152,7 +159,7 @@ void GameObject::createConvexRigidBody(){
 
 		o->addPoint(btVector3(v1.x,v1.y,v1.z),false);
 		o->addPoint(btVector3(v2.x,v2.y,v2.z),false);
-		o->addPoint(btVector3(v3.x,v3.y,v3.z),false);
+		o->addPoint(btVector3(v3.x,v3.y,v3.z),true);
 
 	}
 	o->recalcLocalAabb();
@@ -167,7 +174,7 @@ void GameObject::createConvexRigidBody(){
 	collisionshape = new btConvexHullShape();
 	btConvexHullShape *tmp = (btConvexHullShape *)collisionshape;
 	for(int i=0;i<hull->numVertices();i++){
-		tmp->addPoint(hull->getVertexPointer()[i],false);
+		tmp->addPoint(hull->getVertexPointer()[i],true);
 	}
 	tmp->recalcLocalAabb();
 	if(motion != NULL)
@@ -195,10 +202,6 @@ void GameObject::createCubeRigidBody(){
 	ysize = extents.maxy-extents.miny;
 	zsize = extents.maxz-extents.minz;
 	btVector3 boxVector(xsize/2.0,ysize/2.0,zsize/2.0);
-
-	originOffset.setX((extents.maxx+extents.minx)/2.0);
-	originOffset.setY((extents.maxy+extents.miny)/2.0);
-	originOffset.setZ((extents.maxz+extents.minz)/2.0);
 
 	if(collisionshape != NULL)
 		delete collisionshape;

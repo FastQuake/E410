@@ -54,7 +54,11 @@ void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg, float dt){
 		outquat.w = quat.getW();
 		glm::mat4 rot = glm::mat4_cast(glm::normalize(outquat));
 		glm::mat4 trans = glm::translate(glm::mat4(1), drawList[i]->position);
-		glm::mat4 modelMat = trans * rot * scale;
+		glm::vec3 originOffset = glm::vec3(	drawList[i]->originOffset.getX(),
+											drawList[i]->originOffset.getY(),
+											drawList[i]->originOffset.getZ());
+		glm::mat4 transOrigin = glm::translate(glm::mat4(1), originOffset);
+		glm::mat4 modelMat = trans * transOrigin * rot * glm::inverse(transOrigin) * scale;
 		modelMat *= glm::rotate(glm::mat4(1),-90.0f,glm::vec3(1.0,0,0)); //Rotate everything -90deg on x axis
 		glUniformMatrix4fv(prg->getUniform("modelMat"),1,GL_FALSE,glm::value_ptr(modelMat));
 		drawList[i]->model->draw(prg,drawList[i]->textures,drawList[i]->outframe);
