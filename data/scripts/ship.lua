@@ -29,7 +29,7 @@ function PlayerShip:relativeMove(objectList)
 		--pos = Vector.scalarMul(-delta, self.vel) + pos
 		v:setPos(pos:get())
 		v:setVelocity(Vector.scalarMul(-1,self.vel):get())
-		v:setRot(self.rot:get())
-		self.deltaRot = Vector.create(0,0,0)
+		v:setRot(Vector.scalarMul(0.5,self.rot):get())
 	end
+	self.deltaRot = Vector.create(0,0,0)
 end

@@ -82,7 +82,17 @@ function init()
 	e:setRot(180,0,0)
 	e:setActivation(true)
 
+	e2 = GO.loadIQM("ship_ext.iqm","eship2")
+	e2:setBoxBody()
+	e2:setMass(10)
+	e2:setG(0,0,0)
+	e2:setPos(-150,0,0)
+	--e2:setRot(180,0,0)
+	e2:setActivation(true)
+
+
 	table.insert(spaceObjects,e)
+	table.insert(spaceObjects,e2)
 end
 
 delta = 0
@@ -101,7 +111,6 @@ function update(dt)
 				local fwd = Vector.create(ship.ship:getLookat())
 				local right = Vector.cross(Vector.create(0,1,0),fwd)
 				local out = Vector.scalarMul(v.fwd,fwd) + Vector.scalarMul(v.right,right)
-				right = Vector.cross(Vector.create(0,1,0),fwd)
 				out = Vector.scalarMul(v.fwd,fwd) + Vector.scalarMul(v.right,right)
 				ship.vel = Vector.scalarMul(50,out:normalize())
 			else
