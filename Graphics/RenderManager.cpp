@@ -49,10 +49,6 @@ void RenderManager::drawScene(ShaderProgram *prg, float dt, bool texture, bool n
 		}
 		drawList[i]->model->draw(prg, drawList[i]->textures, drawList[i]->outframe, texture, normal);
 	}
-	glUseProgram(debugprg->getID());
-	glm::mat4 view = currentCam->view();
-	glUniformMatrix4fv(debugprg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
-	physworld.dynWorld->debugDrawWorld();
 }
 
 void RenderManager::renderDepth(ShaderProgram *prg, float dt, int lightIndex){
@@ -107,7 +103,6 @@ void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg, float dt){
 	//Draw the skybox without writing any depth information
 	glUseProgram(skyprg->getID());
 	glDepthMask(0);
-	glUniformMatrix4fv(skyprg->getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
 	view *= glm::scale(glm::mat4(1),glm::vec3(50,50,50));
 	glUniformMatrix4fv(skyprg->getUniform("view"),1,GL_FALSE,glm::value_ptr(view));
 	skybox.model->draw(skyprg,skybox.textures,skybox.outframe,true,false);
@@ -115,10 +110,11 @@ void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg, float dt){
 
 	view = currentCam->view();
 	glUseProgram(prg->getID());
-	glUniformMatrix4fv(skyprg->getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
 	glUniformMatrix4fv(prg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
 	drawScene(prg,dt,true,true);
-
+	glUseProgram(debugprg->getID());
+	glUniformMatrix4fv(debugprg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
+	physworld.dynWorld->debugDrawWorld();
 }
 
 void RenderManager::updateUBO(){
