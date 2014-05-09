@@ -23,13 +23,10 @@ Light *l_toLight(lua_State *l, int pos){
 
 int l_lightCreate(lua_State *l){
 	int type = 0;
-	string typeString = l_toString(l,1);
 	Light *i;
-	if(typeString == "point")
-		i = new (lua_newuserdata(l,sizeof(PLight))) PLight;
-	if(typeString == "directional")
-		i = new (lua_newuserdata(l,sizeof(DLight))) DLight;
+	i = new (lua_newuserdata(l,sizeof(PLight))) PLight;
 	i->magic = LIGHT_MAGIC;
+	i->pos = glm::vec3(0,0,0);
 	rendman.lights.push_back(i);
 	rendman.updateUBO();
 	luaL_getmetatable(l, "MetaLight");
@@ -43,6 +40,7 @@ int l_lightSetPos(lua_State *l){
 	float z = l_toNumber(l, 4);
 
 	i->pos = glm::vec3(x,y,z);
+	rendman.updateUBO();
 	return 0;
 }
 int l_lightSetRot(lua_State *l){

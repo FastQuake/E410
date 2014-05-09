@@ -68,6 +68,9 @@ function init()
 	cam:setPos(0,0,0)
 	cam:setRot(0,0,0)
 	camera.setCam(cam)
+
+	light = GO.createLight()
+	light:setPos(18,2.35,2.55)
 end
 
 player.oldRot = 0
