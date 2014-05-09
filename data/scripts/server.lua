@@ -1,6 +1,5 @@
 require "networkutils"
 require "vector"
-require "ship"
 
 peers = {}
 peerID = 0
