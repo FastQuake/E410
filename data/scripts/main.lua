@@ -1,5 +1,6 @@
 require "title"
-sensitvity = 0.50
+require "vector"
+sensitvity = 0.75
 speed = 10
 
 states = {
@@ -12,7 +13,7 @@ state = states.title
 player = {}
 player.model = nil
 player.id = -1
-player.height = 7
+player.height = 6
 function createObject(obj)
 	if obj:getTag() == "player"..player.id then
 		player.model = obj
@@ -23,6 +24,35 @@ end
 function onReceivePacket(data)
 	if data[1]:sub(1,6) == "player" then	
 		player.id = data[1]:sub(7)
+end
+
+function onKeyDown(key)
+	if key == keys.W then
+		network.sendPacket("move forward")
+	elseif key == keys.S then
+		network.sendPacket("move backward")
+	elseif key == keys.A then
+		network.sendPacket("move left")
+	elseif key == keys.D then
+		network.sendPacket("move right")
+	elseif key == keys.E then
+		local pos = Vector.create(cam:getPos())
+		local dir = Vector.create(cam:getLookat())
+		network.sendPacket("cast "..(pos+dir).." "..dir)
+	elseif key == keys.Space then
+		network.sendPacket("jump")
+	end
+end
+
+function onKeyRelease(key)
+	if key == keys.W then
+		network.sendPacket("stop forward")
+	elseif key == keys.S then
+		network.sendPacket("stop backward")
+	elseif key == keys.A then
+		network.sendPacket("stop left")
+	elseif key == keys.D then
+		network.sendPacket("stop right")
 	end
 end
 
@@ -34,13 +64,13 @@ function init()
 	fpsCounter:setString("FPS: ".. 0)
 	--Create stuff for scene
 	cam = camera.createCam()
-	cam:setPos(0, 0, 0)
+	cam:setPos(0,0,0)
+	cam:setRot(0,0,0)
 	camera.setCam(cam)
 end
 
-time = 0
-frames = 0;
-
+player.oldRot = 0
+player.newRot = 0
 function update(dt)
 	if time > 1 then
 		fpsCounter:setString("FPS: "..frames)
@@ -62,40 +92,20 @@ function update(dt)
 	end
 	if state == states.play then
 		if player.model ~= nil then
-			x,y,z = player.model:getPos()
-			--print("cam pos "..x.." "..z)
-			cam:setPos(x,y+player.height,z)
+			pos = Vector.create(player.model:getPos())
+			pos = pos+Vector.create(0,player.height,0)
+			cam:setPos(pos:get())
 		end
 		local mousex, mousey = input.getMousePos()
 		mousex = mousex - (width/2)
 		mousey = mousey - (height/2)
-		cam:turn(-mousey*sensitvity,
-		mousex*sensitvity)
+		cam:turn(mousex*sensitvity,
+		-mousey*sensitvity)
 		input.setMousePos(width/2, height/2)
-
-		local camx,camy,camz = cam:getRot()
-		dir = camx.." "..camy
-		if input.isKeyDown(keys.W) then
-			network.sendPacket("forward "..dir)
+		player.newRot = player.oldRot-mousex*sensitvity
+		if player.newRot ~= player.oldRot then
+			network.sendPacket("turn "..mousex*sensitvity.." "..-mousey*sensitvity)
 		end
-		if input.isKeyDown(keys.S) then
-			network.sendPacket("backward "..dir)
-		end
-		if input.isKeyDown(keys.A) then
-			network.sendPacket("left "..dir)
-		end
-		if input.isKeyDown(keys.D) then
-			network.sendPacket("right "..dir)
-		end
-		--[[if input.isKeyDown(keys.Up) then
-			network.sendPacket("forward")
-		end
-		if input.isKeyDown(keys.Right) then
-			network.sendPacket("right")
-		end
-		if input.isKeyDown(keys.Left) then
-			network.sendPacket("left")
-		end]]--
-
+		player.oldRot = player.newRot
 	end
 end

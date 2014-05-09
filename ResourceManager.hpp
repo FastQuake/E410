@@ -16,12 +16,16 @@ private:
 	std::map<std::string,sf::Font> fonts;
 	std::map<std::string,sf::Image> images;
 	std::map<std::string,GLuint> texs;
+
+	std::map<std::string, Model> noGLModels;
 public:
 	Model *loadModel(std::string name);
 	sf::Font *loadFont(std::string name);
 	sf::Image *loadImage(std::string name);
 	GLuint loadTexture(std::string name);
 	GLuint loadTexture(std::string name, int *width, int *height);
+
+	Model *loadNoGLModel(std::string name);
 };
 
 #endif

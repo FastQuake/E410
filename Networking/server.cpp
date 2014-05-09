@@ -1,4 +1,5 @@
 #include <sstream>
+#include <glm/gtx/quaternion.hpp>
 #include <lua.hpp>
 #include "server.hpp"
 #include "../Lua/luabinding.hpp"
@@ -12,6 +13,7 @@ vector<Peer> peers;
 vector<Packet> serverPacketList;
 uint32_t serverID;
 uint64_t peerID = 0;
+PhysWorld physworld;
 
 int peerIndexByPeer(ENetPeer* checkPeer){
 	for(int i=0;i<peers.size();i++){
@@ -73,6 +75,12 @@ void sendSpawnPackets(ENetPeer *peer){
 		sendMovePacket(peer, serverRendMan.drawList[i]);
 		sendRotatePacket(peer, serverRendMan.drawList[i]);
 		sendScalePacket(peer, serverRendMan.drawList[i]);
+		//Send visible packet
+		Packet p;
+		p.addr = peer->address.host;
+		p.port = peer->address.port;
+		p.data = "visible " + intToString(serverRendMan.drawList[i]->id) + " " + intToString(serverRendMan.drawList[i]->visible);
+		serverPacketList.push_back(p);
 	}
 }
 
@@ -98,6 +106,8 @@ void serverMain(){
 	lua_State *l = luaL_newstate();
 	luaL_openlibs(l);
 	serverBindFunctions(l);
+	lua_newtable(l);
+	lua_setglobal(l,"serverObjects");
 
 	//load main server lua function
 	if(luaL_dofile(l,"./data/scripts/server.lua")){
@@ -118,6 +128,7 @@ void serverMain(){
 	}
 
 
+	serverPacketList.clear();
 	sf::Clock timer;
 	sf::Time dt = timer.restart();
 	ENetEvent event;
@@ -145,10 +156,10 @@ void serverMain(){
 					}
 					break;
 				case ENET_EVENT_TYPE_DISCONNECT:
+					index = peerIndexByPeer(event.peer);
 					lua_getglobal(l, "onPeerDisconnect");
-					lua_pushnumber(l, event.peer->address.host);
-					lua_pushnumber(l, event.peer->address.port);
-					if(lua_pcall(l, 2, 0, 0)){
+					lua_pushnumber(l, peers[index].id);
+					if(lua_pcall(l, 1, 0, 0)){
 						string error = "[SERVER] " + string(lua_tostring(l,-1));
 						cout << error << endl;
 						global_con->out.println("[SERVER] "+error);
@@ -202,19 +213,38 @@ void serverMain(){
 		lua_getglobal(l,"update");
 		lua_pushnumber(l, dt.asSeconds());
 		if(lua_pcall(l,1,0,0)){
+			//luaL_traceback(l,l,lua_tostring(l,-1),1);
 			string error = "[SERVER] " + string(lua_tostring(l,-1));
 			cout << error << endl;
 			global_con->out.println("[SERVER] "+error);
 		}
 
+		//do physics
+		physworld.step(dt.asSeconds());
+
 		for(int i=0;i<serverRendMan.drawList.size();i++){
 			ENetPeer p;
 			p.address.host = -1;
-			if(serverRendMan.drawList[i]->moved == true){
+			btTransform trans;
+			serverRendMan.drawList[i]->motion->getWorldTransform(trans);
+			glm::vec3 originOffset = glm::vec3(	serverRendMan.drawList[i]->originOffset.getX(),
+												serverRendMan.drawList[i]->originOffset.getY(),
+												serverRendMan.drawList[i]->originOffset.getZ());
+			glm::vec3 newPos = glm::vec3(trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z());
+			btQuaternion newRot = trans.getRotation();
+			glm::vec3 rot =quatToEuler(glm::quat(newRot.x(),newRot.y(),newRot.z(),newRot.w())); 
+			//cout << rot.x << " " << rot.y << " " << rot.z << endl;
+			if(serverRendMan.drawList[i]->oldPos != newPos){
+				serverRendMan.drawList[i]->position = newPos-originOffset;
+				serverRendMan.drawList[i]->oldPos = newPos-originOffset;
 				sendMovePacket(&p,serverRendMan.drawList[i]);
 				serverRendMan.drawList[i]->moved = false;
 			}
-			if(serverRendMan.drawList[i]->rotated == true){
+			if(serverRendMan.drawList[i]->rot != newRot){
+				serverRendMan.drawList[i]->rotation = quatToEuler(glm::quat(newRot.x(),newRot.y(),newRot.z(),newRot.w()));
+				serverRendMan.drawList[i]->updateLookat();
+				serverRendMan.drawList[i]->rot = newRot;
+				serverRendMan.drawList[i]->oldRot = newRot;
 				sendRotatePacket(&p,serverRendMan.drawList[i]);
 				serverRendMan.drawList[i]->rotated = false;
 			}
@@ -256,7 +286,9 @@ void sendMovePacket(ENetPeer *peer, GameObject *obj){
 void sendRotatePacket(ENetPeer *peer, GameObject *obj){
 	stringstream ss;
 	ss << "rotate" << " " << obj->id << " " << obj->rotation.x << " "
-		<< obj->rotation.y << " " << obj->rotation.z;
+		<< obj->rotation.y << " " << obj->rotation.z
+		<< " " << obj->rot.x() << " " << obj->rot.y()
+		<< " " << obj->rot.z() << " " << obj->rot.w();
 	Packet p;
 	p.addr = peer->address.host;
 	p.port = peer->address.port;

@@ -30,6 +30,21 @@ Model *ResourceManager::loadModel(string name){
 	}
 }
 
+Model *ResourceManager::loadNoGLModel(std::string name){
+	map<string,Model>::iterator it = noGLModels.find(name);
+	//If model is not loaded, load it
+	if(it == noGLModels.end()){
+		Model model;
+		if(noGLLoadIQM(modelDir+name,model) == false){
+			return NULL;
+		};
+		noGLModels[name] = model;
+		return &noGLModels[name];
+	}else{
+		return &it->second;
+	}
+}
+
 sf::Font *ResourceManager::loadFont(string name){
 	map<string, sf::Font>::iterator it = fonts.find(name);
 

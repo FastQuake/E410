@@ -18,6 +18,7 @@ class FPSCamera{
 		void move(float amount);
 		void strafe(float amount);
 		void turn(glm::vec2 amount);
+		void updateLookat();
 
 		glm::mat4 view();
 		glm::vec3 getLookat();

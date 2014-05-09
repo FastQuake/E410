@@ -29,6 +29,8 @@ ENetPeer *serverPeer;
 ENetHost *client;
 sf::RenderWindow *gwindow;
 vector<string> packetList;
+ShaderProgram *debugprg;
+GLuint debugvbo;
 
 int width, height;
 
@@ -133,6 +135,11 @@ int main(int argc, char *argv[]){
 			"./data/shaders/skyfragment.glsl");
 	if(!skyprg.good)
 		cerr << "Bad skybox shader program. No skybox will be rendered." << endl;
+
+	debugprg = new ShaderProgram("./data/shaders/debuglinesv.glsl","./data/shaders/debuglinesf.glsl");
+	glGenBuffers(1,&debugvbo);
+	if(!debugprg.good)
+		cerr << "Bad physics debug shader program. No collision debug info will be rendered." << endl;
 
 	//Load the skybox
 	rendman.skybox.setModel(resman.loadModel("skybox.iqm"));
@@ -301,6 +308,24 @@ int main(int argc, char *argv[]){
 					con.visible = !con.visible;
 					con.updates = !con.updates;
 					im->setGuiMousePos(sf::Vector2i(width/2,height/2));
+				} else if(im->isGuiLocked() == false){
+					lua_getglobal(l, "onKeyDown");
+					lua_pushnumber(l, event.key.code);
+					if(lua_pcall(l,1,0,0)){
+						cout << lua_tostring(l, -1) << endl;
+						global_con->out.println(lua_tostring(l, -1));
+					}
+
+				}
+			}
+			if(event.type == sf::Event::KeyReleased){
+				if(im->isGuiLocked() == false){
+					lua_getglobal(l, "onKeyRelease");
+					lua_pushnumber(l, event.key.code);
+					if(lua_pcall(l,1,0,0)){
+							cout << lua_tostring(l, -1) << endl;
+							global_con->out.println(lua_tostring(l, -1));
+					}
 				}
 			}
 		}
@@ -367,6 +392,10 @@ int main(int argc, char *argv[]){
 						obj->rotation.x = stringToFloat(pdata[2]);
 						obj->rotation.y = stringToFloat(pdata[3]);
 						obj->rotation.z = stringToFloat(pdata[4]);
+						obj->rot.setX(stringToFloat(pdata[5]));
+						obj->rot.setY(stringToFloat(pdata[6]));
+						obj->rot.setZ(stringToFloat(pdata[7]));
+						obj->rot.setW(stringToFloat(pdata[8]));
 						obj->updateLookat();
 					}
 					else if(pdata[0] == "scale"){
@@ -379,6 +408,14 @@ int main(int argc, char *argv[]){
 						obj->scale.x = stringToFloat(pdata[2]);
 						obj->scale.y = stringToFloat(pdata[3]);
 						obj->scale.z = stringToFloat(pdata[4]);
+					}else if(pdata[0] == "delete") {
+						uint32_t id = stringToInt(pdata[1]);
+						GameObject *obj = rendman.getId(id);
+						rendman.remove(obj);
+					}else if(pdata[0] == "visible") {
+						uint32_t id = stringToInt(pdata[1]);
+						GameObject *obj = rendman.getId(id);
+						obj->visible = stringToInt(pdata[2]);
 					}else {
 						lua_getglobal(l,"onReceivePacket");
 						l_pushStringVector(l,pdata);

@@ -107,19 +107,16 @@ void bindFunctions(lua_State *l){
 
 void serverBindFunctions(lua_State *l){
 	lua_register(l,"print",l_print);
+	lua_register(l,"matRot",l_rotVec);
+	lua_register(l,"mathMagic",l_mathmagic);
 
 	//create GO binding
-	//Remap some functions to their server version
-	GO_methods[0].func = l_serverDelete;
-	GO_methods[1].func = l_serverDelete;
-	GO_funcs[0].func = l_serverLoadIQM;
-	GO_funcs[0].func = l_serverLoadIQM;
 	luaL_newmetatable(l, "MetaGO");
-	luaL_setfuncs(l, GO_methods, 0);
+	luaL_setfuncs(l, Server_GO_methods, 0);
 	lua_pushvalue(l, -1);
 	lua_setfield(l, -1,"__index");
 
-	luaL_newlib(l,GO_funcs);
+	luaL_newlib(l,Server_GO_funcs);
 	lua_setglobal(l, "GO");
 
 	luaL_newlib(l, ServerNetwork_funcs);

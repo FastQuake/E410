@@ -51,6 +51,7 @@ int l_camSetRot(lua_State *l){
 	cam->angle.x = x;
 	cam->angle.y = y;
 	cam->angle.z = z;
+	cam->updateLookat();
 
 	return 0;
 }
@@ -99,6 +100,15 @@ int l_camGetRot(lua_State *l){
 	lua_pushnumber(l,cam->angle.x);
 	lua_pushnumber(l,cam->angle.y);
 	lua_pushnumber(l,cam->angle.z);
+
+	return 3;
+}
+int l_camGetLookat(lua_State *l){
+	FPSCamera *cam = l_toCam(l,1);
+
+	lua_pushnumber(l,cam->getLookat().x);
+	lua_pushnumber(l,cam->getLookat().y);
+	lua_pushnumber(l,cam->getLookat().z);
 
 	return 3;
 }
