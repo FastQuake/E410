@@ -1,7 +1,7 @@
 #include "Light.hpp"
 #include "../globals.hpp"
 
-glm::mat4 PLight::pointProjection = glm::perspective(90.0f, 1.0f, 0.6f, 250.0f);
+glm::mat4 PLight::pointProjection = glm::perspective(90.0f, 1.0f, 1.0f, 75.0f);
 
 glm::mat4 DLight::mvp(){
 	glm::vec3 p;

@@ -52,7 +52,7 @@ void main(){
 	for(int i=0;i<numLights.x;i++){
 		vec3 l = normalize((vec4(lightPositions[i].xyz,0.0)).xyz);
 		float cosTheta = clamp(dot(normalCam,l),0.000001, 1.0);
-		float bias = clamp(tan(acos(cosTheta)),0.0,0.0025);
+		float bias = clamp(tan(acos(cosTheta)),0.0,0.0035);
 		float shadowed = 0.0f;
 		shadowed = 0.0f;
 		vec4 abs_position = abs(shadowCoords[i]);
