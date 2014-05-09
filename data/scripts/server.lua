@@ -73,11 +73,11 @@ function init()
 	shit:setMass(1.0)
 	shit:setPos(3,5,0)
 
-	floor = GO.loadIQM("cube.iqm", "floor")
-	floor:setBoxBody()
+	floor = GO.loadIQM("level1.iqm", "floor")
+	floor:setTriangleBody()
 	floor:setMass(0)
-	floor:setScale(100,1,100)
-	floor:setPos(0,-10,0)
+	--floor:setScale(100,1,100)
+	--floor:setPos(0,-1,0)
 end
 
 delta = 0
