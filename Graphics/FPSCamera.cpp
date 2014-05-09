@@ -42,7 +42,7 @@ void FPSCamera::turn(glm::vec2 amount){
 	} else if(angle.y < -360){
 		angle.y = -(abs(angle.y)-360.0);
 	}
-	angle.y -= 90.0f;
+	angle.x -= 90.0f;
 	updateLookat();
 }
 void FPSCamera::updateLookat(){

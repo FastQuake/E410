@@ -74,7 +74,6 @@ function init()
 	shit:setPos(3,5,0)
 
 	floor = GO.loadIQM("cube.iqm", "floor")
-	--floor:setTriangleBody()
 	floor:setBoxBody()
 	floor:setMass(0)
 	floor:setScale(100,1,100)
