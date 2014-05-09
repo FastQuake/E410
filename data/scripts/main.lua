@@ -70,7 +70,7 @@ function init()
 	camera.setCam(cam)
 
 	light = GO.createLight()
-	light:setPos(18,2.35,2.55)
+	light:setPos(16,2.35,2.55)
 end
 
 player.oldRot = 0
