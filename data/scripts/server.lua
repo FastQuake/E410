@@ -52,7 +52,7 @@ function onReceivePacket(id, data)
 		end
 	elseif data[1] == "jump" then
 		local x,y,z = p.model:getPos()
-		local obj = GO.castRay(x,y,z,0,-1,0,0.05)
+		local obj = GO.castRay(x,y,z,0,-1,0,0.4)
 		if obj ~= nil then
 			x,y,z = p.model:getVelocity()
 			p.model:setVelocity(x,playerSpeed,z)
