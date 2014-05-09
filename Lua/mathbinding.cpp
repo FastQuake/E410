@@ -2,6 +2,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "luabinding.hpp"
 #include "mathbinding.hpp"
+#include "../globals.hpp"
 using namespace std;
 
 l_vec3 *l_toVec3(lua_State *l, int pos){
@@ -135,4 +136,37 @@ int l_rotVec(lua_State *l){
 
 	return 3;
 }
+int l_mathmagic(lua_State *l){
+	glm::vec3 rot(l_toNumber(l,1),l_toNumber(l,2),l_toNumber(l,3));
+	rot.x = toRad(rot.x);
+	rot.y = toRad(rot.y);
+	rot.z = toRad(rot.z);
+	glm::vec3 fwd(0,0,0);
 
+	fwd.x = sin(rot.x)*cos(-rot.y);
+	fwd.y = sin(rot.x)*sin(-rot.y);
+	fwd.z = cos(rot.x);
+
+	glm::vec3 right = glm::cross(fwd, glm::vec3(0,1,0));
+
+	btQuaternion a(btVector3(right.x,right.y,right.z),rot.x);
+	btQuaternion b(btVector3(0,1,0),rot.y);
+
+	btQuaternion out = b*a;
+	glm::quat o;
+	o.x = out.x();
+	o.y = out.y();
+	o.z = out.z();
+	o.w = out.w();
+	glm::vec3 ang = quatToEuler(o);
+
+	/*float x = ang.x;
+	ang.x = ang.z;
+	ang.z = x;*/
+
+	lua_pushnumber(l,ang.x);
+	lua_pushnumber(l,ang.y);
+	lua_pushnumber(l,ang.z);
+
+	return 3;
+}

@@ -84,3 +84,12 @@ function Vector:rotate(angle, axis)
 		+ Vector.scalarMul(math.sin(math.rad(angle)), (Vector.cross(axis,self))) 
 		+ Vector.scalarMul(Vector.dot(axis,self)*(1-math.cos(math.rad(angle))),axis)
 end
+
+function axisToEuler(vec, angle)
+	angle = math.rad(angle)
+	local out = Vector.create(0,0,0)
+	out.y = math.atan2(vec.y * math.sin(angle)-vec.x*vec.z*(1-math.cos(angle)), 1-(vec.y*vec.y + vec.z*vec.z)*(1-math.cos(angle)))
+	out.x = math.asin(vec.x*vec.y*(1-math.cos(angle))+vec.z*math.sin(angle))
+	out.y = math.atan2(vec.x*math.sin(angle)-vec.y*vec.z*(1-math.cos(angle)), 1 - (vec.x*vec.x + vec.z*vec.z)*(1-math.cos(angle)))
+	return out
+end

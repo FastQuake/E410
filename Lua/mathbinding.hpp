@@ -20,12 +20,14 @@ int l_vec3Sub(lua_State *l);
 int l_vec3Cross(lua_State *l);
 int l_vec3Dot(lua_State *l);
 int l_rotVec(lua_State *l);
+int l_mathmagic(lua_State *l);
 
 static struct luaL_Reg Vec3_funcs[] = {
 	{"vec3", l_createVec3},
 	{"cross", l_vec3Cross},
 	{"dot", l_vec3Dot},
 	{"matRot", l_rotVec},
+	{"mathMagic", l_mathmagic},
 	{NULL, NULL}
 }; 
 

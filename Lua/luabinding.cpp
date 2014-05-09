@@ -87,6 +87,7 @@ void bindFunctions(lua_State *l){
 void serverBindFunctions(lua_State *l){
 	lua_register(l,"print",l_print);
 	lua_register(l,"matRot",l_rotVec);
+	lua_register(l,"mathMagic",l_mathmagic);
 
 	//create GO binding
 	luaL_newmetatable(l, "MetaGO");
