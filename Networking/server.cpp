@@ -226,13 +226,16 @@ void serverMain(){
 			p.address.host = -1;
 			btTransform trans;
 			serverRendMan.drawList[i]->motion->getWorldTransform(trans);
+			glm::vec3 originOffset = glm::vec3(	serverRendMan.drawList[i]->originOffset.getX(),
+												serverRendMan.drawList[i]->originOffset.getY(),
+												serverRendMan.drawList[i]->originOffset.getZ());
 			glm::vec3 newPos = glm::vec3(trans.getOrigin().x(), trans.getOrigin().y(), trans.getOrigin().z());
 			btQuaternion newRot = trans.getRotation();
 			glm::vec3 rot =quatToEuler(glm::quat(newRot.x(),newRot.y(),newRot.z(),newRot.w())); 
 			//cout << rot.x << " " << rot.y << " " << rot.z << endl;
 			if(serverRendMan.drawList[i]->oldPos != newPos){
-				serverRendMan.drawList[i]->position = newPos;
-				serverRendMan.drawList[i]->oldPos = newPos;
+				serverRendMan.drawList[i]->position = newPos-originOffset;
+				serverRendMan.drawList[i]->oldPos = newPos-originOffset;
 				sendMovePacket(&p,serverRendMan.drawList[i]);
 				serverRendMan.drawList[i]->moved = false;
 			}
