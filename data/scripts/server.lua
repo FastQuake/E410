@@ -3,7 +3,7 @@ require "vector"
 
 peers = {}
 peerID = 0
-playerSpeed = 15
+playerSpeed = 5
 function onPeerConnect(id)
 	print("Got connection from peer "..id)
 	network.sendPacket(id, "player".. peerID)
@@ -52,10 +52,10 @@ function onReceivePacket(id, data)
 		end
 	elseif data[1] == "jump" then
 		local x,y,z = p.model:getPos()
-		local obj = GO.castRay(x,y,z,0,-1,0,7)
+		local obj = GO.castRay(x,y,z,0,-1,0,1)
 		if obj ~= nil then
 			x,y,z = p.model:getVelocity()
-			p.model:setVelocity(x,15,z)
+			p.model:setVelocity(x,playerSpeed,z)
 		end
 	end
 end

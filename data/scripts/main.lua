@@ -13,7 +13,7 @@ state = states.title
 player = {}
 player.model = nil
 player.id = -1
-player.height = 6
+player.height = 2
 function createObject(obj)
 	if obj:getTag() == "player"..player.id then
 		player.model = obj
