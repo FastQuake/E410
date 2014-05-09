@@ -26,9 +26,6 @@ end
 function onReceivePacket(data)
 	if data[1]:sub(1,6) == "player" then	
 		player.id = data[1]:sub(7)
-	elseif data[1] == "fly" then
-		player.flying = true
-		print("FLY TIME")
 	elseif data[1] == "shiprot" then
 		player.shipRot.x = data[2]
 		player.shipRot.y = data[3]

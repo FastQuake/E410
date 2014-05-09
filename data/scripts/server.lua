@@ -40,14 +40,8 @@ function onReceivePacket(id, data)
 			p.right = -0
 		end
 	elseif data[1] == "turn" then
-		if p.flying == true then
-			ship.rot = Vector.create(-data[3],data[2],0) + ship.rot
-			ship.deltaRot = Vector.create(data[3]/2,data[2]/2,0)
-			network.sendPacket(-1,"shiprot "..ship.rot)
-		else
-			local rot = Vector.create(p.model:getRot()) + Vector.create(0,-data[2],0) 
-			p.model:setRot(rot:get())
-		end
+		local rot = Vector.create(p.model:getRot()) + Vector.create(0,-data[2],0) 
+		p.model:setRot(rot:get())
 	elseif data[1] == "cast" then
 		local obj = GO.castRay(data[2],data[3],data[4],data[5],data[6],data[7],15)
 		if obj ~= nil then
@@ -68,34 +62,18 @@ end
 
 spaceObjects = {}
 function init()
-	ship = PlayerShip.create()
-
 	shit = GO.loadIQM("monkey.iqm","monkey")
-	shit:setTriangleBody()
+	--shit:setTriangleBody()
+	shit:setBoxBody()
 	shit:setMass(1.0)
 	shit:setPos(3,5,0)
 
-	e = GO.loadIQM("ship_ext.iqm","eship")
-	e:setBoxBody()
-	e:setMass(10)
-	e:setG(0,0,0)
-	e:setPos(150,0,0)
-	e:setRot(180,0,0)
-	e:setActivation(true)
-	e:lockAxis(0,0,0)
-
-	e2 = GO.loadIQM("ship_ext.iqm","eship2")
-	e2:setBoxBody()
-	e2:setMass(10)
-	e2:setG(0,0,0)
-	e2:setPos(-150,0,0)
-	--e2:setRot(180,0,0)
-	e2:setActivation(true)
-	e2:lockAxis(0,0,0)
-
-
-	table.insert(spaceObjects,e)
-	table.insert(spaceObjects,e2)
+	floor = GO.loadIQM("cube.iqm", "floor")
+	--floor:setTriangleBody()
+	floor:setBoxBody()
+	floor:setMass(0)
+	floor:setScale(100,1,100)
+	floor:setPos(0,-10,0)
 end
 
 delta = 0
@@ -110,24 +88,9 @@ function update(dt)
 			out = out:normalize()
 			out = Vector.scalarMul(playerSpeed, out)
 			out.y = vel.y
-			if v.flying == true then
-				local fwd = Vector.create(ship.ship:getLookat())
-				local right = Vector.cross(Vector.create(0,1,0),fwd)
-				local out = Vector.scalarMul(v.fwd,fwd) + Vector.scalarMul(v.right,right)
-				out = Vector.scalarMul(v.fwd,fwd) + Vector.scalarMul(v.right,right)
-				ship.vel = Vector.scalarMul(50,out:normalize())
-				ship.vel.y = -ship.vel.y
-			else
-				v.model:setVelocity(out:get())
-			end
+			v.model:setVelocity(out:get())
 		else
-			if v.flying == true then
-				ship.vel = Vector.create(0,0,0)
-			else
-				v.model:setVelocity(0,vel.y,0)
-			end
+			v.model:setVelocity(0,vel.y,0)
 		end
 	end
-
-	ship:relativeMove(spaceObjects, peers)
 end
