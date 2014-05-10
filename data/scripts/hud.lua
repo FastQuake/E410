@@ -28,15 +28,16 @@ function HUD:update()
 	local scale = self.player.hp/100
 	self.gui.hp:setPos(width/2 - (400*scale)/2,10)
 	self.gui.hp:setScale(scale*400,30)
-
+	
+	local x,y,z = player.model:getRot()
+	local x = cam:getRot()
 	local gunpos = Vector.create(player.model:getPos())
 	local fwd = Vector.create(cam:getLookat())
+	fwd.y =0
+	fwd = fwd:normalize()
 	local right = Vector.cross(fwd,Vector.create(0,1,0))
-	--print(right)
 	gunpos.y = gunpos.y+1.8
-	gunpos = gunpos + Vector.scalarMul(0.3,right)
-	x,y,z = player.model:getRot()
-	x = cam:getRot()
+	gunpos = gunpos +Vector.scalarMul(0.3,right)
 	h.gui.gun:setPos(gunpos:get())
 	h.gui.gun:setRot(-x,y,z)
 end
