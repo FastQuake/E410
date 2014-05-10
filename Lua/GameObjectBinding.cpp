@@ -254,7 +254,7 @@ int l_setV(lua_State *l){
 	float z = l_toNumber(l,4);
 
 	if(obj->body != NULL){
-		obj->body->setLinearVelocity(btVector3(x,y,-z));
+		obj->body->setLinearVelocity(btVector3(x,y,z));
 		obj->body->clearForces();
 	}
 

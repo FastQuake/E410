@@ -99,7 +99,7 @@ function update(dt)
 	delta = dt
 	for k,v in pairs(peers) do
 		local fwd = Vector.create(v.model:getLookat())
-		local right = Vector.cross(Vector.create(0,1,0),fwd)
+		local right = Vector.cross(fwd,Vector.create(0,1,0))
 		local out = Vector.scalarMul(v.fwd,fwd) + Vector.scalarMul(v.right,right)
 		local vel = Vector.create(v.model:getVelocity())
 		if out ~= Vector.create(0,0,0) then
