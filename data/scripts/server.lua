@@ -84,14 +84,14 @@ function init()
 	--floor:setScale(100,1,100)
 	--floor:setPos(0,-1,0)
 	AIManager.addMonster()
-	AIManager.addNode(1,-0.14,-2.5,3.0) --left ramp bottom
-	AIManager.addNode(2,-0.14,-2.5,-10) --right ramp bottom
-	AIManager.addNode(3,8.6,-1.2,3.0) --left ramp top
-	AIManager.addNode(4,8.6,-1.2,-10) --right ramp top
-	AIManager.addNode(5,15.5,-1.2,3.0) --Left door inside
-	AIManager.addNode(6,15.5,-1.2,-10) --Right door inside
-	AIManager.addNode(7,20,-1.2,-4) --big ramp bottom
-	AIManager.addNode(8,28.6,2.14,-4) --big ramp top
+	AIManager.addNode(1,-0.14,-2.5,3.0);AIManager.addNeighbors(1,{2,3}) --left ramp bottom
+	AIManager.addNode(2,-0.14,-2.5,-10);AIManager.addNeighbors(2,{1,4}) --right ramp bottom
+	AIManager.addNode(3,8.6,-1.2,3.0);AIManager.addNeighbors(3,{4,5,1}) --left ramp top
+	AIManager.addNode(4,8.6,-1.2,-10);AIManager.addNeighbors(4,{3,6,2}) --right ramp top
+	AIManager.addNode(5,15.5,-1.2,3.0);AIManager.addNeighbors(5,{3,6}) --Left door inside
+	AIManager.addNode(6,15.5,-1.2,-10);AIManager.addNeighbors(6,{5,7,4}) --Right door inside
+	AIManager.addNode(7,20,-1.2,-4);AIManager.addNeighbors(7,{8,6,5,7}) --big ramp bottom
+	AIManager.addNode(8,28.6,2.14,-4);AIManager.addNeighbors(8,{7}) --big ramp top
 end
 
 delta = 0
@@ -110,5 +110,7 @@ function update(dt)
 		else
 			v.model:setVelocity(0,vel.y,0)
 		end
+		local visibleNode = AIManager.findVisibleNode(Vector.create(v.model:getPos()))
+		print(visibleNode.id)
 	end
 end

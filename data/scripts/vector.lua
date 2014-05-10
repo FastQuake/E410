@@ -87,7 +87,7 @@ end
 
 function Vector.distance(vec1,vec2)
 	subtracted = vec1-vec2
-	return subtraced:mag()
+	return subtracted:mag()
 end
 
 function axisToEuler(vec, angle)
