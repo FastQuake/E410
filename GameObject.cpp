@@ -221,7 +221,11 @@ void GameObject::createCubeRigidBody(){
 		delete body;
 	}
 	body = new btRigidBody(ci);
-	physworld.addBody(body);
+	if(this->tag.substr(0,4) == "node"){
+		physworld.addBody(body,1<<2,1);
+	}
+	else
+		physworld.addBody(body,1<<2,1<<2);
 }
 void GameObject::createCubeRididBody(extents e){
 	float xsize,ysize,zsize;
@@ -264,7 +268,11 @@ void GameObject::updateMass(float mass){
 		physworld.removeBody(body);
 		body->getCollisionShape()->calculateLocalInertia(this->mass, inertia);
 		body->setMassProps(this->mass, inertia);
-		physworld.addBody(body);
+		if(this->tag.substr(0,4) == "node"){
+			physworld.addBody(body,1<<2,1);
+		}
+		else
+			physworld.addBody(body,1<<2,1<<2);
 	}
 	else
 		cout << "body is null" << endl;

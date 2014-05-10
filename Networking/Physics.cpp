@@ -49,6 +49,10 @@ void PhysWorld::addBody(btRigidBody *body){
 	dynWorld->addRigidBody(body);
 }
 
+void PhysWorld::addBody(btRigidBody *body, int colGroup, int colMask){
+	dynWorld->addRigidBody(body,colGroup,colMask);
+}
+
 void PhysWorld::removeBody(btRigidBody *body){
 	dynWorld->removeRigidBody(body);
 }

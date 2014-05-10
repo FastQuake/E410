@@ -9,7 +9,7 @@ function AIManager.addNode(id,x,y,z)
 	node.neighbors = {}
 	node.model = GO.loadIQM("cube.iqm","node"..id)
 	node.model:setBoxBody()
-	node.model:setVisible(true)
+	node.model:setVisible(false)
 	node.model:setMass(0)
 	node.model:setPos(node.pos:get())
 	table.insert(nodes,node)
@@ -39,7 +39,6 @@ function AIManager.addMonster()
 end
 
 function AIManager.findVisibleNode(startPos)
-	startPos.y = startPos.y + 2
 	local closestNode = {}
 	local triedNodes = {}
 	local out = {}

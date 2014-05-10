@@ -17,6 +17,7 @@ public:
 	void step(float dt);
 	void addBody(btRigidBody* body);
 	void removeBody(btRigidBody* body);
+	void addBody(btRigidBody *body, int colGroup, int colMask);
 };
 
 #endif
