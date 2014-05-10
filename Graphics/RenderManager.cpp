@@ -111,10 +111,10 @@ void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg,float dt){
 }
 void RenderManager::renderSprites(ShaderProgram *prg, float curTime){
 	glUseProgram(prg->getID());
-	glm::mat4 projection = glm::perspective(45.0f, 1.0f*width/height, 0.01f, 1000.0f);
+	glm::mat4 proj = glm::perspective(45.0f, 1.0f*width/height, 0.1f, 1000.0f);
 	glm::mat4 view = currentCam->view();
-	glm::mat4 projview = projection*view;
-	glUniformMatrix4fv(prg->getUniform("projview"),1,GL_FALSE,glm::value_ptr(projview));
+	glUniformMatrix4fv(prg->getUniform("proj"),1,GL_FALSE,glm::value_ptr(proj));
+	glUniformMatrix4fv(prg->getUniform("view"),1,GL_FALSE,glm::value_ptr(view));
 	for(int i=0;i<sprites.size();i++){
 		sprites[i]->draw(curTime,currentCam);
 	}

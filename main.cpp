@@ -259,7 +259,7 @@ int main(int argc, char *argv[]){
 	glGetIntegerv(GL_MINOR_VERSION, &minv);
 	cout << "GL Version: "<< majv << "." << minv << endl;
 
-	Sprite s("cube.png");
+	Sprite s("glow.png");
 	s.position = glm::vec3(18,0,0);
 	s.sprite.position = glm::vec3(18,0,0);
 	rendman.sprites.push_back(&s);
@@ -482,8 +482,8 @@ int main(int argc, char *argv[]){
 		glUniformMatrix4fv(prg.getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
 		glUniformMatrix4fv(prg.getUniform("pointProj"),1,GL_FALSE,glm::value_ptr(PLight::pointProjection));
 		rendman.render(&prg,&skyprg,dt.asSeconds());
-		glDisable(GL_TEXTURE_CUBE_MAP_ARB);
 		rendman.renderSprites(spriteprg,dt.asSeconds());
+		glDisable(GL_TEXTURE_CUBE_MAP_ARB);
 
 
 		//Do sfml drawing here

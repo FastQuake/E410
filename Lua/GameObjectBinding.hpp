@@ -104,6 +104,7 @@ const static struct luaL_Reg Server_GO_methods[]={
 	{"getTag", l_getTag},
 	{"getVelocity",l_getV},
 	{"getID",l_getID},
+	{"getCurAnim", l_getCurAnim},
 	{NULL,NULL}
 };
 
