@@ -1,3 +1,4 @@
+require "vector"
 HUD = {}
 HUD.__index = HUD
 
@@ -12,6 +13,8 @@ function HUD.create(player)
 	h.gui.hp:setScale(400,30)
 	h.gui.hp:setPos(width/2-200,10)
 	h.gui.hp:setColour(200,0,0,255)
+
+	h.gui.gun = GO.loadIQM("gun.iqm")
 	return h
 end
 
@@ -25,4 +28,15 @@ function HUD:update()
 	local scale = self.player.hp/100
 	self.gui.hp:setPos(width/2 - (400*scale)/2,10)
 	self.gui.hp:setScale(scale*400,30)
+
+	local gunpos = Vector.create(player.model:getPos())
+	local fwd = Vector.create(cam:getLookat())
+	local right = Vector.cross(fwd,Vector.create(0,1,0))
+	--print(right)
+	gunpos.y = gunpos.y+1.8
+	gunpos = gunpos + Vector.scalarMul(0.3,right)
+	x,y,z = player.model:getRot()
+	x = cam:getRot()
+	h.gui.gun:setPos(gunpos:get())
+	h.gui.gun:setRot(-x,y,z)
 end

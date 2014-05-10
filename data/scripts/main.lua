@@ -123,7 +123,6 @@ function update(dt)
 	time = time + dt
 	frames = frames + 1
 	title:update(dt)
-	h:update()
 	if title.state == tstates.play then
 		title:show(false)
 		title.state = tstates.default
@@ -137,6 +136,7 @@ function update(dt)
 		--lamp:setPos(18,2.35,2.55)
 	end
 	if state == states.play then
+		h:update()
 		if player.model ~= nil then
 			pos = Vector.create(player.model:getPos())
 			pos = pos+Vector.create(0,player.height,0)
