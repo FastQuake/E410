@@ -62,7 +62,7 @@ function AIManager.findVisibleNode(startPos)
 		local dir = closestNode.pos-startPos
 		local dirx,diry,dirz = dir:get()
 		local posx,posy,posz = startPos:get()
-		obj = GO.castRay(posx,posy,posz,dirx,diry,dirz,50)
+		obj = GO.castRay(posx,posy,posz,dirx,diry,dirz,50,1)
 		if obj ~= nil then
 			if obj:getTag() ~= "floor" then
 				out = closestNode

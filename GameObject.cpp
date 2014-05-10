@@ -269,7 +269,7 @@ void GameObject::updateMass(float mass){
 		body->getCollisionShape()->calculateLocalInertia(this->mass, inertia);
 		body->setMassProps(this->mass, inertia);
 		if(this->tag.substr(0,4) == "node"){
-			physworld.addBody(body,1<<2,1);
+			physworld.addBody(body,1,1);
 		}
 		else
 			physworld.addBody(body,1<<2,1<<2);

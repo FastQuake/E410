@@ -47,7 +47,7 @@ function onReceivePacket(id, data)
 		local rot = Vector.create(p.model:getRot()) + Vector.create(0,-data[2],0) 
 		p.model:setRot(rot:get())
 	elseif data[1] == "cast" then
-		local obj = GO.castRay(data[2],data[3],data[4],data[5],data[6],data[7],15)
+		local obj = GO.castRay(data[2],data[3],data[4],data[5],data[6],data[7],15,4)
 		if obj ~= nil then
 			print("Looking at: "..obj:getTag())
 			if obj:getTag() == "chair" then
@@ -57,7 +57,7 @@ function onReceivePacket(id, data)
 		end
 	elseif data[1] == "jump" then
 		local x,y,z = p.model:getPos()
-		local obj = GO.castRay(x,y,z,0,-1,0,0.4)
+		local obj = GO.castRay(x,y,z,0,-1,0,0.4,4)
 		if obj ~= nil then
 			x,y,z = p.model:getVelocity()
 			p.model:setVelocity(x,playerSpeed,z)

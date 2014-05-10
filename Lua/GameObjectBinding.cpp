@@ -398,9 +398,12 @@ int l_raycast(lua_State *l){
 	btVector3 pos(l_toNumber(l,1),l_toNumber(l,2),l_toNumber(l,3));
 	btVector3 dir(l_toNumber(l,4),l_toNumber(l,5),l_toNumber(l,6));
 	float dis = l_toNumber(l,7);
+	int filterMask = l_toNumber(l,8);
 
 	dir = dis*dir.normalize();
 	btCollisionWorld::ClosestRayResultCallback rayCallback(pos, pos+dir);
+	rayCallback.m_collisionFilterMask = filterMask;
+	rayCallback.m_collisionFilterGroup = filterMask;
 	physworld.dynWorld->rayTest(pos, pos+dir, rayCallback);
 	if(rayCallback.hasHit()){
 		GameObject *obj = serverRendMan.getBody(rayCallback.m_collisionObject);
