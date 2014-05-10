@@ -2,6 +2,21 @@ local nodes = {}
 local monsters = {}
 AIManager = {}
 
+function tablelength(T)
+  local count = 0
+  for _ in pairs(T) do count = count + 1 end
+  return count
+end
+
+function tableContains(t,searchv)
+	for k,v in pairs(t) do
+		if v == searchv then
+			return true
+		end
+	end
+	return false
+end
+
 function AIManager.addNode(id,x,y,z)
 	local node = {}
 	node.pos = Vector.create(x,y,z)
@@ -12,13 +27,13 @@ function AIManager.addNode(id,x,y,z)
 	node.model:setVisible(false)
 	node.model:setMass(0)
 	node.model:setPos(node.pos:get())
-	table.insert(nodes,node)
+	nodes[id] = node
 end
 
 function AIManager.addNeighbors(id1,ids)
-	local node = nodes[id1]
 	for id in pairs(ids) do
-		table.insert(node.neighbors,id)
+		local node = nodes[id1]
+		table.insert(node.neighbors,nodes[id])
 	end
 end
 
@@ -33,12 +48,15 @@ end
 function AIManager.addMonster()
 	local monster = {}
 	monster.model = GO.loadIQM("cube.iqm","monster")
+	monster.model:setBoxBody()
 	monster.model:setPos(18,2,5)
+	monster.pos = Vector.create(18,2,5)
 	monster.path = {}
 	table.insert(monsters,monster)
 end
 
 function AIManager.findVisibleNode(startPos)
+	startPos.y = startPos.y + 2
 	local closestNode = {}
 	local triedNodes = {}
 	local out = {}
@@ -62,7 +80,7 @@ function AIManager.findVisibleNode(startPos)
 		local dir = closestNode.pos-startPos
 		local dirx,diry,dirz = dir:get()
 		local posx,posy,posz = startPos:get()
-		obj = GO.castRay(posx,posy,posz,dirx,diry,dirz,50,1)
+		local obj = GO.castRay(posx,posy,posz,dirx,diry,dirz,50,1)
 		if obj ~= nil then
 			if obj:getTag() ~= "floor" then
 				out = closestNode
@@ -73,6 +91,69 @@ function AIManager.findVisibleNode(startPos)
 		else
 			table.insert(triedNodes,closestNode)
 			tries = tries+1
+		end
+	end
+end
+
+function AIManager.buildMonsterPaths(startPos)
+	for k,v in pairs(monsters) do
+		v.path = {}
+		local ignoreList = {}
+		local nodehere = AIManager.findVisibleNode(v.pos)
+		local nodethere = AIManager.findVisibleNode(startPos)
+		table.insert(v.path,nodehere)
+		table.insert(ignoreList,nodehere)
+		local pathComplete = false
+		while pathComplete == false do
+			local closestNode = {}
+			local distance = 0
+			local min = 9999
+			local dead = 0
+			local endNode = v.path[#v.path]
+			print(endNode.model:getTag())
+			local neighbors = endNode.neighbors
+			for l,w in pairs(neighbors) do
+				local ignored = false
+				if tableContains(ignoreList,w) == true then
+					ignored = true
+				end
+				if ignored == true then
+					dead = dead+1
+					if dead == tablelength(neighbors) then
+						table.insert(ignoreList,v.path[#v.path])
+						table.remove(v.path)
+						break
+					end
+				end
+				distance = Vector.distance(w.pos,nodethere.pos)
+				if distance < min then
+					min = distance
+					closestNode = w
+				end
+			end
+			if tableContains(ignoreList,closestNode) == false then
+				print("Pathed to "..closestNode.model:getTag())
+				table.insert(v.path,closestNode)
+				table.insert(ignoreList,closestNode)
+			end
+			if v.path[#v.path] == nodethere then
+				print("PATH DONE")
+				pathComplete = true
+			end
+		end
+		v.targetNodeNum = 1
+	end
+end
+
+function AIManager.stepMonsters()
+	for k,v in pairs(monsters) do
+		if v.targetNodeNum <= #v.path then
+			v.pos = Vector.create(v.model:getPos())
+			local vel = Vector.normalize(v.path[v.targetNodeNum].pos - v.pos)
+			v.model:setVelocity(Vector.scalarMul(3,vel):get())
+			if Vector.distance(v.path[v.targetNodeNum].pos,v.pos) < 1.0 then
+				v.targetNodeNum = v.targetNodeNum+1
+			end
 		end
 	end
 end
