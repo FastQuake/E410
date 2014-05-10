@@ -2,6 +2,8 @@ require "title"
 require "vector"
 require "hud"
 require "networkutils"
+require "ai"
+
 sensitvity = 0.75
 speed = 10
 
