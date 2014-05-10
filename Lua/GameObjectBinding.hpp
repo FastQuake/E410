@@ -8,6 +8,7 @@ int l_serverLoadIQM(lua_State *l);
 int l_setPos(lua_State *l);
 int l_setRot(lua_State *l);
 int l_setScale(lua_State *l);
+int l_setOrigin(lua_State *l);
 int l_move(lua_State *l);
 int l_strafe(lua_State *l);
 int l_turn(lua_State *l);
@@ -54,6 +55,7 @@ const static struct luaL_Reg GO_methods[] = {
 	{"remove", l_delete},
 	{"setPos", l_setPos},
 	{"setRot", l_setRot},
+	{"setOrigin",l_setOrigin},
 	{"move", l_move},
 	{"strafe", l_strafe},
 	{"turn", l_turn},

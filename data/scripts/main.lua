@@ -33,6 +33,7 @@ function createObject(obj)
 	
 	if obj:getTag():sub(1,6) == "player" then
 		obj:animate(true)
+		player.model:setOrigin(0,0,0)
 	end
 end
 
