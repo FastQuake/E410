@@ -5,6 +5,12 @@
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
+struct vert{
+	glm::vec3 pos;
+	glm::vec2 texCoord;
+};
+vert verts[4];
+
 class Sprite{
 public:
 	void draw(float dt);
@@ -19,11 +25,6 @@ private:
 	float scale;
 	float animTime;
 	bool animated;
-	struct vert{
-		glm::vec3 pos;
-		glm::vec2 texCoord;
-	};
-	vert verts[4];
 };
 
 #endif
