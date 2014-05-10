@@ -39,6 +39,17 @@ function Title.create()
 		end
 	end)
 
+	title.disconnect = GUI.createButton()
+	title.disconnect:setString("Disconnect")
+	title.disconnect:setCharSize(24)
+	title.disconnect:setPos(10,-150)
+	title.disconnect:setBGColour(0,0,0,0)
+	title.disconnect:setVisible(false)
+	title.disconnect:setCallback(function()
+		network.reset()
+		title.disconnect:setVisible(false)
+	end)
+
 	title.top.multi = GUI.createButton()
 	title.top.multi:setString("Multiplayer")
 	title.top.multi:setCharSize(24)
@@ -267,6 +278,13 @@ function Title:setTop(bool)
 	for key, value in pairs(self.top) do
 		value:setVisible(bool)
 	end
+end
+
+function Title:setPause(bool)
+	self:setTop(bool)
+	self.top.play:setVisible(false)
+	self.planet:setVisible(false)
+	self.disconnect:setVisible(bool)
 end
 
 function Title:getOptions()

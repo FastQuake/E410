@@ -16,6 +16,7 @@ function HUD.create(player)
 
 	h.gui.cross = GUI.createImg()
 	h.gui.cross:setImg("crosshairs.png")
+	h.gui.cross:setZ(-2)
 
 	h.gui.gun = GO.loadIQM("gun.iqm")
 	return h

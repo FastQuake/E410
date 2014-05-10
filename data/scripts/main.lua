@@ -20,7 +20,8 @@ player.model = nil
 player.id = -1
 player.height = 2
 player.hp = 100
-
+paused = false
+pausetimer = 0
 function myPos()
 	print(Vector.create(player.model:getPos()))
 end
@@ -81,6 +82,9 @@ function onKeyDown(key)
 		network.sendPacket("cast "..(pos+dir).." "..dir)
 	elseif key == keys.Space then
 		network.sendPacket("jump")
+	elseif key == keys.Escape then
+		title:setPause(true)
+		paused = true
 	end
 end
 
@@ -163,6 +167,15 @@ function update(dt)
 		player.newRot = player.oldRot-mousex*sensitvity
 		if player.newRot ~= player.oldRot then
 			network.sendPacket("turn "..mousex*sensitvity.." "..-mousey*sensitvity)
+		end
+		if paused then
+			pausetimer = pausetimer+dt
+		end
+		if input.isGuiKeyDown(keys.Escape) and pausetimer > 0.5 then
+			title:setPause(false)
+			pausetimer = 0
+			paused = false
+			input.setGuiMousePos(width/2,height/2)
 		end
 		player.oldRot = player.newRot
 	elseif state == states.title then
