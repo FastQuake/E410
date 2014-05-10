@@ -8,12 +8,13 @@ sensitvity = 0.75
 speed = 10
 
 states = {
-	title = 0,
-	play = 1,
-	server = 2,
+	default = 0,
+	title = 1,
+	play = 2,
+	server = 3,
 }
 
-state = states.title
+state = states.default
 player = {}
 player.model = nil
 player.id = -1
@@ -58,6 +59,11 @@ function onReceivePacket(data)
 			end
 		end
 	end
+end
+
+function onServerDisconnect()
+	print("BYE BYE!")
+	state = states.title
 end
 
 function onKeyDown(key)
@@ -159,5 +165,11 @@ function update(dt)
 			network.sendPacket("turn "..mousex*sensitvity.." "..-mousey*sensitvity)
 		end
 		player.oldRot = player.newRot
+	elseif state == states.title then
+		h:show(false)
+		title:show(true)
+		cam:setPos(0,0,0)
+		cam:setRot(0,0,0)
+		state = states.default
 	end
 end

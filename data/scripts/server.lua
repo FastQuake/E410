@@ -96,6 +96,7 @@ end
 
 delta = 0
 function update(dt)
+	--print("running")
 	delta = dt
 	for k,v in pairs(peers) do
 		local fwd = Vector.create(v.model:getLookat())

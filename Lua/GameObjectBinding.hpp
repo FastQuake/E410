@@ -1,7 +1,9 @@
 #ifndef GAMEOBJECTBINDING_HPP
 #define GAMEOBJECTBINDING_HPP
 #include <lua.hpp>
+#include "../GameObject.hpp"
 
+GameObject *l_toGO(lua_State *l, int pos);
 int l_loadIQM(lua_State *l);
 int l_serverLoadIQM(lua_State *l);
 //setters

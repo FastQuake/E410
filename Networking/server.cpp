@@ -3,6 +3,7 @@
 #include <lua.hpp>
 #include "server.hpp"
 #include "../Lua/luabinding.hpp"
+#include "../Lua/GameObjectBinding.hpp"
 using namespace std;
 
 sf::Thread *serverThread;
@@ -141,6 +142,7 @@ void serverMain(){
 			int index = 0;
 			switch(event.type){
 				case ENET_EVENT_TYPE_CONNECT:
+					cout << "peer connecting" << endl;
 					enet_peer_timeout(event.peer, ENET_PEER_TIMEOUT_LIMIT,
 											ENET_PEER_TIMEOUT_MINIMUM,
 											ENET_PEER_TIMEOUT_MAXIMUM);
@@ -258,6 +260,24 @@ void serverMain(){
 		dt = timer.restart();
 	}
 
+	peers.clear();	
+	int index=1;
+	lua_getglobal(l,"serverObjects");
+	lua_pushvalue(l,-1);
+	lua_pushnil(l);
+	while(lua_next(l,-2) != 0){
+		GameObject *obj=l_toGO(l,-1);
+		serverRendMan.remove(obj);
+		physworld.removeBody(obj->body);
+		lua_pushnil(l);
+		lua_rawseti(l,-4,index);
+		index++;
+		lua_pop(l,1);
+	}
+
+	lua_close(l);
+	peerID = 0;
+	serverID = 0;
 	delete[] pstr;
 	serverRunning = false;
 	peers.clear();

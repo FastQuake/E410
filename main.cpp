@@ -17,6 +17,7 @@
 #include "Graphics/Sprite.hpp"
 #include "GUI/Console.hpp"
 #include "Lua/luabinding.hpp"
+#include "Lua/GameObjectBinding.hpp"
 #include "Networking/server.hpp"
 #include "Lua/SettingsBinding.hpp"
 using namespace std;
@@ -421,6 +422,28 @@ int main(int argc, char *argv[]){
 					enet_packet_destroy(enetEvent.packet);
 				}else if(enetEvent.type == ENET_EVENT_TYPE_DISCONNECT){
 					//handle server disconnect here
+					serverPeer = NULL;
+					enet_host_destroy(client);
+					client = NULL;
+					lua_getglobal(l, "onServerDisconnect");
+					if(lua_pcall(l,0,0,0)){
+						string error = lua_tostring(l,-1);
+						cout << error << endl;
+						global_con->out.print(error);
+					}
+					int index=1;
+					lua_getglobal(l,"serverObjects");
+					lua_pushvalue(l,-1);
+					lua_pushnil(l);
+					while(lua_next(l,-2) != 0){
+						GameObject *obj=l_toGO(l,-1);
+						rendman.remove(obj);
+						lua_pushnil(l);
+						lua_rawseti(l,-4,index);
+						index++;
+						lua_pop(l,1);
+					}
+					break;
 				}
 			}
 			//send buffered packets
