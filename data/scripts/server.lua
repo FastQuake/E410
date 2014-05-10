@@ -1,5 +1,6 @@
 require "networkutils"
 require "vector"
+require "ai"
 
 peers = {}
 peerID = 0
@@ -80,6 +81,17 @@ function init()
 	floor = GO.loadIQM("level1.iqm", "floor")
 	floor:setTriangleBody()
 	floor:setMass(0)
+	--floor:setScale(100,1,100)
+	--floor:setPos(0,-1,0)
+	AIManager.addMonster()
+	AIManager.addNode(1,-0.14,-2.5,3.0) --left ramp bottom
+	AIManager.addNode(2,-0.14,-2.5,-10) --right ramp bottom
+	AIManager.addNode(3,8.6,-1.2,3.0) --left ramp top
+	AIManager.addNode(4,8.6,-1.2,-10) --right ramp top
+	AIManager.addNode(5,15.5,-1.2,3.0) --Left door inside
+	AIManager.addNode(6,15.5,-1.2,-10) --Right door inside
+	AIManager.addNode(7,20,-1.2,-4) --big ramp bottom
+	AIManager.addNode(8,28.6,2.14,-4) --big ramp top
 end
 
 delta = 0

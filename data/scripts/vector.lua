@@ -85,6 +85,11 @@ function Vector:rotate(angle, axis)
 		+ Vector.scalarMul(Vector.dot(axis,self)*(1-math.cos(math.rad(angle))),axis)
 end
 
+function Vector.distance(vec1,vec2)
+	subtracted = vec1-vec2
+	return subtraced:mag()
+end
+
 function axisToEuler(vec, angle)
 	angle = math.rad(angle)
 	local out = Vector.create(0,0,0)

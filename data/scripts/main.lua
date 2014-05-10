@@ -19,6 +19,11 @@ player.model = nil
 player.id = -1
 player.height = 2
 player.hp = 100
+
+function myPos()
+	print(Vector.create(player.model:getPos()))
+end
+
 function createObject(obj)
 	if obj:getTag() == "player"..player.id then
 		player.model = obj
