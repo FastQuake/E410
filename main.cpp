@@ -244,20 +244,6 @@ int main(int argc, char *argv[]){
 	dtTimer.restart();
 	sf::Time dt;
 
-	//TODO: Move this to main.lua and all that that implies
-	PLight light1;
-	PLight light2;
-	PLight light3;
-	PLight light4;
-	/*light1.pos = glm::vec3(18, 2.35, 2.55);
-	light2.pos = glm::vec3(-9,11,5);
-	light3.pos = glm::vec3(0,11,-2);
-	light4.pos = glm::vec3(15,12,5);
-	rendman.lights.push_back(&light1);
-//	rendman.lights.push_back(&light2);
-//	rendman.lights.push_back(&light3);
-//	rendman.lights.push_back(&light4);
-	rendman.updateUBO();*/
 	int majv;
 	int minv;
 	glGetIntegerv(GL_MAJOR_VERSION, &majv);
@@ -457,17 +443,24 @@ int main(int argc, char *argv[]){
 		}
 
 		gui->update();
+		for(int i=0;i<rendman.drawList.size();i++){
+			if(rendman.drawList[i]->animate){
+				rendman.drawList[i]->aTime += dt.asSeconds();
+				rendman.drawList[i]->model->animate(rendman.drawList[i]->currentAnimation,
+				rendman.drawList[i]->aTime,&rendman.drawList[i]->outframe);
+			}
+		}
 
 		//Do all drawing here
 		glEnable(GL_TEXTURE_CUBE_MAP_ARB);
 		glUseProgram(depthPrg.getID());
 		glBindFramebuffer(GL_FRAMEBUFFER,rendman.framebuffer);
 		for(int i=0;i<rendman.lights.size();i++)
-			rendman.renderDepth(&depthPrg, dt.asSeconds(),i);
+			rendman.renderDepth(&depthPrg,i);
 
 		glUseProgram(deferredPrg.getID());
 		glUniformMatrix4fv(deferredPrg.getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
-		rendman.renderDeferred(&deferredPrg,dt.asSeconds());
+		rendman.renderDeferred(&deferredPrg);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glUseProgram(prg.getID());

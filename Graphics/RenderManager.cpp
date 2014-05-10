@@ -14,17 +14,10 @@ GameObject *RenderManager::getId(uint32_t id){
 	return NULL;
 }
 
-void RenderManager::drawScene(ShaderProgram *prg, float dt, bool texture, bool normal){
+void RenderManager::drawScene(ShaderProgram *prg, bool texture, bool normal){
 	for(int i=0;i<this->drawList.size();i++){
 		if(this->drawList[i]->visible == false)
 			continue;
-
-		if(drawList[i]->animate){
-			drawList[i]->aTime += dt;
-			drawList[i]->model->animate(drawList[i]->currentAnimation,
-					drawList[i]->aTime,&drawList[i]->outframe);
-			drawList[i]->aTime -=dt;
-		}
 
 		glm::mat4 scale = glm::scale(glm::mat4(1),drawList[i]->scale);
 		btQuaternion quat(toRad(drawList[i]->rotation.y), toRad(drawList[i]->rotation.x), toRad(drawList[i]->rotation.z));
@@ -51,7 +44,7 @@ void RenderManager::drawScene(ShaderProgram *prg, float dt, bool texture, bool n
 	}
 }
 
-void RenderManager::renderDepth(ShaderProgram *prg, float dt, int lightIndex){
+void RenderManager::renderDepth(ShaderProgram *prg, int lightIndex){
 	#ifdef WINDOWS
 		glDrawBuffer(GL_NONE);
 		glReadBuffer(GL_NONE);
@@ -66,7 +59,7 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt, int lightIndex){
 		glm::mat4 depthMVP = myLight.mvp();
 		glUniformMatrix4fv(prg->getUniform("pv"), 1, GL_FALSE, glm::value_ptr(depthMVP));
 
-		drawScene(prg,dt,false,false);
+		drawScene(prg,false,false);
 	}else if(light->type == POINT_LIGHT){
 		PLight myLight = *static_cast<PLight*>(light);
 		for(int i=0;i<6;i++){
@@ -74,14 +67,14 @@ void RenderManager::renderDepth(ShaderProgram *prg, float dt, int lightIndex){
 			glm::mat4 depthMVP = myLight.mvp(i);
 			glUniformMatrix4fv(prg->getUniform("pv"), 1, GL_FALSE, glm::value_ptr(depthMVP));
 			glClear(GL_DEPTH_BUFFER_BIT);
-			drawScene(prg,dt,false,false);
+			drawScene(prg,false,false);
 		}
 	}
 	glFramebufferTextureLayer(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,0,0,0);
 	glViewport(0,0,width,height);
 }
 
-void RenderManager::renderDeferred(ShaderProgram *prg, float dt){
+void RenderManager::renderDeferred(ShaderProgram *prg){
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,renderbuffer);
 	glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,normalTex,0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -92,7 +85,7 @@ void RenderManager::renderDeferred(ShaderProgram *prg, float dt){
 #endif
 	glm::mat4 view = currentCam->view();
 	glUniformMatrix4fv(prg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
-	drawScene(prg,dt,false,true);
+	drawScene(prg,false,true);
 }
 
 void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg, float dt){
@@ -112,7 +105,7 @@ void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg, float dt){
 	//cout << currentCam->pos.x << "," << currentCam->pos.y << "," << currentCam->pos.z << " | " << currentCam->angle.x << "," << currentCam->angle.y << "," << currentCam->angle.z << "," << endl;
 	glUseProgram(prg->getID());
 	glUniformMatrix4fv(prg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
-	drawScene(prg,dt,true,true);
+	drawScene(prg,true,true);
 	/*glUseProgram(debugprg->getID());
 	glUniformMatrix4fv(debugprg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
 	physworld.dynWorld->debugDrawWorld();*/

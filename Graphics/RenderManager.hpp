@@ -17,8 +17,8 @@ public:
 	GLuint depthCubemaps;
 	GLuint normalTex;
 	GLuint ubo;
-	void renderDepth(ShaderProgram *prg, float dt, int lightIndex);
-	void renderDeferred(ShaderProgram *prg, float dt);
+	void renderDepth(ShaderProgram *prg, int lightIndex);
+	void renderDeferred(ShaderProgram *prg);
 	void updateUBO();
 	
 	std::vector<GameObject*> drawList;
@@ -35,7 +35,7 @@ public:
 	void removeLight(Light *light);
 
 private:
-	void drawScene(ShaderProgram *prg, float dt, bool texture, bool normal);
+	void drawScene(ShaderProgram *prg, bool texture, bool normal);
 };
 
 class GLDebugDrawer : public btIDebugDraw
