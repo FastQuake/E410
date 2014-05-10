@@ -13,6 +13,7 @@ int l_strafe(lua_State *l);
 int l_turn(lua_State *l);
 int l_setCurAnim(lua_State *l);
 int l_setAnim(lua_State *l);
+int l_stopAnim(lua_State *l);
 int l_setTexture(lua_State *l);
 int l_setVisible(lua_State *l);
 int l_setV(lua_State *l);
@@ -33,6 +34,7 @@ int l_getRot(lua_State *l);
 int l_getLookat(lua_State *l);
 int l_getTag(lua_State *l);
 int l_getV(lua_State *l);
+int l_getID(lua_State *l);
 
 int l_delete(lua_State *l);
 int l_serverDelete(lua_State *l);
@@ -58,10 +60,12 @@ const static struct luaL_Reg GO_methods[] = {
 	{"setTexture", l_setTexture},
 	{"setVisible", l_setVisible},
 	{"animate", l_setAnim},
+	{"stopAnim", l_stopAnim},
 	{"getPos", l_getPos},
 	{"getRot", l_getRot},
 	{"getTag", l_getTag},
 	{"getLookat",l_getLookat},
+	{"getID",l_getID},
 	{NULL,NULL}
 };
 
@@ -97,6 +101,7 @@ const static struct luaL_Reg Server_GO_methods[]={
 	{"getLookat", l_getLookat},
 	{"getTag", l_getTag},
 	{"getVelocity",l_getV},
+	{"getID",l_getID},
 	{NULL,NULL}
 };
 

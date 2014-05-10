@@ -28,16 +28,18 @@ function onReceivePacket(id, data)
 		elseif data[2] == "left" then
 			p.right = -1
 		end
+		network.sendPacket(-1, "animate "..p.model:getID())
 	elseif data[1] == "stop" then
 		if data[2] == "forward" then
 			p.fwd = 0
 		elseif data[2] == "backward" then
-			p.fwd = -0
+			p.fwd = 0
 		elseif data[2] == "right" then
 			p.right = 0
 		elseif data[2] == "left" then
-			p.right = -0
+			p.right = 0
 		end
+		network.sendPacket(-1, "stopanimate "..p.model:getID())
 	elseif data[1] == "turn" then
 		local rot = Vector.create(p.model:getRot()) + Vector.create(0,-data[2],0) 
 		p.model:setRot(rot:get())

@@ -161,6 +161,19 @@ int l_setAnim(lua_State *l){
 	obj->animate = animate;
 	return 0;
 }
+
+int l_stopAnim(lua_State *l){
+	GameObject *obj = l_toGO(l, 1);
+	obj->aTime = 0;
+	obj->model->animate(obj->currentAnimation, obj->aTime, &obj->outframe);
+	obj->animate = (false);
+	return 0;
+}
+int l_getID(lua_State *l){
+	GameObject *obj = l_toGO(l, 1);
+	lua_pushnumber(l,obj->id);
+	return 1;
+}
 int l_setTexture(lua_State *l){
 	GameObject *obj = l_toGO(l, 1);
 	string tex = l_toString(l, 2);

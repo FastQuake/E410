@@ -1,6 +1,7 @@
 require "title"
 require "vector"
 require "hud"
+require "networkutils"
 sensitvity = 0.75
 speed = 10
 
@@ -27,6 +28,16 @@ function onReceivePacket(data)
 	if data[1]:sub(1,6) == "player" then	
 		player.id = data[1]:sub(7)
 		h:show(true)
+	elseif data[1] == "animate" then
+		local obj = getModelFromID(tonumber(data[2]))
+		if obj ~= nil then
+			obj:animate(true)
+		end
+	elseif data[1] == "stopanimate" then
+		local obj = getModelFromID(tonumber(data[2]))
+		if obj ~= nil then
+			obj:stopAnim()
+		end
 	end
 end
 
