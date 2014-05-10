@@ -11,6 +11,8 @@ Sprite::Sprite(std::string name):sprite(){
 	sprite.textures[0] = texture;
 	position = glm::vec3(0,0,0);
 	scale = 1;
+	visible = true;
+	magic = SPRITE_MAGIC;
 }
 
 void Sprite::draw(float dt, FPSCamera *cam){

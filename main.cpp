@@ -259,11 +259,6 @@ int main(int argc, char *argv[]){
 	glGetIntegerv(GL_MINOR_VERSION, &minv);
 	cout << "GL Version: "<< majv << "." << minv << endl;
 
-	Sprite s("glow.png");
-	s.position = glm::vec3(18,0,0);
-	s.sprite.position = glm::vec3(18,0,0);
-	rendman.sprites.push_back(&s);
-
 	gwindow->setActive(true);
 	char *pstr = new char[65536];
 	while(gwindow->isOpen()){

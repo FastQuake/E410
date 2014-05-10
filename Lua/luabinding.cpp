@@ -9,6 +9,7 @@
 #include "LightBinding.hpp"
 #include "mathbinding.hpp"
 #include "SettingsBinding.hpp"
+#include "SpriteBinding.hpp"
 using namespace std;
 
 //TODO make this less ugly, break it up, etc
@@ -43,6 +44,12 @@ void bindFunctions(lua_State *l){
 	lua_pushvalue(l, -1);
 	lua_setfield(l, -1,"__index");
 
+	//create sprite binding
+	luaL_newmetatable(l, "MetaSprite");
+	luaL_setfuncs(l, Sprite_methods, 0);
+	lua_pushvalue(l, -1);
+	lua_setfield(l, -1, "__index");
+
 	//create entity namespace
 	//luaL_newlib(l,GO_funcs);
 	//luaL_newlib(l,Light_funcs);
@@ -51,6 +58,7 @@ void bindFunctions(lua_State *l){
 	luaL_setfuncs(l,GO_funcs,0);
 	luaL_setfuncs(l,Light_funcs,0);
 	luaL_setfuncs(l,cam_funcs,0);
+	luaL_setfuncs(l,Sprite_funcs, 0);
 	lua_setglobal(l, "GO");
 
 

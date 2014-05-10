@@ -116,7 +116,9 @@ void RenderManager::renderSprites(ShaderProgram *prg, float curTime){
 	glUniformMatrix4fv(prg->getUniform("proj"),1,GL_FALSE,glm::value_ptr(proj));
 	glUniformMatrix4fv(prg->getUniform("view"),1,GL_FALSE,glm::value_ptr(view));
 	for(int i=0;i<sprites.size();i++){
-		sprites[i]->draw(curTime,currentCam);
+		if(sprites[i]->visible){
+			sprites[i]->draw(curTime,currentCam);
+		}
 	}
 }
 
