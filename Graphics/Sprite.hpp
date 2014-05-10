@@ -19,14 +19,20 @@ public:
 	float scale;
 	GameObject sprite;
 	bool visible;
+	bool animate;
 	Sprite(std::string name);
 	void draw(float dt, FPSCamera *cam);
+	void setFrames(int hframes, int vframes);
 private:
 	GLuint texture;
 	int imgwidth;
 	int imgheight;
 	int spritewidth;
 	int spriteheight;
+	int xframes;
+	int yframes;
+	int cframe;
+	float fcframe;
 	float animTime;
 	bool animated;
 };

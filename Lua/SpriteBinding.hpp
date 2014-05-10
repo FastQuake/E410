@@ -8,6 +8,8 @@ int l_createSprite(lua_State *l);
 int l_spriteSetPos(lua_State *l);
 int l_spriteSetScale(lua_State *l);
 int l_spriteSetVisible(lua_State *l);
+int l_spriteSetFrameSize(lua_State *l);
+int l_spriteSetAnimate(lua_State *l);
 
 int l_spriteDelete(lua_State *l);
 
@@ -22,6 +24,8 @@ const static struct luaL_Reg Sprite_methods[] = {
 	{"setPos", l_spriteSetPos},
 	{"setScale", l_spriteSetScale},
 	{"setVisible", l_spriteSetVisible},
+	{"setFrameSize", l_spriteSetFrameSize},
+	{"animate", l_spriteSetAnimate},
 	{NULL, NULL}
 };
 

@@ -48,6 +48,20 @@ int l_spriteSetVisible(lua_State *l){
 	s->visible = show;
 	return 0;
 }
+int l_spriteSetFrameSize(lua_State *l){
+	Sprite *s = l_toSprite(l,1);
+	int xs = l_toNumber(l,2);
+	int ys = l_toNumber(l,3);
+	s->setFrames(xs,ys);
+	return 0;
+}
+int l_spriteSetAnimate(lua_State *l){
+	Sprite *s = l_toSprite(l,1);
+	bool anim = l_toBool(l,2);
+	s->animate = anim;
+	cout << s->animate << endl;
+	return 0;
+}
 int l_spriteDelete(lua_State *l){
 	Sprite *s = l_toSprite(l,1);
 	for(int i=0;i<rendman.sprites.size();i++){
