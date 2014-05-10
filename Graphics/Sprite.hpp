@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include "GraphicsUtils.hpp"
 #include "../GameObject.hpp"
+#include "FPSCamera.hpp"
 
 
 extern ShaderProgram *spriteprg;
@@ -13,7 +14,7 @@ extern ShaderProgram *spriteprg;
 class Sprite{
 public:
 	Sprite(std::string name);
-	void draw(float dt, glm::vec3 camrot);
+	void draw(float dt, FPSCamera *cam);
 	glm::vec3 position;
 	float scale;
 	GameObject sprite;

@@ -260,7 +260,8 @@ int main(int argc, char *argv[]){
 	cout << "GL Version: "<< majv << "." << minv << endl;
 
 	Sprite s("cube.png");
-	//s.position = glm::vec3(18,0,0);
+	s.position = glm::vec3(18,0,0);
+	s.sprite.position = glm::vec3(18,0,0);
 	rendman.sprites.push_back(&s);
 
 	gwindow->setActive(true);
@@ -476,12 +477,13 @@ int main(int argc, char *argv[]){
 		rendman.renderDeferred(&deferredPrg);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(prg.getID());
 		glUniformMatrix4fv(prg.getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
 		glUniformMatrix4fv(prg.getUniform("pointProj"),1,GL_FALSE,glm::value_ptr(PLight::pointProjection));
 		rendman.render(&prg,&skyprg,dt.asSeconds());
-		rendman.renderSprites(spriteprg,dt.asSeconds());
 		glDisable(GL_TEXTURE_CUBE_MAP_ARB);
+		rendman.renderSprites(spriteprg,dt.asSeconds());
 
 
 		//Do sfml drawing here
