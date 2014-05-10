@@ -26,6 +26,7 @@ int l_serverSetVisible(lua_State *l);
 int l_setConvexBody(lua_State *l);
 int l_setTriangleBody(lua_State *l);
 int l_setBoxBody(lua_State *l);
+int l_setExtBoxBody(lua_State *l);
 int l_setActivation(lua_State *l);
 int l_setG(lua_State *l);
 //getters
@@ -93,6 +94,7 @@ const static struct luaL_Reg Server_GO_methods[]={
 	{"setConvexBody",l_setConvexBody},
 	{"setTriangleBody",l_setTriangleBody},
 	{"setBoxBody",l_setBoxBody},
+	{"setExtBoxBody",l_setExtBoxBody},
 	{"setMass", l_setMass},
 	{"setActivation",l_setActivation},
 	{"setG", l_setG},

@@ -8,7 +8,7 @@ function Peer.create(modelName, tag)
 	p.fwd = 0
 	p.right = 0
 	p.model = GO.loadIQM("guy.iqm","player".. peerID)
-	p.model:setBoxBody()
+	p.model:setExtBoxBody(-0.5,0,-0.5,0.5,2.5,0.5)
 	p.model:setActivation(true)
 	p.model:setMass(100)
 	p.model:setPos(0,10,0)

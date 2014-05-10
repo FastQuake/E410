@@ -223,6 +223,39 @@ void GameObject::createCubeRigidBody(){
 	body = new btRigidBody(ci);
 	physworld.addBody(body);
 }
+void GameObject::createCubeRididBody(extents e){
+	float xsize,ysize,zsize;
+	xsize = e.maxx-e.minx;
+	ysize = e.maxy-e.miny;
+	zsize = e.maxz-e.minz;
+	btVector3 boxVector(xsize/2.0,ysize/2.0,zsize/2.0);
+
+	if(collisionshape != NULL)
+		delete collisionshape;
+	collisionshape = new btBoxShape(boxVector);
+
+	if(motion != NULL)
+		delete motion;
+	motion = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,0,0)));
+
+	btVector3 inertia;
+	collisionshape->calculateLocalInertia(mass,inertia);
+	btRigidBody::btRigidBodyConstructionInfo ci(mass,motion,collisionshape,inertia);
+	if(body != NULL){
+		physworld.removeBody(body);
+		delete body;
+	}
+	body = new btRigidBody(ci);
+	physworld.addBody(body);
+
+	float oox = (e.maxx+e.minx)/2.0;
+	float ooy = (e.maxy+e.miny)/2.0;
+	float ooz = (e.maxz+e.minz)/2.0;
+
+	originOffset.setX(oox);
+	originOffset.setY(ooy);
+	originOffset.setZ(ooz);
+}
 
 void GameObject::updateMass(float mass){
 	this->mass = btScalar(mass);

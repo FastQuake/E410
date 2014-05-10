@@ -65,6 +65,7 @@ public:
 	void createTriangleRigidBody();
 	void createConvexRigidBody();
 	void createCubeRigidBody();
+	void createCubeRididBody(extents e);
 	void updateMass(float mass);
 
 	extents getExtents();

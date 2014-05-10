@@ -350,6 +350,18 @@ int l_setBoxBody(lua_State *l){
 	obj->createCubeRigidBody();
 	return 0;
 }
+int l_setExtBoxBody(lua_State *l){
+	GameObject *obj = l_toGO(l,1);
+	extents e;
+	e.minx = l_toNumber(l,2);
+	e.miny = l_toNumber(l,3);
+	e.minz = l_toNumber(l,4);
+	e.maxx = l_toNumber(l,5);
+	e.maxy = l_toNumber(l,6);
+	e.maxz = l_toNumber(l,7);
+	obj->createCubeRididBody(e);
+	return 0;
+}
 
 int l_serverLockAxis(lua_State *l){
 	GameObject *obj = l_toGO(l,1);
