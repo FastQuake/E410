@@ -1,5 +1,6 @@
 require "title"
 require "vector"
+require "hud"
 sensitvity = 0.75
 speed = 10
 
@@ -14,6 +15,7 @@ player = {}
 player.model = nil
 player.id = -1
 player.height = 2
+player.hp = 100
 function createObject(obj)
 	if obj:getTag() == "player"..player.id then
 		player.model = obj
@@ -24,6 +26,7 @@ end
 function onReceivePacket(data)
 	if data[1]:sub(1,6) == "player" then	
 		player.id = data[1]:sub(7)
+		h:show(true)
 	end
 end
 
@@ -63,6 +66,7 @@ function init()
 	fpsCounter = GUI.createText()
 	fpsCounter:setCharSize(26)
 	fpsCounter:setString("FPS: ".. 0)
+	fpsCounter:setVisible(false)
 	--Create stuff for scene
 	cam = camera.createCam()
 	cam:setPos(0,0,0)
@@ -71,6 +75,9 @@ function init()
 
 	light = GO.createLight()
 	light:setPos(16,2.35,2.55)
+
+	h = HUD.create(player)
+	h:show(false)
 end
 
 player.oldRot = 0
@@ -88,6 +95,7 @@ function update(dt)
 	time = time + dt
 	frames = frames + 1
 	title:update(dt)
+	h:update()
 	if title.state == tstates.play then
 		title:show(false)
 		title.state = tstates.default
