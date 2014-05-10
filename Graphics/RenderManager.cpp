@@ -88,7 +88,7 @@ void RenderManager::renderDeferred(ShaderProgram *prg){
 	drawScene(prg,false,true);
 }
 
-void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg, float dt){
+void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg,float dt){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glm::mat4 projection = glm::perspective(45.0f, 1.0f*width/height, 0.01f, 1000.0f);
 	glm::mat4 view = glm::lookAt(glm::vec3(0,0,0), currentCam->getLookat(),glm::vec3(0,1,0));
@@ -109,6 +109,18 @@ void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg, float dt){
 	/*glUseProgram(debugprg->getID());
 	glUniformMatrix4fv(debugprg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
 	physworld.dynWorld->debugDrawWorld();*/
+}
+void RenderManager::renderSprites(ShaderProgram *prg, float curTime){
+	glUseProgram(prg->getID());
+	glm::mat4 projection = glm::perspective(45.0f, 1.0f*width/height, 0.01f, 1000.0f);
+	glm::mat4 view = currentCam->view();
+	glm::mat4 projview = projection*view;
+	glUniformMatrix4fv(prg->getUniform("projview"),1,GL_FALSE,glm::value_ptr(projview));
+	for(int i=0;i<sprites.size();i++){
+		sprites[i]->draw(curTime,currentCam->angle);
+	}
+	glBindTexture(GL_TEXTURE_2D,0);
+	glUseProgram(0);
 }
 
 void RenderManager::updateUBO(){

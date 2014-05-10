@@ -4,25 +4,25 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include "GraphicsUtils.hpp"
+#include "../GameObject.hpp"
 
-struct vert{
-	glm::vec3 pos;
-	glm::vec2 texCoord;
-};
-vert verts[4];
+
+extern ShaderProgram *spriteprg;
 
 class Sprite{
 public:
-	void draw(float dt);
 	Sprite(std::string name);
+	void draw(float dt, glm::vec3 camrot);
+	glm::vec3 position;
+	float scale;
+	GameObject sprite;
 private:
 	GLuint texture;
 	int imgwidth;
 	int imgheight;
 	int spritewidth;
 	int spriteheight;
-	glm::vec3 position;
-	float scale;
 	float animTime;
 	bool animated;
 };

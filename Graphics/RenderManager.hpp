@@ -8,6 +8,7 @@
 #include "FPSCamera.hpp"
 #include "../GameObject.hpp"
 #include "Light.hpp"
+#include "Sprite.hpp"
 
 class RenderManager{
 public:
@@ -24,6 +25,7 @@ public:
 	std::vector<GameObject*> drawList;
 	std::vector<FPSCamera*> cameras;
 	std::vector<Light*> lights;
+	std::vector<Sprite*> sprites;
 
 	FPSCamera *currentCam;
 	GameObject skybox;
@@ -31,6 +33,7 @@ public:
 	GameObject* getId(uint32_t id);
 	GameObject* getBody(const btCollisionObject *body);
 	void render(ShaderProgram *prg, ShaderProgram *skyprg,float curTime);
+	void renderSprites(ShaderProgram *prg, float curTime);
 	void remove(GameObject* obj);
 	void removeLight(Light *light);
 
