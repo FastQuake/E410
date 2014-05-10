@@ -215,6 +215,11 @@ int l_getRot(lua_State *l){
 	lua_pushnumber(l, obj->rotation.z);
 	return 3;
 }
+int l_getCurAnim(lua_State *l){
+	GameObject *obj = l_toGO(l, 1);
+	lua_pushstring(l,obj->currentAnimation.c_str());
+	return 1;
+}
 int l_delete(lua_State *l){
 	GameObject *obj = l_toGO(l, 1);
 

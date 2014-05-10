@@ -35,6 +35,7 @@ int l_getLookat(lua_State *l);
 int l_getTag(lua_State *l);
 int l_getV(lua_State *l);
 int l_getID(lua_State *l);
+int l_getCurAnim(lua_State *l);
 
 int l_delete(lua_State *l);
 int l_serverDelete(lua_State *l);
@@ -66,6 +67,7 @@ const static struct luaL_Reg GO_methods[] = {
 	{"getTag", l_getTag},
 	{"getLookat",l_getLookat},
 	{"getID",l_getID},
+	{"getCurAnim", l_getCurAnim},
 	{NULL,NULL}
 };
 

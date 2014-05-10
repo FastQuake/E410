@@ -21,6 +21,11 @@ function createObject(obj)
 	if obj:getTag() == "player"..player.id then
 		player.model = obj
 		player.model:setVisible(false)
+		player.model:animate(true)
+	end
+	
+	if obj:getTag():sub(1,6) == "player" then
+		obj:animate(true)
 	end
 end
 
@@ -31,12 +36,18 @@ function onReceivePacket(data)
 	elseif data[1] == "animate" then
 		local obj = getModelFromID(tonumber(data[2]))
 		if obj ~= nil then
-			obj:animate(true)
+			if obj:getCurAnim() ~= "walk" then
+				obj:setCurAnim("walk")
+				obj:animate(true)
+			end
 		end
 	elseif data[1] == "stopanimate" then
 		local obj = getModelFromID(tonumber(data[2]))
 		if obj ~= nil then
-			obj:stopAnim()
+			if obj:getCurAnim() ~= "stand" then
+				obj:setCurAnim("stand")
+				obj:animate(true)
+			end
 		end
 	end
 end
