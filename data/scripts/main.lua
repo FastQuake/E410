@@ -69,6 +69,9 @@ function onReceivePacket(data)
 		table.insert(bullets,Bullet.create(Vector.create(data[2],data[3],data[4]),Vector.create(data[5],data[6],data[7])))
 	elseif data[1] == "hit" then
 		player.hp = player.hp - 10
+	elseif data[1] == "explode" then
+		local pos = Vector.create(data[2],data[3],data[4])
+		table.insert(tSprites, timedSprite("explosion.png",pos,16,1,0.8))
 	end
 end
 
@@ -214,6 +217,14 @@ function update(dt)
 			if p1 > p2 then
 				v.sprite:setVisible(false)
 				table.remove(bullets,k)
+			end
+		end
+
+		for k,v in pairs(tSprites) do
+			v.time = v.time + dt
+			if v.time > v.endtime then
+				v.sprite:setVisible(false)
+				table.remove(tSprites, k)
 			end
 		end
 	elseif state == states.title then

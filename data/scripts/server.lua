@@ -59,7 +59,10 @@ function onReceivePacket(id, data)
 				local mon = getAiFromObj(obj)
 				mon.hp = mon.hp - 10
 				if mon.hp <= 0 then
-					removeMonster(obj)	
+					local x,y,z = obj:getPos()
+					y = y + 1.5
+					network.sendPacket(-1, "explode "..x.." "..y.." "..z)
+					removeMonster(obj)
 				end
 			end
 		else

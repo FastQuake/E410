@@ -2,8 +2,10 @@ require "vector"
 Bullet = {}
 Bullet.__index = Bullet
 
+tSprites = {}
+
 function Bullet.create(pos,stop)
-	b = {}
+	local b = {}
 	setmetatable(b, Bullet)
 
 	b.pos = pos
@@ -14,4 +16,16 @@ function Bullet.create(pos,stop)
 	b.sprite:setPos(pos:get())
 
 	return b
+end
+
+function timedSprite(texture, pos, sizex, sizey, time)
+	local t = {}
+
+	t.time = 0
+	t.endtime = time
+	t.sprite = GO.createSprite(texture)
+	t.sprite:setFrameSize(sizex,sizey)
+	t.sprite:animate(true)
+	t.sprite:setPos(pos:get())
+	return t
 end
