@@ -71,7 +71,7 @@ function onReceivePacket(data)
 		player.hp = player.hp - 10
 	elseif data[1] == "explode" then
 		local pos = Vector.create(data[2],data[3],data[4])
-		table.insert(tSprites, timedSprite("explosion.png",pos,16,1,0.8))
+		table.insert(tSprites, timedSprite("explosion.png",pos,16,1,2,0.8))
 	end
 end
 

@@ -18,7 +18,7 @@ function Bullet.create(pos,stop)
 	return b
 end
 
-function timedSprite(texture, pos, sizex, sizey, time)
+function timedSprite(texture, pos, sizex, sizey, scale,time)
 	local t = {}
 
 	t.time = 0
@@ -26,6 +26,7 @@ function timedSprite(texture, pos, sizex, sizey, time)
 	t.sprite = GO.createSprite(texture)
 	t.sprite:setFrameSize(sizex,sizey)
 	t.sprite:animate(true)
+	t.sprite:setScale(scale)
 	t.sprite:setPos(pos:get())
 	return t
 end
