@@ -173,9 +173,16 @@ function AIManager.stepMonsters(peers)
 			end
 		end
 		local dir = Vector.normalize(targetPos-v.pos)
+
 		local dirx,diry,dirz = dir:get()
+		local yaw = math.acos(Vector.dot(Vector.create(1,0,0),Vector.create(dirx,0,dirz)))
+		yaw = math.deg(yaw)
+		if dirz > 0 then
+			yaw = -yaw
+		end
 		local posx,posy,posz = v.pos:get()
 		local obj,x,y,z = GO.castRay(posx,posy,posz,dirx,diry,dirz,100,4)
+		v.model:setRot(0,yaw,0)
 		if obj ~= nil then
 		--	print(obj:getTag())
 			if obj:getTag() == "player"..v.targetPlayer then
