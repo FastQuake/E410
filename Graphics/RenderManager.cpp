@@ -127,6 +127,7 @@ void RenderManager::updateUBO(){
 			glm::mat4 depthMVPs[MAX_LIGHTS];
 			glm::vec4 lightPositions[MAX_LIGHTS];
 			glm::vec4 lightTypes[MAX_LIGHTS];
+			glm::vec4 lightIntensities[MAX_LIGHTS];
 			glm::vec4 numLights;
 		};
 	toUBO data;
@@ -135,6 +136,7 @@ void RenderManager::updateUBO(){
 			data.depthMVPs[i] = mv;
 			data.lightPositions[i] = glm::vec4(lights[i]->pos,1.0);
 			data.lightTypes[i].x = lights[i]->type;
+			data.lightIntensities[i].x = lights[i]->intensity;
 	}
 	data.numLights.x = lights.size();
 	glBindBufferARB(GL_UNIFORM_BUFFER,ubo);

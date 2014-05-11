@@ -17,6 +17,7 @@ public:
 	std::string magic;
 	glm::vec3 pos;
 	int type;
+	float intensity = 330.0;
 	virtual glm::mat4 mvp()=0;
 };
 

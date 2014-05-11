@@ -24,6 +24,7 @@ uniform Light {
 	mat4 depthMVPs[MAX_LIGHTS];
 	vec4 lightPositions[MAX_LIGHTS];
 	vec4 lightTypes[MAX_LIGHTS];
+	vec4 lightIntensities[MAX_LIGHTS];
 	vec4 numLights;
 };
 

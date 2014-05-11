@@ -197,7 +197,7 @@ int main(int argc, char *argv[]){
 
 
 	glBindBufferBase(GL_UNIFORM_BUFFER,0,rendman.ubo);
-	glBufferDataARB(GL_UNIFORM_BUFFER,sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*(1+MAX_LIGHTS*2),NULL,GL_DYNAMIC_DRAW);
+	glBufferDataARB(GL_UNIFORM_BUFFER,sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*(1+MAX_LIGHTS*3),NULL,GL_DYNAMIC_DRAW);
 	glBindBufferARB(GL_UNIFORM_BUFFER,0);
 
 	glGenTextures(1,&rendman.normalTex);
