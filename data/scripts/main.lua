@@ -127,6 +127,10 @@ function init()
 
 	h = HUD.create(player)
 	h:show(false)
+
+	s = GO.createSprite("explosion.png")
+	s:setFrameSize(16,1)
+	s:animate(true)
 end
 
 player.oldRot = 0

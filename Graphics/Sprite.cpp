@@ -3,7 +3,7 @@
 #include "../globals.hpp"
 using namespace std;
 
-#define SPRITE_FRAMERATE 10.0;
+#define SPRITE_FRAMERATE 20.0;
 
 ShaderProgram *spriteprg;
 
