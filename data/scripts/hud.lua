@@ -40,8 +40,8 @@ function HUD:update()
 	self.gui.ammo:setString(player.ammo)
 	
 	if player.model ~= nil then
-		local x,y,z = player.model:getRot()
-		local x = cam:getRot()
+		--local x,y,z = player.model:getRot()
+		local x,y,z = cam:getRot()
 		local gunpos = Vector.create(player.model:getPos())
 		local fwd = Vector.create(cam:getLookat())
 		fwd.y =0
