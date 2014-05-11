@@ -154,15 +154,20 @@ end
 function AIManager.stepMonsters(peers)
 	for k,v in pairs(monsters) do
 		local targetPos = Vector.create(Peer.getPeer(peers,v.targetPlayer).model:getPos())
+		targetPos.y = targetPos.y+1
 		if v.targetNodeNum <= #v.path then
+			local oldv = Vector.create(v.model:getVelocity())
 			v.pos = Vector.create(v.model:getPos())
-			local vel = Vector.normalize(v.path[v.targetNodeNum].pos - v.pos)
+			local vel = (v.path[v.targetNodeNum].pos - v.pos):normalize()
+			vel.x = 3*vel.x
+			vel.z = 3*vel.z
+			vel.y = oldv.y
 			if vel == Vector.create(0,0,0) then
 				network.sendPacket(-1, "stopanimate "..v.model:getID())	
 			else
 				network.sendPacket(-1, "animate "..v.model:getID())
 			end
-			v.model:setVelocity(Vector.scalarMul(3,vel):get())
+			v.model:setVelocity(Vector.scalarMul(1,vel):get())
 			if Vector.distance(v.path[v.targetNodeNum].pos,v.pos) < 1.0 then
 				v.targetNodeNum = v.targetNodeNum+1
 			end
@@ -175,7 +180,7 @@ function AIManager.stepMonsters(peers)
 		--	print(obj:getTag())
 			if obj:getTag() == "player"..v.targetPlayer then
 		--		print("shoting")
-				network.sendPacket(-1,"shoot "..posx.." "..posy.." "..posz.." "..x.." "..y.." "..z)
+				network.sendPacket(-1,"shoot "..posx.." "..(posy+2).." "..posz.." "..x.." "..y.." "..z)
 			end
 		end
 	end
