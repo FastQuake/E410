@@ -49,6 +49,9 @@ float specular(float lc){
 }
 
 void main(){
+	vec4 texColour = texture2D(inTexture,texcoord_f).rgba;
+	if(texColour.w == 0.0)
+		discard;
 	float lightCoefficient = 0.0f;
 	for(int i=0;i<numLights.x;i++){
 		vec3 l = normalize((vec4(lightPositions[i].xyz-vec3(coord3d_f),0.0)).xyz);
@@ -66,6 +69,5 @@ void main(){
 		lightCoefficient += (1.0-shadowed)*(lightIntensities[i].x/(4.0*3.14159265359*pow(distance(lightPositions[i],coord3d_f),2.0)));
 	}
 	lightCoefficient = max(lightCoefficient,0.01f);
-	vec3 texColour = texture2D(inTexture,texcoord_f).rgb;
-	outColour = vec4((specular(lightCoefficient)+lightCoefficient)*texColour,1.0);
+	outColour = vec4((specular(lightCoefficient)+lightCoefficient)*texColour.rgb,1.0);
 }
