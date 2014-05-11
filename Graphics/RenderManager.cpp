@@ -16,8 +16,14 @@ GameObject *RenderManager::getId(uint32_t id){
 
 void RenderManager::drawScene(ShaderProgram *prg, bool texture, bool normal){
 	for(int i=0;i<this->drawList.size();i++){
-		if(this->drawList[i]->visible == false)
-			continue;
+		//If its making the shadow map
+		if(!texture && !normal){
+			if(this->drawList[i]->castShadow == false)
+				continue;
+		}else {
+			if(this->drawList[i]->visible == false)
+				continue;
+		}
 
 		glm::mat4 scale = glm::scale(glm::mat4(1),drawList[i]->scale);
 		btQuaternion quat(toRad(drawList[i]->rotation.y), toRad(drawList[i]->rotation.x), toRad(drawList[i]->rotation.z));

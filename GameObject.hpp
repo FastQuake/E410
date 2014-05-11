@@ -51,7 +51,7 @@ public:
 	btQuaternion oldRot;
 
 
-	bool visible, animate, hasAnimation;
+	bool visible, animate, hasAnimation, castShadow;
 
 	GameObject();
 	~GameObject();

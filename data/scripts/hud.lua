@@ -24,6 +24,7 @@ function HUD.create(player)
 	h.gui.cross:setZ(-2)
 
 	h.gui.gun = GO.loadIQM("gun.iqm")
+	h.gui.gun:setCast(false)
 	return h
 end
 

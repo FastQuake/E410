@@ -16,6 +16,7 @@ position(0,0,0), rotation(0,0,0), scale(1,1,1){
 	scaled = false;
 	rotated = false;
 	visible = true;
+	castShadow = true;
 	animate = false;
 	hasAnimation = false;
 	aTime = 0;

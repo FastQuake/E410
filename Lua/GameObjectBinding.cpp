@@ -124,6 +124,13 @@ int l_setOrigin(lua_State *l){
 	obj->originOffset = btVector3(x,y,z);
 	return 0;
 }
+int l_setCast(lua_State *l){
+	GameObject *obj = l_toGO(l,1);
+	bool b = l_toBool(l,2);
+
+	obj->castShadow = b;
+	return 0;
+}
 int l_move(lua_State *l){
 	GameObject *obj = l_toGO(l, 1);
 	float amount = l_toNumber(l, 2);

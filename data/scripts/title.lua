@@ -316,6 +316,7 @@ function Title:show(bool)
 	self:setSettings(bool)
 	self:setMulti(bool)
 	self.planet:setVisible(bool)
+	self.planet:setCast(bool)
 end
 
 function Title:update(dt)

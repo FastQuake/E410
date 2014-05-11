@@ -32,6 +32,7 @@ int l_setBoxBody(lua_State *l);
 int l_setExtBoxBody(lua_State *l);
 int l_setActivation(lua_State *l);
 int l_setG(lua_State *l);
+int l_setCast(lua_State *l);
 //getters
 int l_getPos(lua_State *l);
 int l_getRot(lua_State *l);
@@ -65,6 +66,7 @@ const static struct luaL_Reg GO_methods[] = {
 	{"setCurAnim", l_setCurAnim},
 	{"setTexture", l_setTexture},
 	{"setVisible", l_setVisible},
+	{"setCast", l_setCast},
 	{"animate", l_setAnim},
 	{"stopAnim", l_stopAnim},
 	{"getPos", l_getPos},

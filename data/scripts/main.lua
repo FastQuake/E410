@@ -42,6 +42,8 @@ function createObject(obj)
 		player.model:setOrigin(0,0,0)
 	elseif obj:getTag() == "monster" then
 		obj:animate(true)
+	elseif obj:getTag():sub(1,4) == "node" then
+		obj:setCast(false)
 	end
 end
 
