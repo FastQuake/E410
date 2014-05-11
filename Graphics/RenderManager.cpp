@@ -111,9 +111,9 @@ void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg,float dt){
 	glUseProgram(prg->getID());
 	glUniformMatrix4fv(prg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
 	drawScene(prg,true,true);
-	glUseProgram(debugprg->getID());
+	/*glUseProgram(debugprg->getID());
 	glUniformMatrix4fv(debugprg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
-	physworld.dynWorld->debugDrawWorld();
+	physworld.dynWorld->debugDrawWorld();*/
 }
 void RenderManager::renderSprites(ShaderProgram *prg, float curTime){
 	glUseProgram(prg->getID());
