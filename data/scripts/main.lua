@@ -243,5 +243,11 @@ function update(dt)
 		cam:setPos(0,0,0)
 		cam:setRot(0,0,0)
 		state = states.default
+
+		GO.deleteLight(light)
+		GO.deleteLight(light2)
+		GO.deleteLight(sun)
+		planetLight = GO.createLight()
+		planetLight:setPos(-3.5,0,5)
 	end
 end
