@@ -121,25 +121,15 @@ function init()
 	cam:setRot(0,0,0)
 	camera.setCam(cam)
 
-	light = GO.createLight()
-	light:setPos(18,2.35,2.55)
-	light2 = GO.createLight()
-	light2:setPos(0,14,-4)
-	light2:setIntensity(550)
-
-	sun = GO.createLight()
-	sun:setPos(0,20,0)
-	sun:setIntensity(8000)
-
-	light2 = GO.createLight()
-	light2:setPos(16,2.35,-12.55)
-
 	h = HUD.create(player)
 	h:show(false)
 
 	s = GO.createSprite("explosion.png")
 	s:setFrameSize(16,1)
 	s:animate(true)
+
+	planetLight = GO.createLight()
+	planetLight:setPos(-3.5,0,5)
 end
 
 player.oldRot = 0
@@ -167,8 +157,21 @@ function update(dt)
 		--cam:setRot(0,90,0)
 		cam:setRot(0,0,0)
 		input.setGuiMousePos(width/2, height/2)
-		--lamp = GO.createLight("point")
-		--lamp:setPos(18,2.35,2.55)
+
+		GO.deleteLight(planetLight)
+
+		light = GO.createLight()
+		light:setPos(18,2.35,2.55)
+		light2 = GO.createLight()
+		light2:setPos(0,14,-4)
+		light2:setIntensity(550)
+
+		sun = GO.createLight()
+		sun:setPos(0,20,0)
+		sun:setIntensity(8000)
+
+		light2 = GO.createLight()
+		light2:setPos(16,2.35,-12.55)
 	end
 	if state == states.play then
 		h:update()

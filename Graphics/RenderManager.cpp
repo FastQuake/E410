@@ -157,9 +157,10 @@ void RenderManager::removeLight(Light *light){
 	for(int i=0;i<lights.size();i++){
 		if(light == lights[i]){
 			lights.erase(lights.begin() + i);
-			return;
+			break;
 		}
 	}
+	updateUBO();
 }
 
 GameObject *RenderManager::getBody(const btCollisionObject *body){

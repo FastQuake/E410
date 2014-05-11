@@ -26,7 +26,7 @@ function AIManager.addNode(id,x,y,z)
 	node.neighbors = {}
 	node.model = GO.loadIQM("cube.iqm","node"..id)
 	node.model:setBoxBody()
-	--node.model:setVisible(false)
+	node.model:setVisible(false)
 	node.model:setMass(0)
 	node.model:setPos(node.pos:get())
 	nodes[id] = node

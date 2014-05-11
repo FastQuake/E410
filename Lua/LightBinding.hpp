@@ -13,6 +13,7 @@ int l_lightDelete(lua_State *l);
 
 static const struct luaL_Reg Light_funcs[] = {
 	{"createLight", l_lightCreate},
+	{"deleteLight", l_lightDelete},
 	{NULL, NULL}
 };
 
