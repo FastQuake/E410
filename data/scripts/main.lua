@@ -127,10 +127,6 @@ function init()
 
 	h = HUD.create(player)
 	h:show(false)
-
-	p = GO.createSprite("player.png");
-	p:setFrameSize(3,1);
-	p:animate(true)
 end
 
 player.oldRot = 0
