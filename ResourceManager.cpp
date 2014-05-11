@@ -5,6 +5,7 @@ string dataDir = "data/";
 string modelDir = dataDir+"models/";
 string fontDir = dataDir+"fonts/";
 string imgDir = dataDir+"textures/";
+string soundDir = dataDir+"audio/";
 
 string defaultFont = "DejaVuSansMono.ttf";
 
@@ -73,8 +74,20 @@ sf::Image *ResourceManager::loadImage(string name){
 		return &it->second;
 	}
 }
-
-GLuint ResourceManager::loadTexture(std::string name){
+sf::SoundBuffer *ResourceManager::loadSound(string name){
+	map<string, sf::SoundBuffer>::iterator it = sounds.find(name);
+	if(it == sounds.end()){
+		sf::SoundBuffer b;
+		if(b.loadFromFile(soundDir+name) == false){
+			return NULL;
+		}
+		sounds[name] = b;
+		return &sounds[name];
+	} else {
+		return &it->second;
+	}
+}
+GLuint ResourceManager::loadTexture(string name){
 	map<string, GLuint>::iterator it = texs.find(name);
 	if(it == texs.end()){
 		GLuint i;
@@ -103,7 +116,7 @@ GLuint ResourceManager::loadTexture(std::string name){
 	}
 }
 
-GLuint ResourceManager::loadTexture(std::string name, int *width, int *height){
+GLuint ResourceManager::loadTexture(string name, int *width, int *height){
 	map<string, GLuint>::iterator it = texs.find(name);
 	if(it == texs.end()){
 		GLuint i;

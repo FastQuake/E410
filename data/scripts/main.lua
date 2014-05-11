@@ -66,6 +66,7 @@ function onReceivePacket(data)
 			end
 		end
 	elseif data[1] == "shoot" then
+		sound.playSound("bullet.wav")
 		table.insert(bullets,Bullet.create(Vector.create(data[2],data[3],data[4]),Vector.create(data[5],data[6],data[7])))
 	elseif data[1] == "hit" then
 		player.hp = player.hp - 10
@@ -200,11 +201,15 @@ function update(dt)
 			paused = false
 			input.setGuiMousePos(width/2,height/2)
 		end
-		if input.isMouseDown(mouse.Left) and bulletTimer > 0.3 and player.ammo > 0 then
-			local pos = Vector.create(cam:getPos())
-			local dir = Vector.create(cam:getLookat())
-			network.sendPacket("shoot "..(pos+dir).." "..dir)
-			player.ammo = player.ammo -1
+		if input.isMouseDown(mouse.Left) and bulletTimer > 0.3 then
+			if player.ammo > 0 then
+				local pos = Vector.create(cam:getPos())
+				local dir = Vector.create(cam:getLookat())
+				network.sendPacket("shoot "..(pos+dir).." "..dir)
+				player.ammo = player.ammo -1
+			else
+				sound.playSound("click.wav")
+			end
 			bulletTimer = 0
 		end
 		player.oldRot = player.newRot

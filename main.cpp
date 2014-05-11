@@ -27,6 +27,7 @@ InputManager *im;
 ResourceManager resman;
 RenderManager rendman;
 GuiManager *gui;
+SoundManager *soundman;
 ENetPeer *serverPeer;
 ENetHost *client;
 sf::RenderWindow *gwindow;
@@ -102,10 +103,14 @@ int main(int argc, char *argv[]){
 			sf::Color(50,50,50),sf::Color::White);
 
 	global_con = &con;
-	
+
 	GuiManager guie(im);
 	guie.add(&con);
 	gui = &guie;
+
+	//Create sound manager
+	SoundManager m;
+	soundman = &m;
 
 	GLenum glewStatus = glewInit();
 	if(glewStatus != GLEW_OK){
@@ -322,6 +327,8 @@ int main(int argc, char *argv[]){
 				}
 			}
 		}
+		//Update sounds
+		soundman->update();
 		//Handle input packets and send buffered packets
 		if(client != NULL){
 			while(enet_host_service(client, &enetEvent, 0) >0){

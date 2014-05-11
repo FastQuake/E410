@@ -10,6 +10,7 @@
 #include "mathbinding.hpp"
 #include "SettingsBinding.hpp"
 #include "SpriteBinding.hpp"
+#include "SoundBinding.hpp"
 using namespace std;
 
 //TODO make this less ugly, break it up, etc
@@ -72,10 +73,14 @@ void bindFunctions(lua_State *l){
 	registerKeys(l);
 	lua_setglobal(l,"keys");
 
-	//add mouse conatants
+	//add mouse constants
 	lua_newtable(l);
 	registerMice(l);
 	lua_setglobal(l,"mouse");
+
+	//add sound binding
+	luaL_newlib(l, Sound_funcs);
+	lua_setglobal(l, "sound");
 
 	//create camera register
 	luaL_newmetatable(l, "MetaCam");

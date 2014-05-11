@@ -7,6 +7,7 @@
 #include "Graphics/RenderManager.hpp"
 #include "ResourceManager.hpp"
 #include "GUI/Console.hpp"
+#include "Audio/SoundManager.hpp"
 
 #define PI 3.14159265359 
 #define MAX_LIGHTS 12
@@ -16,6 +17,7 @@ extern InputManager *im;
 extern ResourceManager resman;
 extern RenderManager rendman;
 extern GuiManager *gui;
+extern SoundManager *soundman;
 extern sf::RenderWindow *gwindow;
 extern std::vector<std::string> packetList;
 
