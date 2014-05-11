@@ -37,6 +37,16 @@ GLuint debugvbo;
 
 int width, height;
 
+const char *serverDelete = \
+	"function __serverDelete(id)\n"
+	"for k,v in pairs(serverObjects) do\n"
+	"if v:getID() == id then\n"
+	"v:remove()\n"
+	"table.remove(serverObjects, k)\n"
+	"end\n"
+	"end\n"
+	"end\n";
+
 int stringToInt(string input){
 	int out;
 	stringstream ss;
@@ -76,6 +86,12 @@ int main(int argc, char *argv[]){
 	lua_State *l = luaL_newstate();
 	luaL_openlibs(l);
 	bindFunctions(l);
+
+	//Load server delete function
+	if(luaL_dostring(l,serverDelete)){
+		cerr << lua_tostring(l, -1) << endl;
+		return EXIT_FAILURE;
+	}
 
 	//Load settings from lua
 	if(luaL_dofile(l,"./data/scripts/settings.lua")){
@@ -413,9 +429,13 @@ int main(int argc, char *argv[]){
 						GameObject *obj = rendman.getId(id);
 						if(obj != NULL){
 							rendman.remove(obj);
-							lua_getglobal(l,"serverObjects");
-							lua_pushnil(l);
-							lua_rawseti(l,-2,obj->id);
+							lua_getglobal(l,"__serverDelete");
+							lua_pushnumber(l,obj->id);
+							if(lua_pcall(l,1,0,0)){
+								cout << lua_tostring(l, -1) << endl;
+								global_con->out.println(lua_tostring(l, -1));
+							}
+
 						}
 					}else if(pdata[0] == "visible") {
 						uint32_t id = stringToInt(pdata[1]);
