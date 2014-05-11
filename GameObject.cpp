@@ -54,10 +54,9 @@ void GameObject::setModel(Model *model){
 		hasAnimation = true;
 	}
 	textures = model->textures;
-	extents extents = getExtents();
-	float oox = (extents.maxx+extents.minx)/2.0;
-	float ooy = (extents.maxy+extents.miny)/2.0;
-	float ooz = (extents.maxz+extents.minz)/2.0;
+	float oox = (model->e.maxx+model->e.minx)/2.0;
+	float ooy = (model->e.maxy+model->e.miny)/2.0;
+	float ooz = (model->e.maxz+model->e.minz)/2.0;
 
 	originOffset.setX(oox);
 	originOffset.setY(ooy);
@@ -199,11 +198,10 @@ void GameObject::createConvexRigidBody(){
 	delete o;
 }
 void GameObject::createCubeRigidBody(){
-	extents extents = getExtents();
 	float xsize,ysize,zsize;
-	xsize = extents.maxx-extents.minx;
-	ysize = extents.maxy-extents.miny;
-	zsize = extents.maxz-extents.minz;
+	xsize =	model->e.maxx-model->e.minx;
+	ysize = model->e.maxy-model->e.miny;
+	zsize = model->e.maxz-model->e.minz;
 	btVector3 boxVector(xsize/2.0,ysize/2.0,zsize/2.0);
 
 	if(collisionshape != NULL)
@@ -228,7 +226,7 @@ void GameObject::createCubeRigidBody(){
 	else
 		physworld.addBody(body,1<<2,1<<2);
 }
-void GameObject::createCubeRididBody(extents e){
+void GameObject::createCubeRigidBody(extents e){
 	float xsize,ysize,zsize;
 	xsize = e.maxx-e.minx;
 	ysize = e.maxy-e.miny;
@@ -251,7 +249,11 @@ void GameObject::createCubeRididBody(extents e){
 		delete body;
 	}
 	body = new btRigidBody(ci);
-	physworld.addBody(body);
+	if(this->tag.substr(0,4) == "node"){
+		physworld.addBody(body,1<<2,1);
+	}
+	else
+		physworld.addBody(body,1<<2,1<<2);
 
 	float oox = (e.maxx+e.minx)/2.0;
 	float ooy = (e.maxy+e.miny)/2.0;
@@ -277,32 +279,4 @@ void GameObject::updateMass(float mass){
 	}
 	else
 		cout << "body is null" << endl;
-}
-
-extents GameObject::getExtents(){
-	extents out;
-	glm::mat4 rot = glm::rotate(glm::mat4(1),-90.0f,glm::vec3(1,0,0));
-	glm::vec4 p1(model->verts[0].position[0],
-			model->verts[0].position[1],
-			model->verts[0].position[2],1.0);
-	p1 = rot*p1;
-	out.minx = p1.x;
-	out.miny = p1.y;
-	out.minz = p1.z;
-	out.maxx = out.minx;
-	out.maxy = out.miny;
-	out.maxz = out.minz;
-	for(int i=0;i<model->verts.size();i++){
-		glm::vec4 p2(model->verts[i].position[0],
-			model->verts[i].position[1],
-			model->verts[i].position[2],1.0);
-		p2 = rot * p2;
-		out.minx = min(out.minx, p2.x);
-		out.maxx = max(out.maxx, p2.x);
-		out.miny = min(out.miny, p2.y);
-		out.maxy = max(out.maxy, p2.y);
-		out.minz = min(out.minz, p2.z);
-		out.maxz = max(out.maxz, p2.z);
-	}
-	return out;
 }

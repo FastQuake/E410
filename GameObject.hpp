@@ -11,15 +11,6 @@
 
 #define GOMAGIC "Game"
 
-struct extents{
-	float minx;
-	float maxx;
-	float miny;
-	float maxy;
-	float minz;
-	float maxz;
-};
-
 class GameObject{
 public:
 	std::string magic;
@@ -66,11 +57,8 @@ public:
 	void createTriangleRigidBody();
 	void createConvexRigidBody();
 	void createCubeRigidBody();
-	void createCubeRididBody(extents e);
+	void createCubeRigidBody(extents e);
 	void updateMass(float mass);
-
-	extents getExtents();
-
 private:
 	btTriangleMesh *trimesh;
 	btCollisionShape *collisionshape;

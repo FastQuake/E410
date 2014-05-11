@@ -69,11 +69,11 @@ end
 function AIManager.addMonster(numPlayers)
 	local monster = {}
 	monster.model = GO.loadIQM("robit.iqm","monster")
-	monster.model:setBoxBody()
-	--monster.model:setExtBoxBody(-0.5,0,-0.5,0.5,2.5,0.5)
+	--monster.model:setBoxBody()
+	monster.model:setExtBoxBody(-0.5,0,-0.5,0.5,2.5,0.5)
 	monster.model:setActivation(true)
 	monster.model:lockAxis(0,0,0)
-	monster.model:setPos(18,2,5)
+	monster.model:setPos(18,4,5)
 	monster.pos = Vector.create(18,2,5)
 	monster.path = {}
 	monster.targetPlayer = math.random(0,numPlayers-1)

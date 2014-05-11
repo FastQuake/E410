@@ -375,7 +375,7 @@ int l_setExtBoxBody(lua_State *l){
 	e.maxx = l_toNumber(l,5);
 	e.maxy = l_toNumber(l,6);
 	e.maxz = l_toNumber(l,7);
-	obj->createCubeRididBody(e);
+	obj->createCubeRigidBody(e);
 	return 0;
 }
 

@@ -13,6 +13,15 @@
 #include "GraphicsUtils.hpp"
 #include "Texture.hpp"
 
+struct extents{
+	float minx;
+	float maxx;
+	float miny;
+	float maxy;
+	float minz;
+	float maxz;
+};
+
 struct vertex{
     GLfloat position[3];
     GLfloat normal[3];
@@ -39,6 +48,7 @@ class Model {
 		std::vector<std::string> animNames;
 		std::vector<iqmpose> poses;
 		std::vector<glm::mat4> frames;
+		extents e;
 		int numFrames;
 
 		void setEBO(GLuint ebo);
@@ -47,6 +57,7 @@ class Model {
 
 		void draw(ShaderProgram *prg, std::vector<Texture> textures,std::vector<glm::mat4> outframe, bool texture, bool normal);
 		void animate(std::string animName, float currentframe, std::vector<glm::mat4> *outframe);
+		void getExtents();
 };
 
 bool loadIQM(std::string filename, Model &target);

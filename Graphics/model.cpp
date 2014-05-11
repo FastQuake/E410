@@ -265,6 +265,7 @@ bool loadIQM(string filename, Model &target){
 
 		loadIQMMesh(filename, header, target, buf, true);
 		loadIQMAnim(filename, header, target, buf);
+		target.getExtents();
 		delete[] buf;
 
 		return true;
@@ -299,6 +300,7 @@ bool noGLLoadIQM(std::string filename, Model &target){
 		file.close();
 
 		loadIQMMesh(filename, header, target, buf, false);
+		target.getExtents();
 		delete[] buf;
 
 		return true;
@@ -320,6 +322,32 @@ void Model::setVBO(GLuint vbo){
 
 void Model::setTEXID(GLuint id){
 	this->textureID = id;
+}
+
+void Model::getExtents(){
+	glm::mat4 rot = glm::rotate(glm::mat4(1),-90.0f,glm::vec3(1,0,0));
+	glm::vec4 p1(verts[0].position[0],
+			verts[0].position[1],
+			verts[0].position[2],1.0);
+	p1 = rot*p1;
+	e.minx = p1.x;
+	e.miny = p1.y;
+	e.minz = p1.z;
+	e.maxx = e.minx;
+	e.maxy = e.miny;
+	e.maxz = e.minz;
+	for(int i=0;i<verts.size();i++){
+		glm::vec4 p2(verts[i].position[0],
+			verts[i].position[1],
+			verts[i].position[2],1.0);
+		p2 = rot * p2;
+		e.minx = min(e.minx, p2.x);
+		e.maxx = max(e.maxx, p2.x);
+		e.miny = min(e.miny, p2.y);
+		e.maxy = max(e.maxy, p2.y);
+		e.minz = min(e.minz, p2.z);
+		e.maxz = max(e.maxz, p2.z);
+	}
 }
 
 /**
