@@ -80,7 +80,7 @@ int l_connectTo(lua_State *l){
 		//lua_error(l);
 		return 1;
 	}
-	if((enet_host_service(client, &event, 5000) > 0) &&
+	if((enet_host_service(client, &event, 10000) > 0) &&
 			event.type == ENET_EVENT_TYPE_CONNECT){
 		string line = "\nConnection to "+serverAddr+" succeeded";
 		global_con->out.print(line);

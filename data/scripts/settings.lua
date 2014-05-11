@@ -8,6 +8,6 @@ settings.fullscreen(bool)
 --]]
 settings.vsync(false)
 settings.fullscreen(false)
-settings.AA(4)
+settings.AA(0)
 settings.maxFPS(0)
 settings.size(800,600)

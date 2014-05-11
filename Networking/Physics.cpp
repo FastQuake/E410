@@ -42,7 +42,10 @@ PhysWorld::~PhysWorld(){
 }
 
 void PhysWorld::step(float dt){
-	dynWorld->stepSimulation(dt,0,0);
+	if(dt > 1)
+		dynWorld->stepSimulation((1.0/60.0),0,0);
+	else
+		dynWorld->stepSimulation(dt,0,0);
 }
 
 void PhysWorld::addBody(btRigidBody *body){
