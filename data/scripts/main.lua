@@ -78,6 +78,7 @@ function onReceivePacket(data)
 	elseif data[1] == "hit" then
 		player.hp = player.hp - 10
 	elseif data[1] == "explode" then
+		sound.playSound("explode.wav")
 		local pos = Vector.create(data[2],data[3],data[4])
 		table.insert(tSprites, timedSprite("explosion.png",pos,16,1,2,0.8))
 	end

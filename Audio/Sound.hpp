@@ -9,6 +9,7 @@
 class Sound {
 	public:
 		std::string magic;
+		bool good;
 		sf::Sound sound;
 
 		Sound();

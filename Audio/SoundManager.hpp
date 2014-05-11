@@ -7,7 +7,9 @@
 class SoundManager{
 	public:
 		std::vector<Sound> sounds;
+		sf::Clock soundTimer;
 
+		SoundManager();
 		void update();
 };
 
