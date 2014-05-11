@@ -54,6 +54,13 @@ int l_lightSetRot(lua_State *l){
 	}
 	return 0;
 }
+int l_lightSetIntensity(lua_State *l){
+	Light *i = l_toLight(l, 1);
+	float intensity = l_toNumber(l, 2);
+	i->intensity = intensity;
+	rendman.updateUBO();
+	return 0;
+}
 int l_lightDelete(lua_State *l){
 	Light *i = l_toLight(l, 1);
 	rendman.removeLight(i);
