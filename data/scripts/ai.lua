@@ -20,6 +20,24 @@ function tableContains(t,searchv)
 	return false
 end
 
+function getAiFromObj(obj)
+	for k,v in pairs(monsters) do
+		if v.model:getID() == obj:getID() then
+			return v
+		end
+	end
+	return nil
+end
+
+function removeMonster(obj)
+	for k,v in pairs(monsters) do
+		if v.model:getID() == obj:getID() then
+			v.model:remove()
+			table.remove(monsters,k)
+		end
+	end
+end
+
 function AIManager.addNode(id,x,y,z)
 	local node = {}
 	node.pos = Vector.create(x,y,z)
@@ -60,6 +78,7 @@ function AIManager.addMonster(numPlayers)
 	monster.path = {}
 	monster.targetPlayer = math.random(0,numPlayers-1)
 	monster.bulletTimer = 0
+	monster.hp = 100
 	table.insert(monsters,monster)
 end
 

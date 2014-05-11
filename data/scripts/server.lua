@@ -55,6 +55,13 @@ function onReceivePacket(id, data)
 		local obj,x,y,z = GO.castRay(data[2],data[3],data[4],data[5],data[6],data[7],bulletd,4)
 		if obj ~= nil then
 			network.sendPacket(-1,"shoot "..data[2].." "..data[3].." "..data[4].." "..x.." "..y.." "..z)
+			if obj:getTag() == "monster" then
+				local mon = getAiFromObj(obj)
+				mon.hp = mon.hp - 10
+				if mon.hp <= 0 then
+					removeMonster(obj)	
+				end
+			end
 		else
 			network.sendPacket(-1,"shoot "..data[2].." "..data[3].." "..data[4].." "..bulletd*data[5].." "..bulletd*data[6].." "..bulletd*data[7])
 		end
