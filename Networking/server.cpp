@@ -224,6 +224,35 @@ void serverMain(){
 		//do physics
 		physworld.step(dt.asSeconds());
 
+		//Check for collisions
+		int numManis = physworld.dynWorld->getDispatcher()->getNumManifolds();
+		for(int i=0;i<numManis;i++){
+			btPersistentManifold *contact = physworld.dynWorld->getDispatcher()->getManifoldByIndexInternal(i);
+			btCollisionObject *a = (btCollisionObject*)(contact->getBody0());
+			btCollisionObject *b = (btCollisionObject*)(contact->getBody1());
+
+			int numContacts = contact->getNumContacts();
+			for(int j=0;j<numContacts;j++){
+				btManifoldPoint &pt = contact->getContactPoint(j);
+				if(pt.getDistance() < 0.0f){
+					GameObject *obj1 = serverRendMan.getBody(a);
+					GameObject *obj2 = serverRendMan.getBody(b);
+					lua_getglobal(l,"serverObjects");
+					lua_getglobal(l,"onCollision");
+					lua_rawgeti(l,-2,obj1->id);
+					lua_rawgeti(l,-3,obj2->id);
+					if(lua_pcall(l,2,1,0)){
+						string error = "[SERVER] " + string(lua_tostring(l,-1));
+						cout << error << endl;
+						global_con->out.println("[SERVER] "+error);
+					}
+					bool check = l_toBool(l,-1);
+					if(check)
+						break;
+				}
+			}
+		}
+
 		for(int i=0;i<serverRendMan.drawList.size();i++){
 			ENetPeer p;
 			p.address.host = -1;

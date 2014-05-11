@@ -404,7 +404,12 @@ int main(int argc, char *argv[]){
 					}else if(pdata[0] == "delete") {
 						uint32_t id = stringToInt(pdata[1]);
 						GameObject *obj = rendman.getId(id);
-						rendman.remove(obj);
+						if(obj != NULL){
+							rendman.remove(obj);
+							lua_getglobal(l,"serverObjects");
+							lua_pushnil(l);
+							lua_rawseti(l,-2,obj->id);
+						}
 					}else if(pdata[0] == "visible") {
 						uint32_t id = stringToInt(pdata[1]);
 						GameObject *obj = rendman.getId(id);

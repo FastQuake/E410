@@ -418,7 +418,10 @@ int l_raycast(lua_State *l){
 		GameObject *obj = serverRendMan.getBody(rayCallback.m_collisionObject);
 		lua_getglobal(l, "serverObjects");
 		lua_rawgeti(l, -1, obj->id);
-		return 1;
+		lua_pushnumber(l,rayCallback.m_hitPointWorld.getX());
+		lua_pushnumber(l,rayCallback.m_hitPointWorld.getY());
+		lua_pushnumber(l,rayCallback.m_hitPointWorld.getZ());
+		return 4;
 	}
 	return 0;	
 }

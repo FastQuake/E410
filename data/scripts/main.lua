@@ -3,6 +3,7 @@ require "vector"
 require "hud"
 require "networkutils"
 require "ai"
+require "bullet"
 
 sensitvity = 0.75
 speed = 10
@@ -22,6 +23,7 @@ player.height = 2
 player.hp = 100
 paused = false
 pausetimer = 0
+bullets = {}
 function myPos()
 	print(Vector.create(player.model:getPos()))
 end
@@ -59,6 +61,8 @@ function onReceivePacket(data)
 				obj:animate(true)
 			end
 		end
+	elseif data[1] == "shoot" then
+		table.insert(bullets,Bullet.create(Vector.create(data[2],data[3],data[4]),Vector.create(data[5],data[6],data[7])))
 	end
 end
 
@@ -106,7 +110,7 @@ function init()
 	fpsCounter = GUI.createText()
 	fpsCounter:setCharSize(26)
 	fpsCounter:setString("FPS: ".. 0)
-	fpsCounter:setVisible(false)
+	--fpsCounter:setVisible(false)
 	--Create stuff for scene
 	cam = camera.createCam()
 	cam:setPos(0,0,0)
@@ -177,7 +181,23 @@ function update(dt)
 			paused = false
 			input.setGuiMousePos(width/2,height/2)
 		end
+		if input.isMouseDown(mouse.Left) then
+			local pos = Vector.create(cam:getPos())
+			local dir = Vector.create(cam:getLookat())
+			network.sendPacket("shoot "..(pos+dir).." "..dir)
+		end
 		player.oldRot = player.newRot
+
+		for k,v in pairs(bullets) do
+			v.pos = v.pos + Vector.scalarMul(100*dt,v.dir)
+			v.sprite:setPos(v.pos:get())
+			local p1 = (v.pos - v.spos):mag()
+			local p2 = (v.stop - v.spos):mag()
+			if p1 > p2 then
+				v.sprite:setVisible(false)
+				table.remove(bullets,k)
+			end
+		end
 	elseif state == states.title then
 		h:show(false)
 		title:show(true)

@@ -5,6 +5,7 @@ require "ai"
 peers = {}
 peerID = 0
 playerSpeed = 5
+bulletd = 300
 function onPeerConnect(id)
 	print("Got connection from peer "..id)
 	network.sendPacket(id, "player".. peerID)
@@ -47,13 +48,16 @@ function onReceivePacket(id, data)
 		local rot = Vector.create(p.model:getRot()) + Vector.create(0,-data[2],0) 
 		p.model:setRot(rot:get())
 	elseif data[1] == "cast" then
-		local obj = GO.castRay(data[2],data[3],data[4],data[5],data[6],data[7],15,4)
+		local obj,x,y,z = GO.castRay(data[2],data[3],data[4],data[5],data[6],data[7],100,4)
 		if obj ~= nil then
-			print("Looking at: "..obj:getTag())
-			if obj:getTag() == "chair" then
-				p.flying = true
-				network.sendPacket(id, "fly")
-			end
+			print("Looking at: "..obj:getTag().." at "..x.." "..y.." "..z)
+		end
+	elseif data[1] == "shoot" then
+		local obj,x,y,z = GO.castRay(data[2],data[3],data[4],data[5],data[6],data[7],bulletd,4)
+		if obj ~= nil then
+			network.sendPacket(-1,"shoot "..data[2].." "..data[3].." "..data[4].." "..x.." "..y.." "..z)
+		else
+			network.sendPacket(-1,"shoot "..data[2].." "..data[3].." "..data[4].." "..bulletd*data[5].." "..bulletd*data[6].." "..bulletd*data[7])
 		end
 	elseif data[1] == "jump" then
 		local x,y,z = p.model:getPos()
@@ -69,6 +73,23 @@ function onPeerDisconnect(id)
 	print("peer "..id.." disconnected")
 	local p = Peer.getPeer(peers, id)
 	p.model:remove()
+end
+
+function onCollision(a, b)
+	if a:getTag() == "bullet" then
+		--a:remove()
+		serverObjects[a:getID()]:remove()
+		serverObjects[a:getID()] = nil
+		--a = nil
+		return true
+	elseif b:getTag() == "bullet" then 
+		--b:remove()
+		serverObjects[b:getID()]:remove()
+		serverObjects[b:getID()] = nil
+		--b = nil
+		return true
+	end
+	return false
 end
 
 function init()
@@ -106,8 +127,18 @@ end
 delta = 0
 pathTimer = 0
 firstRun = true
+time = 0
+frames =0
 function update(dt)
 	--print("running")
+	--print(#serverObjects)
+	if time > 1 then
+		--print(frames)
+		time =0
+		frames=0
+	end
+	time = time + dt
+	frames = frames +1
 	delta = dt
 	pathTimer = pathTimer + dt
 	for k,v in pairs(peers) do
