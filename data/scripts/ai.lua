@@ -1,3 +1,5 @@
+require "networkutils"
+
 local nodes = {}
 local monsters = {}
 AIManager = {}
@@ -24,7 +26,7 @@ function AIManager.addNode(id,x,y,z)
 	node.neighbors = {}
 	node.model = GO.loadIQM("cube.iqm","node"..id)
 	node.model:setBoxBody()
-	node.model:setVisible(false)
+	--node.model:setVisible(false)
 	node.model:setMass(0)
 	node.model:setPos(node.pos:get())
 	nodes[id] = node
@@ -45,13 +47,14 @@ function AIManager.getMonsters()
 	return monsters
 end
 
-function AIManager.addMonster()
+function AIManager.addMonster(numPlayers)
 	local monster = {}
 	monster.model = GO.loadIQM("cube.iqm","monster")
 	monster.model:setBoxBody()
 	monster.model:setPos(18,2,5)
 	monster.pos = Vector.create(18,2,5)
 	monster.path = {}
+	monster.targetPlayer = math.random(0,numPlayers-1)
 	table.insert(monsters,monster)
 end
 
@@ -80,7 +83,7 @@ function AIManager.findVisibleNode(startPos)
 		local dir = closestNode.pos-startPos
 		local dirx,diry,dirz = dir:get()
 		local posx,posy,posz = startPos:get()
-		local obj = GO.castRay(posx,posy,posz,dirx,diry,dirz,50,1)
+		local obj,x,y,z = GO.castRay(posx,posy,posz,dirx,diry,dirz,50,1)
 		if obj ~= nil then
 			if obj:getTag() ~= "floor" then
 				out = closestNode
@@ -145,14 +148,26 @@ function AIManager.buildMonsterPaths(startPos)
 	end
 end
 
-function AIManager.stepMonsters()
+function AIManager.stepMonsters(peers)
 	for k,v in pairs(monsters) do
+		local targetPos = Vector.create(Peer.getPeer(peers,v.targetPlayer).model:getPos())
 		if v.targetNodeNum <= #v.path then
 			v.pos = Vector.create(v.model:getPos())
 			local vel = Vector.normalize(v.path[v.targetNodeNum].pos - v.pos)
 			v.model:setVelocity(Vector.scalarMul(3,vel):get())
 			if Vector.distance(v.path[v.targetNodeNum].pos,v.pos) < 1.0 then
 				v.targetNodeNum = v.targetNodeNum+1
+			end
+		end
+		local dir = Vector.normalize(targetPos-v.pos)
+		local dirx,diry,dirz = dir:get()
+		local posx,posy,posz = v.pos:get()
+		local obj,x,y,z = GO.castRay(posx,posy,posz,dirx,diry,dirz,100,4)
+		if obj ~= nil then
+		--	print(obj:getTag())
+			if obj:getTag() == "player"..v.targetPlayer then
+		--		print("shoting")
+				network.sendPacket(-1,"shoot "..posx.." "..posy.." "..posz.." "..x.." "..y.." "..z)
 			end
 		end
 	end

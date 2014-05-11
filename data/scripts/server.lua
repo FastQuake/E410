@@ -104,7 +104,7 @@ function init()
 	floor:setMass(0)
 	--floor:setScale(100,1,100)
 	--floor:setPos(0,-1,0)
-	AIManager.addMonster()
+	AIManager.addMonster(1)
 	AIManager.addNode(1,-0.14,-3.5,3.0);
 	AIManager.addNode(2,-0.14,-3.5,-10);
 	AIManager.addNode(3,8.6,-2.2,3.0);
@@ -158,7 +158,7 @@ function update(dt)
 			pathTimer = 0
 			AIManager.buildMonsterPaths(Vector.create(v.model:getPos()))
 		end
-		AIManager.stepMonsters()
+		AIManager.stepMonsters(peers)
 	end
 	firstRun = false
 end
