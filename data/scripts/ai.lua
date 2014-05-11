@@ -1,6 +1,7 @@
 require "networkutils"
 
 local nodes = {}
+require "networkutils"
 local monsters = {}
 AIManager = {}
 bulletd = 300
@@ -184,13 +185,17 @@ function AIManager.stepMonsters(peers, dt)
 			yaw = -yaw
 		end
 		if v.bulletTimer > 0.5 then
-			local rx = (math.random()/2)-0.25
-			local ry = (math.random()/4)-0.125
-			local rz = (math.random()/2)-0.25
+			local rx = (math.random()/3)-(1/6)
+			local ry = (math.random()/3)-(1/6)
+			local rz = (math.random()/3)-(1/6)
 			local obj,x,y,z = GO.castRay(p2.x,p2.y,p2.z,dirx+rx,diry+ry,dirz+rz,100,4)
 			v.model:setRot(0,yaw,0)
 			if obj ~= nil then
 				network.sendPacket(-1,"shoot "..p2.x.." "..p2.y.." "..p2.z.." "..x.." "..y.." "..z)
+				if obj:getTag():sub(1,6) == "player" then
+					local id = Peer.getIDFromObject(peers,obj) 
+					network.sendPacket(id,"hit")
+				end
 			else
 				network.sendPacket(-1,"shoot "..p2.x.." "..p2.y.." "..p2.z.." "..bulletd*(dirx+rx).." "..bulletd*(diry+ry).." "..bulletd*(dirz+rz))
 			end

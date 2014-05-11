@@ -27,6 +27,16 @@ function Peer.getPeer(list, id)
 	return nil
 end
 
+function Peer.getIDFromObject(list, obj)
+	local id = obj:getID()
+	for k,v in pairs(list) do
+		if v.model:getID() == id then
+			return v.id
+		end
+	end
+	return nil
+end
+
 function getModelFromID(id)
 	for k,v in ipairs(serverObjects) do
 		if id == v:getID() then

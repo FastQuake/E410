@@ -67,6 +67,8 @@ function onReceivePacket(data)
 		end
 	elseif data[1] == "shoot" then
 		table.insert(bullets,Bullet.create(Vector.create(data[2],data[3],data[4]),Vector.create(data[5],data[6],data[7])))
+	elseif data[1] == "hit" then
+		player.hp = player.hp - 10
 	end
 end
 
