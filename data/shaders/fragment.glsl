@@ -19,7 +19,7 @@ uniform mat4 view;
 
 out vec4 outColour;
 
-float offset = 1.0/512.0+0.04;
+float offset = 1.0/512.0+0.02;
 
 vec3 offsets[3] = vec3[](
 	vec3(offset,0.0,0.0),
@@ -53,7 +53,7 @@ void main(){
 	for(int i=0;i<numLights.x;i++){
 		vec3 l = normalize((vec4(lightPositions[i].xyz-vec3(coord3d_f),0.0)).xyz);
 		float cosTheta = clamp(dot(normalCam,l),0.000001, 1.0);
-		float bias = clamp(tan(acos(cosTheta)),0.0,0.0055);
+		float bias = clamp(tan(acos(cosTheta)),0.0,0.0037);
 		float shadowed = 0.0f;
 		shadowed = 0.0f;
 		vec4 abs_position = abs(shadowCoords[i]);
