@@ -87,46 +87,19 @@ sf::SoundBuffer *ResourceManager::loadSound(string name){
 		return &it->second;
 	}
 }
-GLuint ResourceManager::loadTexture(string name){
-	map<string, GLuint>::iterator it = texs.find(name);
+Texture ResourceManager::loadTexture(string name){
+	map<string, Texture>::iterator it = texs.find(name);
 	if(it == texs.end()){
 		GLuint i;
+		sf::Vector2i size;
 		sf::Image *img = loadImage(name);
 		if(img == NULL){
-			return -1;
+			Texture error;
+			error.id = -1;
+			return error;
 		}
-		glGenTextures(1, &i);
-		glBindTexture(GL_TEXTURE_2D, i);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexImage2D(GL_TEXTURE_2D,
-				0,
-				GL_RGBA,
-				img->getSize().x,
-				img->getSize().y,
-				0,
-				GL_RGBA,
-				GL_UNSIGNED_BYTE,
-				img->getPixelsPtr());
-		texs[name] = i;
-		cout << "IMAGE X:"<<img->getSize().x << " IMAGE Y:" << img->getSize().y << endl;
-		return texs[name];
-	} else {
-		return it->second;
-	}
-}
-
-GLuint ResourceManager::loadTexture(string name, int *width, int *height){
-	map<string, GLuint>::iterator it = texs.find(name);
-	if(it == texs.end()){
-		GLuint i;
-		sf::Image *img = loadImage(name);
-		if(img == NULL){
-			return -1;
-		}
-		sf::Vector2u size = img->getSize();
-		*width = size.x;
-		*height = size.y;
+		size.x = img->getSize().x;
+		size.y = img->getSize().y;
 		glGenTextures(1, &i);
 		glBindTexture(GL_TEXTURE_2D, i);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -140,8 +113,12 @@ GLuint ResourceManager::loadTexture(string name, int *width, int *height){
 				GL_RGBA,
 				GL_UNSIGNED_BYTE,
 				img->getPixelsPtr());
-		texs[name] = i;
 		cout << "IMAGE X:"<<img->getSize().x << " IMAGE Y:" << img->getSize().y << endl;
+		Texture out;
+		out.height = size.y;
+		out.width = size.x;
+		out.id = i;
+		texs[name] = out;
 		return texs[name];
 	} else {
 		return it->second;

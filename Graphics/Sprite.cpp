@@ -8,7 +8,9 @@ using namespace std;
 ShaderProgram *spriteprg;
 
 Sprite::Sprite(std::string name):sprite(){
-	texture = resman.loadTexture(name,&imgwidth,&imgheight);
+	texture = resman.loadTexture(name);
+	imgwidth = texture.width;
+	imgheight = texture.height;
 	sprite.setModel(resman.loadModel("cube.iqm"));
 	sprite.textures[0] = texture;
 	position = glm::vec3(0,0,0);

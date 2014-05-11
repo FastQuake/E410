@@ -53,7 +53,7 @@ void GameObject::setModel(Model *model){
 		currentAnimation = model->animNames[0];
 		hasAnimation = true;
 	}
-	textures = model->textureIDS;
+	textures = model->textures;
 	extents extents = getExtents();
 	float oox = (extents.maxx+extents.minx)/2.0;
 	float ooy = (extents.maxy+extents.miny)/2.0;

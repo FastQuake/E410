@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 #include <bullet/btBulletDynamicsCommon.h>
 #include "Graphics/model.hpp"
+#include "Graphics/Texture.hpp"
 #include "stdint.h"
 
 #define GOMAGIC "Game"
@@ -36,7 +37,7 @@ public:
 	glm::vec3 right;
 	std::string currentAnimation;
 	std::vector<glm::mat4> outframe;
-	std::vector<GLuint> textures;
+	std::vector<Texture> textures;
 	float aTime;
 
 	//Don't forget to delete pointers

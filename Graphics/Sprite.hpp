@@ -24,7 +24,7 @@ public:
 	void draw(float dt, FPSCamera *cam);
 	void setFrames(int hframes, int vframes);
 private:
-	GLuint texture;
+	Texture texture;
 	int imgwidth;
 	int imgheight;
 	int spritewidth;

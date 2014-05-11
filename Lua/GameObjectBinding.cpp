@@ -194,12 +194,12 @@ int l_setTexture(lua_State *l){
 	GameObject *obj = l_toGO(l, 1);
 	string tex = l_toString(l, 2);
 	
-	GLuint id = resman.loadTexture(tex);
-	if(id == -1){
+	Texture texture = resman.loadTexture(tex);
+	if(texture.id == -1){
 		cout << "Can't find texture " << tex << endl;
-		id = resman.loadTexture("default.png");
+		texture = resman.loadTexture("default.png");
 	}
-	obj->textures.at(0) = id;
+	obj->textures.at(0) = texture;
 	return 0;
 }
 int l_setVisible(lua_State *l){

@@ -84,7 +84,7 @@ bool loadIQMMesh(string filename, iqmheader header, Model &target, unsigned char
 
 	iqmmesh *meshes = (iqmmesh*)&buf[header.ofs_meshes];
 
-	GLuint texid;
+	Texture tex;
 	if(GL){
 		for(int i=0;i<(int)header.num_meshes;i++){
 			iqmmesh &m = meshes[i];
@@ -92,15 +92,15 @@ bool loadIQMMesh(string filename, iqmheader header, Model &target, unsigned char
 			cout << "WITH TEXTURE: " << &str[m.material] << endl;
 			//string texture = "./data/textures/";
 			string texture = &str[m.material];
-			texid =	resman.loadTexture(texture);
+			tex = resman.loadTexture(texture);
 			
-			if(texid == -1){
+			if(tex.id == -1){
 				cout << "Could not find " << texture <<endl;
-				texid = resman.loadTexture("default.png");
+				tex = resman.loadTexture("default.png");
 			}
 
-			target.setTEXID(texid);
-			target.textureIDS.push_back(texid);
+			target.setTEXID(tex.id);
+			target.textures.push_back(tex);
 			target.meshes.push_back(m);
 
 			//cout << "IMAGE X:"<<img.getSize().x << " IMAGE Y:" << img.getSize().y << endl;
@@ -183,7 +183,7 @@ bool loadIQMMesh(string filename, iqmheader header, Model &target, unsigned char
 				&target.verts[0],GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER,0);
 
-		cout << "VBO: " << vbo << " EBO: " << ebo << " ID " << texid << endl;
+		cout << "VBO: " << vbo << " EBO: " << ebo << " ID " << tex.id << endl;
 	}
 	return true;
 }
@@ -365,7 +365,7 @@ void Model::animate(string animName, float curTime, std::vector<glm::mat4> *outf
 	}
 }
 
-void Model::draw(ShaderProgram *prg, vector<GLuint> textures, vector<glm::mat4> outframe, bool texture, bool normal){
+void Model::draw(ShaderProgram *prg, vector<Texture> textures, vector<glm::mat4> outframe, bool texture, bool normal){
 	bool skin = true;
 	glUseProgram(prg->getID());
 	glm::mat3x4 outframe3x4[outframe.size()];
@@ -439,7 +439,7 @@ void Model::draw(ShaderProgram *prg, vector<GLuint> textures, vector<glm::mat4> 
 		iqmmesh &m = meshes[i];
 		if(texture){
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, textures[i]);
+			glBindTexture(GL_TEXTURE_2D, textures[i].id);
 			glUniform1i(prg->getUniform("inTexture"),0);
 		}
 		glDrawElements(GL_TRIANGLES, 3*m.num_triangles, GL_UNSIGNED_INT, &tris[m.first_triangle]);

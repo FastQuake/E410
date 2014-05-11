@@ -5,6 +5,7 @@
 #include <SFML/Audio.hpp>
 #include <map>
 #include "Graphics/model.hpp"
+#include "Graphics/Texture.hpp"
 
 extern std::string dataDir;
 extern std::string modelDir;
@@ -17,7 +18,7 @@ private:
 	std::map<std::string,Model> models;
 	std::map<std::string,sf::Font> fonts;
 	std::map<std::string,sf::Image> images;
-	std::map<std::string,GLuint> texs;
+	std::map<std::string,Texture> texs;
 	std::map<std::string,sf::SoundBuffer> sounds;
 
 	std::map<std::string, Model> noGLModels;
@@ -25,8 +26,7 @@ public:
 	Model *loadModel(std::string name);
 	sf::Font *loadFont(std::string name);
 	sf::Image *loadImage(std::string name);
-	GLuint loadTexture(std::string name);
-	GLuint loadTexture(std::string name, int *width, int *height);
+	Texture loadTexture(std::string name);
 	sf::SoundBuffer *loadSound(std::string name);
 
 	Model *loadNoGLModel(std::string name);

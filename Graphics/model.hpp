@@ -11,6 +11,7 @@
 #include <glm/gtx/norm.hpp>
 #include "iqm.hpp"
 #include "GraphicsUtils.hpp"
+#include "Texture.hpp"
 
 struct vertex{
     GLfloat position[3];
@@ -31,7 +32,7 @@ class Model {
 		std::vector<iqmtriangle> triangles;
 		std::vector<iqmmesh> meshes;
 		std::vector<iqmjoint> joints;
-		std::vector<GLuint> textureIDS;
+		std::vector<Texture> textures;
 		std::vector<glm::mat4> baseframe;
 		std::vector<glm::mat4> inversebaseframe;
 		std::vector<iqmanim> anims;
@@ -44,7 +45,7 @@ class Model {
 		void setVBO(GLuint vbo);
 		void setTEXID(GLuint id);
 
-		void draw(ShaderProgram *prg, std::vector<GLuint> textures,std::vector<glm::mat4> outframe, bool texture, bool normal);
+		void draw(ShaderProgram *prg, std::vector<Texture> textures,std::vector<glm::mat4> outframe, bool texture, bool normal);
 		void animate(std::string animName, float currentframe, std::vector<glm::mat4> *outframe);
 };
 
