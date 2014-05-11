@@ -5,7 +5,6 @@ require "ai"
 peers = {}
 peerID = 0
 playerSpeed = 5
-bulletd = 300
 function onPeerConnect(id)
 	print("Got connection from peer "..id)
 	network.sendPacket(id, "player".. peerID)
@@ -158,7 +157,7 @@ function update(dt)
 			pathTimer = 0
 			AIManager.buildMonsterPaths(Vector.create(v.model:getPos()))
 		end
-		AIManager.stepMonsters(peers)
+		AIManager.stepMonsters(peers,delta)
 	end
 	firstRun = false
 end

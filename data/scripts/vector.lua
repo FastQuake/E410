@@ -79,6 +79,14 @@ function Vector:get()
 	return self.x, self.y, self.z
 end
 
+function Vector:copy()
+	local v = Vector.create(0,0,0)
+	v.x = self.x
+	v.y = self.y
+	v.z = self.z
+	return v
+end
+
 function Vector:rotate(angle, axis)
 	return Vector.scalarMul(math.cos(math.rad(angle)),self) 
 		+ Vector.scalarMul(math.sin(math.rad(angle)), (Vector.cross(axis,self))) 

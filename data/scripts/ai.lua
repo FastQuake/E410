@@ -3,7 +3,7 @@ require "networkutils"
 local nodes = {}
 local monsters = {}
 AIManager = {}
-
+bulletd = 300
 function tablelength(T)
   local count = 0
   for _ in pairs(T) do count = count + 1 end
@@ -58,6 +58,7 @@ function AIManager.addMonster(numPlayers)
 	monster.pos = Vector.create(18,2,5)
 	monster.path = {}
 	monster.targetPlayer = math.random(0,numPlayers-1)
+	monster.bulletTimer = 0
 	table.insert(monsters,monster)
 end
 
@@ -151,7 +152,7 @@ function AIManager.buildMonsterPaths(startPos)
 	end
 end
 
-function AIManager.stepMonsters(peers)
+function AIManager.stepMonsters(peers, dt)
 	for k,v in pairs(monsters) do
 		local targetPos = Vector.create(Peer.getPeer(peers,v.targetPlayer).model:getPos())
 		targetPos.y = targetPos.y+1
@@ -172,7 +173,9 @@ function AIManager.stepMonsters(peers)
 				v.targetNodeNum = v.targetNodeNum+1
 			end
 		end
-		local dir = Vector.normalize(targetPos-v.pos)
+		local p2 = v.pos:copy()
+		p2.y = p2.y+1.5
+		local dir = Vector.normalize(targetPos-p2)
 
 		local dirx,diry,dirz = dir:get()
 		local yaw = math.acos(Vector.dot(Vector.create(1,0,0),Vector.create(dirx,0,dirz)))
@@ -180,15 +183,19 @@ function AIManager.stepMonsters(peers)
 		if dirz > 0 then
 			yaw = -yaw
 		end
-		local posx,posy,posz = v.pos:get()
-		local obj,x,y,z = GO.castRay(posx,posy,posz,dirx,diry,dirz,100,4)
-		v.model:setRot(0,yaw,0)
-		if obj ~= nil then
-		--	print(obj:getTag())
-			if obj:getTag() == "player"..v.targetPlayer then
-		--		print("shoting")
-				network.sendPacket(-1,"shoot "..posx.." "..(posy+2).." "..posz.." "..x.." "..y.." "..z)
+		if v.bulletTimer > 0.5 then
+			local rx = (math.random()/2)-0.25
+			local ry = (math.random()/4)-0.125
+			local rz = (math.random()/2)-0.25
+			local obj,x,y,z = GO.castRay(p2.x,p2.y,p2.z,dirx+rx,diry+ry,dirz+rz,100,4)
+			v.model:setRot(0,yaw,0)
+			if obj ~= nil then
+				network.sendPacket(-1,"shoot "..p2.x.." "..p2.y.." "..p2.z.." "..x.." "..y.." "..z)
+			else
+				network.sendPacket(-1,"shoot "..p2.x.." "..p2.y.." "..p2.z.." "..bulletd*(dirx+rx).." "..bulletd*(diry+ry).." "..bulletd*(dirz+rz))
 			end
+			v.bulletTimer = 0
 		end
+		v.bulletTimer = v.bulletTimer + dt
 	end
 end
