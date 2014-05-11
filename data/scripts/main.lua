@@ -46,6 +46,11 @@ function createObject(obj)
 end
 
 function onReceivePacket(data)
+	out = ""
+	for k,v in ipairs(data) do
+		out = out..v
+	end
+	--print(out)
 	if data[1]:sub(1,6) == "player" then	
 		player.id = data[1]:sub(7)
 		h:show(true)

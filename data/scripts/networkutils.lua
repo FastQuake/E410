@@ -38,7 +38,7 @@ function Peer.getIDFromObject(list, obj)
 end
 
 function getModelFromID(id)
-	for k,v in ipairs(serverObjects) do
+	for k,v in pairs(serverObjects) do
 		if id == v:getID() then
 			return v
 		end
