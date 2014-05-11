@@ -21,9 +21,11 @@ player.model = nil
 player.id = -1
 player.height = 2
 player.hp = 100
+player.ammo = 100
 paused = false
 pausetimer = 0
 bullets = {}
+bulletTimer = 0
 function myPos()
 	print(Vector.create(player.model:getPos()))
 end
@@ -118,7 +120,7 @@ function init()
 	camera.setCam(cam)
 
 	light = GO.createLight()
-	light:setPos(16,2.35,2.55)
+	light:setPos(18,2.35,2.55)
 
 	h = HUD.create(player)
 	h:show(false)
@@ -142,6 +144,7 @@ function update(dt)
 	end
 	time = time + dt
 	frames = frames + 1
+	bulletTimer = bulletTimer+dt
 	title:update(dt)
 	if title.state == tstates.play then
 		title:show(false)
@@ -181,10 +184,12 @@ function update(dt)
 			paused = false
 			input.setGuiMousePos(width/2,height/2)
 		end
-		if input.isMouseDown(mouse.Left) then
+		if input.isMouseDown(mouse.Left) and bulletTimer > 0.3 and player.ammo > 0 then
 			local pos = Vector.create(cam:getPos())
 			local dir = Vector.create(cam:getLookat())
 			network.sendPacket("shoot "..(pos+dir).." "..dir)
+			player.ammo = player.ammo -1
+			bulletTimer = 0
 		end
 		player.oldRot = player.newRot
 

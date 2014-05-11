@@ -14,6 +14,11 @@ function HUD.create(player)
 	h.gui.hp:setPos(width/2-200,10)
 	h.gui.hp:setColour(200,0,0,255)
 
+	h.gui.ammo = GUI.createText()
+	h.gui.ammo:setString(player.ammo)
+	h.gui.ammo:setCharSize(32)
+	h.gui.ammo:setPos(-100,-50)
+
 	h.gui.cross = GUI.createImg()
 	h.gui.cross:setImg("crosshairs.png")
 	h.gui.cross:setZ(-2)
@@ -32,6 +37,7 @@ function HUD:update()
 	local scale = self.player.hp/100
 	self.gui.hp:setPos(width/2 - (400*scale)/2,10)
 	self.gui.hp:setScale(scale*400,30)
+	self.gui.ammo:setString(player.ammo)
 	
 	if player.model ~= nil then
 		local x,y,z = player.model:getRot()
