@@ -31,9 +31,9 @@ function AIManager.addNode(id,x,y,z)
 end
 
 function AIManager.addNeighbors(id1,ids)
-	for id in pairs(ids) do
+	for k,v in pairs(ids) do
 		local node = nodes[id1]
-		table.insert(node.neighbors,nodes[id])
+		table.insert(node.neighbors,nodes[v])
 	end
 end
 
@@ -101,6 +101,7 @@ function AIManager.buildMonsterPaths(startPos)
 		local ignoreList = {}
 		local nodehere = AIManager.findVisibleNode(v.pos)
 		local nodethere = AIManager.findVisibleNode(startPos)
+		--print(nodethere.model:getTag())
 		table.insert(v.path,nodehere)
 		table.insert(ignoreList,nodehere)
 		local pathComplete = false
@@ -110,7 +111,6 @@ function AIManager.buildMonsterPaths(startPos)
 			local min = 9999
 			local dead = 0
 			local endNode = v.path[#v.path]
-			print(endNode.model:getTag())
 			local neighbors = endNode.neighbors
 			for l,w in pairs(neighbors) do
 				local ignored = false
@@ -124,20 +124,20 @@ function AIManager.buildMonsterPaths(startPos)
 						table.remove(v.path)
 						break
 					end
-				end
-				distance = Vector.distance(w.pos,nodethere.pos)
-				if distance < min then
-					min = distance
-					closestNode = w
+				else
+					distance = Vector.distance(w.pos,nodethere.pos)
+					if distance < min then
+						min = distance
+						closestNode = w
+					end
 				end
 			end
 			if tableContains(ignoreList,closestNode) == false then
-				print("Pathed to "..closestNode.model:getTag())
 				table.insert(v.path,closestNode)
 				table.insert(ignoreList,closestNode)
 			end
 			if v.path[#v.path] == nodethere then
-				print("PATH DONE")
+				--print("PATH DONE")
 				pathComplete = true
 			end
 		end

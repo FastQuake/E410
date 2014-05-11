@@ -99,15 +99,17 @@ function init()
 	AIManager.addNeighbors(4,{3,6,2}) --right ramp top
 	AIManager.addNeighbors(5,{3,6,7}) --Left door inside
 	AIManager.addNeighbors(6,{5,7,4}) --Right door inside
-	AIManager.addNeighbors(7,{8,6,5,7}) --big ramp bottom
+	AIManager.addNeighbors(7,{8,6,5}) --big ramp bottom
 	AIManager.addNeighbors(8,{7}) --big ramp top
 end
 
 delta = 0
-asdf = false
+pathTimer = 0
+firstRun = true
 function update(dt)
 	--print("running")
 	delta = dt
+	pathTimer = pathTimer + dt
 	for k,v in pairs(peers) do
 		local fwd = Vector.create(v.model:getLookat())
 		local right = Vector.cross(fwd,Vector.create(0,1,0))
@@ -121,10 +123,11 @@ function update(dt)
 		else
 			v.model:setVelocity(0,vel.y,0)
 		end
-		if asdf == false then
-			AIManager.buildMonsterPaths(Vector.create(0,2,0))
-			asdf = true
+		if pathTimer > 5 or firstRun == true then
+			pathTimer = 0
+			AIManager.buildMonsterPaths(Vector.create(v.model:getPos()))
 		end
-		AIManager.stepMonsters(Vector.create(v.model:getPos()))
+		AIManager.stepMonsters()
 	end
+	firstRun = false
 end
