@@ -121,6 +121,9 @@ function init()
 
 	light = GO.createLight()
 	light:setPos(18,2.35,2.55)
+	light2 = GO.createLight()
+	light2:setPos(0,14,-4)
+	light2:setIntensity(550)
 
 	h = HUD.create(player)
 	h:show(false)
