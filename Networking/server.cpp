@@ -303,7 +303,7 @@ void serverMain(){
 		index++;
 		lua_pop(l,1);
 	}
-
+	serverRendMan.drawList.clear();
 	lua_close(l);
 	peerID = 0;
 	serverID = 0;
