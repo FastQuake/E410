@@ -115,11 +115,13 @@ void RenderManager::renderSprites(ShaderProgram *prg, float curTime){
 	glm::mat4 view = currentCam->view();
 	glUniformMatrix4fv(prg->getUniform("proj"),1,GL_FALSE,glm::value_ptr(proj));
 	glUniformMatrix4fv(prg->getUniform("view"),1,GL_FALSE,glm::value_ptr(view));
+	glDepthMask(0);
 	for(int i=0;i<sprites.size();i++){
 		if(sprites[i]->visible){
 			sprites[i]->draw(curTime,currentCam);
 		}
 	}
+	glDepthMask(1);
 }
 
 void RenderManager::updateUBO(){
