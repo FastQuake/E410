@@ -47,7 +47,7 @@ function HUD:update()
 		fwd.y =0
 		fwd = fwd:normalize()
 		local right = Vector.cross(fwd,Vector.create(0,1,0))
-		gunpos.y = gunpos.y+1.8
+		gunpos.y = gunpos.y+1.5
 		gunpos = gunpos +Vector.scalarMul(0.3,right)
 		h.gui.gun:setPos(gunpos:get())
 		h.gui.gun:setRot(-x,y,z)

@@ -49,8 +49,11 @@ end
 
 function AIManager.addMonster(numPlayers)
 	local monster = {}
-	monster.model = GO.loadIQM("cube.iqm","monster")
+	monster.model = GO.loadIQM("robit.iqm","monster")
 	monster.model:setBoxBody()
+	--monster.model:setExtBoxBody(-0.5,0,-0.5,0.5,2.5,0.5)
+	monster.model:setActivation(true)
+	monster.model:lockAxis(0,0,0)
 	monster.model:setPos(18,2,5)
 	monster.pos = Vector.create(18,2,5)
 	monster.path = {}
@@ -154,6 +157,11 @@ function AIManager.stepMonsters(peers)
 		if v.targetNodeNum <= #v.path then
 			v.pos = Vector.create(v.model:getPos())
 			local vel = Vector.normalize(v.path[v.targetNodeNum].pos - v.pos)
+			if vel == Vector.create(0,0,0) then
+				network.sendPacket(-1, "stopanimate "..v.model:getID())	
+			else
+				network.sendPacket(-1, "animate "..v.model:getID())
+			end
 			v.model:setVelocity(Vector.scalarMul(3,vel):get())
 			if Vector.distance(v.path[v.targetNodeNum].pos,v.pos) < 1.0 then
 				v.targetNodeNum = v.targetNodeNum+1
