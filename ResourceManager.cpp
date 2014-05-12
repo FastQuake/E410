@@ -88,6 +88,12 @@ sf::SoundBuffer *ResourceManager::loadSound(string name){
 	}
 }
 Texture ResourceManager::loadTexture(string name){
+	if(name.length() == 0){
+		Texture error;
+		error.id = -1;
+		cerr << "Texture name is empty." << endl;
+		return error;
+	}
 	map<string, Texture>::iterator it = texs.find(name);
 	if(it == texs.end()){
 		GLuint i;
