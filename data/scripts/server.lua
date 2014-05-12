@@ -128,7 +128,7 @@ function init()
 	AIManager.addNeighbors(11,{9,10,12,13}) -- middle upstairs
 	AIManager.addNeighbors(12,{11}) --left upstairs
 	AIManager.addNeighbors(13,{11}) --right upstairs
-	AIManager.addNeighbors(14,{1.2}) --near window, first floor
+	AIManager.addNeighbors(14,{1,2}) --near window, first floor
 end
 
 delta = 0
