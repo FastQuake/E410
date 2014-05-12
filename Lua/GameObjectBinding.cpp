@@ -429,8 +429,10 @@ int l_raycast(lua_State *l){
 	float dis = l_toNumber(l,7);
 	int filterMask = l_toNumber(l,8);
 
-	if(dir == btVector3(0,0,0))
+	if(dir == btVector3(0,0,0)){
 		dir = btVector3(0,0,0);
+		errorTrace(l, "attempt to cast ray direction 0");
+	}
 	else
 		dir = dis*dir.normalize();
 	btCollisionWorld::ClosestRayResultCallback rayCallback(pos, pos+dir);

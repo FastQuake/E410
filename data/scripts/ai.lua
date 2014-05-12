@@ -109,19 +109,24 @@ function AIManager.findVisibleNode(startPos)
 			end
 		end
 		local dir = closestNode.pos-startPos
-		local dirx,diry,dirz = dir:get()
-		local posx,posy,posz = startPos:get()
-		local obj,x,y,z = GO.castRay(posx,posy,posz,dirx,diry,dirz,50,1)
-		if obj ~= nil then
-			if obj:getTag() ~= "floor" then
-				out = closestNode
-				return out
-			end
-			table.insert(triedNodes,closestNode)
-			tries = tries+1
+		if dir == Vector.create(0,0,0) then
+			out = closestNode
+			return out
 		else
-			table.insert(triedNodes,closestNode)
-			tries = tries+1
+			local dirx,diry,dirz = dir:get()
+			local posx,posy,posz = startPos:get()
+			local obj,x,y,z = GO.castRay(posx,posy,posz,dirx,diry,dirz,50,1)
+			if obj ~= nil then
+				if obj:getTag() ~= "floor" then
+					out = closestNode
+					return out
+				end
+				table.insert(triedNodes,closestNode)
+				tries = tries+1
+			else
+				table.insert(triedNodes,closestNode)
+				tries = tries+1
+			end
 		end
 	end
 end
@@ -187,7 +192,7 @@ function AIManager.spawnWave()
 		--local p = Vector.create(math.random(-4,4),0,math.random(-4,4))
 		local p = nodes[math.random(1,#nodes)].pos
 		--p.x = p.x + math.random(-1,1)
-		p.y = p.y + 1.5
+		p.y = p.y + 0.5
 		--p.z = p.z + math.random(-1,1)
 		AIManager.addMonster(#peers,p)
 	end
