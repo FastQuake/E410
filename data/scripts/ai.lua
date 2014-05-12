@@ -80,6 +80,7 @@ function AIManager.addMonster(numPlayers, pos)
 	monster.path = {}
 	monster.targetPlayer = math.random(0,numPlayers-1)
 	monster.bulletTimer = 0
+	monster.maxtime = (math.random()*0.5)+0.3
 	monster.hp = 100
 	table.insert(monsters,monster)
 end
@@ -224,7 +225,7 @@ function AIManager.stepMonsters(peers, dt)
 		if dirz > 0 then
 			yaw = -yaw
 		end
-		if v.bulletTimer > 0.5 then
+		if v.bulletTimer > v.maxtime then
 			local rx = (math.random()/3)-(1/6)
 			local ry = (math.random()/3)-(1/6)
 			local rz = (math.random()/3)-(1/6)
