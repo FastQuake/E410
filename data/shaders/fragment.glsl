@@ -66,7 +66,7 @@ void main(){
 		shadowed += (1.0/3.0)*texture(shadowCubes,vec4(shadowCoords[i].xyz-offsets[0],i),depth-bias);
 		shadowed += (1.0/3.0)*texture(shadowCubes,vec4(shadowCoords[i].xyz-offsets[1],i),depth-bias);
 		shadowed += (1.0/3.0)*texture(shadowCubes,vec4(shadowCoords[i].xyz-offsets[2],i),depth-bias);
-		lightCoefficient += (1.0-shadowed)*(lightIntensities[i].x/(4.0*3.14159265359*pow(distance(lightPositions[i],coord3d_f),2.0)));
+		lightCoefficient += (1.0-shadowed)*(lightIntensities[i].x/(pow(distance(lightPositions[i],coord3d_f),2.0)));
 	}
 	lightCoefficient = max(lightCoefficient,0.01f);
 	outColour = vec4((specular(lightCoefficient)+lightCoefficient)*texColour.rgb,1.0);
