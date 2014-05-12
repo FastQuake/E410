@@ -191,9 +191,9 @@ function AIManager.spawnWave()
 	for i=1,numMonsters do
 		--local p = Vector.create(math.random(-4,4),0,math.random(-4,4))
 		local p = nodes[math.random(1,#nodes)].pos
-		--p.x = p.x + math.random(-1,1)
+		p.x = p.x + math.random()-0.5
 		p.y = p.y + 1
-		--p.z = p.z + math.random(-1,1)
+		p.z = p.z + math.random()-0.5
 		AIManager.addMonster(#peers,p)
 	end
 	AIManager.buildMonsterPaths()
@@ -210,6 +210,11 @@ function AIManager.stepMonsters(peers, dt)
 		targetPos.y = targetPos.y+1
 		local dir = (targetPos-Vector.create(v.model:getPos())):normalize()
 		local pp = Vector.create(v.model:getPos())
+		if math.abs(pp.x) > 50 or math.abs(pp.y) > 50 or math.abs(pp.z) > 50 then
+				network.sendPacket(-1, "explode "..pp.x.." "..pp.y.." "..pp.z)
+				removeMonster(v.model)
+				break
+		end
 		pp.y = pp.y+1
 		pp = pp+dir
 		local obj = GO.castRay(pp.x,pp.y,pp.z,dir.x,dir.y,dir.z,100,4)
