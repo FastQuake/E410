@@ -87,6 +87,7 @@ string floatToString(float input){
 }
 
 int main(int argc, char *argv[]){
+	srand(time(NULL));
 	//Set Default settings
 	width = 800;
 	height = 600;

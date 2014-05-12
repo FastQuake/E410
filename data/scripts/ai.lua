@@ -183,7 +183,11 @@ function AIManager.spawnWave()
 		numMonsters = 10
 	end
 	for i=1,numMonsters do
-		local p = Vector.create(math.random(-4,4),0,math.random(-4,4))
+		--local p = Vector.create(math.random(-4,4),0,math.random(-4,4))
+		local p = nodes[math.random(1,#nodes)].pos
+		--p.x = p.x + math.random(-1,1)
+		p.y = p.y + 1.5
+		--p.z = p.z + math.random(-1,1)
 		AIManager.addMonster(#peers,p)
 	end
 	AIManager.buildMonsterPaths()

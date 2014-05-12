@@ -429,7 +429,10 @@ int l_raycast(lua_State *l){
 	float dis = l_toNumber(l,7);
 	int filterMask = l_toNumber(l,8);
 
-	dir = dis*dir.normalize();
+	if(dir == btVector3(0,0,0))
+		dir = btVector3(0,1,0);
+	else
+		dir = dis*dir.normalize();
 	btCollisionWorld::ClosestRayResultCallback rayCallback(pos, pos+dir);
 	rayCallback.m_collisionFilterMask = filterMask;
 	rayCallback.m_collisionFilterGroup = filterMask;
