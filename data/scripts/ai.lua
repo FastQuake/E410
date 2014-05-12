@@ -191,6 +191,7 @@ end
 function AIManager.stepMonsters(peers, dt)
 	if #monsters == 0 then
 		wave = wave+1
+		network.sendPacket(-1, "wave")
 		AIManager.spawnWave()
 	end
 	for k,v in pairs(monsters) do

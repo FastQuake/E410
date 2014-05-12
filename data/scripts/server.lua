@@ -57,7 +57,7 @@ function onReceivePacket(id, data)
 			network.sendPacket(-1,"shoot "..data[2].." "..data[3].." "..data[4].." "..x.." "..y.." "..z)
 			if obj:getTag() == "monster" then
 				local mon = getAiFromObj(obj)
-				mon.hp = mon.hp - 100
+				mon.hp = mon.hp - 40
 				if mon.hp <= 0 then
 					local x,y,z = obj:getPos()
 					y = y + 1.5

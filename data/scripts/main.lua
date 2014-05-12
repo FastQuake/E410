@@ -15,13 +15,12 @@ states = {
 	server = 3,
 }
 
+pBullets = 75
 state = states.default
 player = {}
 player.model = nil
 player.id = -1
 player.height = 2
-player.hp = 100
-player.ammo = 100
 paused = false
 pausetimer = 0
 bullets = {}
@@ -81,6 +80,9 @@ function onReceivePacket(data)
 		sound.playSound("explode.wav")
 		local pos = Vector.create(data[2],data[3],data[4])
 		table.insert(tSprites, timedSprite("explosion.png",pos,16,1,2,0.8))
+	elseif data[1] == "wave" then
+		player.hp = 100
+		player.ammo = pBullets
 	end
 end
 
@@ -168,6 +170,9 @@ function update(dt)
 		cam:setRot(0,0,0)
 		input.setGuiMousePos(width/2, height/2)
 
+		player.hp = 100
+		player.ammo = pBullets
+
 		GO.deleteLight(planetLight)
 
 		light = GO.createLight()
@@ -190,6 +195,9 @@ function update(dt)
 			pos = Vector.create(player.model:getPos())
 			pos = pos+Vector.create(0,player.height,0)
 			cam:setPos(pos:get())
+		end
+		if player.hp <= 0 then
+			network.reset()
 		end
 		local mousex, mousey = input.getMousePos()
 		mousex = mousex - (width/2)
