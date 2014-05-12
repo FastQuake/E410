@@ -89,11 +89,11 @@ function onCollision(a, b)
 end
 
 function init()
-	shit = GO.loadIQM("monkey.iqm","monkey")
+	--[[shit = GO.loadIQM("monkey.iqm","monkey")
 	--shit:setTriangleBody()
 	shit:setBoxBody()
 	shit:setMass(1.0)
-	shit:setPos(3,5,0)
+	shit:setPos(3,5,0)]]--
 
 	floor = GO.loadIQM("level1.iqm", "floor")
 	floor:setTriangleBody()

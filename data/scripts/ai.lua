@@ -42,6 +42,7 @@ end
 
 function AIManager.addNode(id,x,y,z)
 	local node = {}
+	y = y +1
 	node.pos = Vector.create(x,y,z)
 	node.id = id
 	node.neighbors = {}
