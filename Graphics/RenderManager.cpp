@@ -148,8 +148,13 @@ void RenderManager::updateUBO(){
 	}
 	data.numLights.x = lights.size();
 	glBindBufferARB(GL_UNIFORM_BUFFER,ubo);
+	cout << "updating ubo: " << ubo << endl;
 	glBufferSubDataARB(GL_UNIFORM_BUFFER,0,sizeof(data),&data);
+	cout << "error buffersubdata: " << endl;
+	checkGLError();
 	glBindBufferARB(GL_UNIFORM_BUFFER,0);
+	cout << "error bindbufferarb: " << endl;
+	checkGLError();
 }
 
 void RenderManager::remove(GameObject *obj){
