@@ -259,9 +259,10 @@ function update(dt)
 		state = states.default
 
 		GO.deleteLight(light)
-		GO.deleteLight(light2)
-		GO.deleteLight(sun)
+		GO.deleteLight(light3)
+		GO.deleteLight(light4)
 		planetLight = GO.createLight()
 		planetLight:setPos(-3.5,0,5)
+		planetLight:setIntensity(80)
 	end
 end
