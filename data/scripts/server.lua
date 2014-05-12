@@ -98,6 +98,7 @@ function init()
 	floor = GO.loadIQM("level1.iqm", "floor")
 	floor:setTriangleBody()
 	floor:setMass(0)
+
 	--floor:setScale(100,1,100)
 	--floor:setPos(0,-1,0)
 	AIManager.addNode(1,-0.14,-3.5,3.0);

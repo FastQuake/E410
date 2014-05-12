@@ -142,6 +142,9 @@ function init()
 
 	planetLight = GO.createLight()
 	planetLight:setPos(-3.5,0,5)
+
+	pSprite = GO.createSprite("psprite.png")
+	pSprite:setPos(-80,0,0)
 end
 
 player.oldRot = 0
