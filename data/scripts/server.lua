@@ -108,15 +108,27 @@ function init()
 	AIManager.addNode(6,15.5,-2.2,-10);
 	AIManager.addNode(7,20,-2.2,-4);
 	AIManager.addNode(8,28.6,1.14,-4);
+	AIManager.addNode(9,28.6,7.9,-18) 
+	AIManager.addNode(10,28.6,7.9,9.8) 
+	AIManager.addNode(11,18.9,7.9,-3) 
+	AIManager.addNode(12,0,9,9.7) 
+	AIManager.addNode(13,-4.3,9,-17.3) 
+	AIManager.addNode(14,-12.4,-3.4,-5.3) 
 
-	AIManager.addNeighbors(1,{2,3}) --left ramp bottom
-	AIManager.addNeighbors(2,{1,4}) --right ramp bottom
+	AIManager.addNeighbors(1,{2,3,14}) --left ramp bottom
+	AIManager.addNeighbors(2,{1,4,14}) --right ramp bottom
 	AIManager.addNeighbors(3,{4,5,1}) --left ramp top
 	AIManager.addNeighbors(4,{3,6,2}) --right ramp top
 	AIManager.addNeighbors(5,{3,6,7}) --Left door inside
 	AIManager.addNeighbors(6,{5,7,4}) --Right door inside
 	AIManager.addNeighbors(7,{8,6,5}) --big ramp bottom
-	AIManager.addNeighbors(8,{7}) --big ramp top
+	AIManager.addNeighbors(8,{7,9,10}) --big ramp top
+	AIManager.addNeighbors(9,{8,11}) --left high top
+	AIManager.addNeighbors(10,{8,11}) --right high top
+	AIManager.addNeighbors(11,{9,10,12,13}) -- middle upstairs
+	AIManager.addNeighbors(12,{11}) --left upstairs
+	AIManager.addNeighbors(13,{11}) --right upstairs
+	AIManager.addNeighbors(14,{1.2}) --near window, first floor
 end
 
 delta = 0
