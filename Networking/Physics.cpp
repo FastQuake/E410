@@ -28,7 +28,7 @@ PhysWorld::PhysWorld(){
 	btGImpactCollisionAlgorithm::registerAlgorithm(dispatcher);
 	solver = new btSequentialImpulseConstraintSolver();
 	dynWorld = new btDiscreteDynamicsWorld(dispatcher,broadphase,solver,conf);
-	dynWorld->setGravity(btVector3(0,-9.81,0));
+	dynWorld->setGravity(btVector3(0,-4.91,0));
 	debugDraw.setDebugMode(1);
 	dynWorld->setDebugDrawer(&debugDraw);
 }
@@ -42,7 +42,7 @@ PhysWorld::~PhysWorld(){
 }
 
 void PhysWorld::step(float dt){
-	if(dt > 1)
+	if(dt > (1.0/60.0))
 		dynWorld->stepSimulation((1.0/60.0),0,0);
 	else
 		dynWorld->stepSimulation(dt,0,0);
