@@ -12,7 +12,7 @@ function Peer.create(modelName, tag)
 	p.model:setExtBoxBody(-0.5,0,-0.5,0.5,2.5,0.5)
 	p.model:setActivation(true)
 	p.model:setMass(100)
-	p.model:setPos(0,10,0)
+	p.model:setPos(0,-1,-4)
 	p.model:lockAxis(0,0,0)
 	peerID = peerID + 1
 	return p

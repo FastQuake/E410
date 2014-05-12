@@ -171,17 +171,18 @@ function update(dt)
 		GO.deleteLight(planetLight)
 
 		light = GO.createLight()
-		light:setPos(18,2.35,2.55)
+		light:setPos(18,5,-5)
 		light2 = GO.createLight()
 		light2:setPos(0,14,-4)
 		light2:setIntensity(550)
 
 		sun = GO.createLight()
-		sun:setPos(0,20,0)
-		sun:setIntensity(8000)
+		sun:setPos(18,15,-4)
+		sun:setIntensity(1000)
 
 		light2 = GO.createLight()
-		light2:setPos(16,2.35,-12.55)
+		light2:setPos(0,12,0)
+		light2:setIntensity(1000)
 	end
 	if state == states.play then
 		h:update()
