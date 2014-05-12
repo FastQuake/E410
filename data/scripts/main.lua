@@ -130,7 +130,7 @@ function init()
 	fpsCounter = GUI.createText()
 	fpsCounter:setCharSize(26)
 	fpsCounter:setString("FPS: ".. 0)
-	--fpsCounter:setVisible(false)
+	fpsCounter:setVisible(false)
 	--Create stuff for scene
 	cam = camera.createCam()
 	cam:setPos(0,0,0)

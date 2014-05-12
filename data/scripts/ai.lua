@@ -42,7 +42,6 @@ end
 
 function AIManager.addNode(id,x,y,z)
 	local node = {}
-	y = y +1
 	node.pos = Vector.create(x,y,z)
 	node.id = id
 	node.neighbors = {}
@@ -129,6 +128,7 @@ function AIManager.findVisibleNode(startPos)
 			end
 		end
 	end
+	return 1
 end
 
 function AIManager.buildMonsterPaths()
@@ -192,7 +192,7 @@ function AIManager.spawnWave()
 		--local p = Vector.create(math.random(-4,4),0,math.random(-4,4))
 		local p = nodes[math.random(1,#nodes)].pos
 		--p.x = p.x + math.random(-1,1)
-		p.y = p.y + 0.5
+		p.y = p.y + 1
 		--p.z = p.z + math.random(-1,1)
 		AIManager.addMonster(#peers,p)
 	end
@@ -208,24 +208,45 @@ function AIManager.stepMonsters(peers, dt)
 	for k,v in pairs(monsters) do
 		local targetPos = Vector.create(Peer.getPeer(peers,v.targetPlayer).model:getPos())
 		targetPos.y = targetPos.y+1
-		if v.targetNodeNum <= #v.path then
-			local oldv = Vector.create(v.model:getVelocity())
-			v.pos = Vector.create(v.model:getPos())
-			local vel = (v.path[v.targetNodeNum].pos - v.pos):normalize()
-			vel.x = 3*vel.x
-			vel.z = 3*vel.z
-			vel.y = oldv.y
-			if vel == Vector.create(0,0,0) then
-				network.sendPacket(-1, "stopanimate "..v.model:getID())	
-			else
-				network.sendPacket(-1, "animate "..v.model:getID())
+		local dir = (targetPos-Vector.create(v.model:getPos())):normalize()
+		local pp = Vector.create(v.model:getPos())
+		pp.y = pp.y+1
+		pp = pp+dir
+		local obj = GO.castRay(pp.x,pp.y,pp.z,dir.x,dir.y,dir.z,100,4)
+		if obj ~= nil then
+			if obj:getTag():sub(1,6) == "player" then
+				local oldv = Vector.create(v.model:getVelocity())
+				local vel = dir:copy()
+				vel.x = 3*vel.x
+				vel.z = 3*vel.z
+				vel.y = oldv.y
+				v.model:setVelocity(Vector.scalarMul(1,vel):get())
+				if vel == Vector.create(0,0,0) then
+					network.sendPacket(-1, "stopanimate "..v.model:getID())	
+				else
+					network.sendPacket(-1, "animate "..v.model:getID())
+				end
 			end
-			v.model:setVelocity(Vector.scalarMul(1,vel):get())
-			if Vector.distance(v.path[v.targetNodeNum].pos,v.pos) < 1.0 then
-				v.targetNodeNum = v.targetNodeNum+1
+		else
+			if v.targetNodeNum < #v.path then
+				local oldv = Vector.create(v.model:getVelocity())
+				v.pos = Vector.create(v.model:getPos())
+				local vel = (v.path[v.targetNodeNum].pos - v.pos):normalize()
+				vel.x = 3*vel.x
+				vel.z = 3*vel.z
+				vel.y = oldv.y
+				if vel == Vector.create(0,0,0) then
+					network.sendPacket(-1, "stopanimate "..v.model:getID())	
+				else
+					network.sendPacket(-1, "animate "..v.model:getID())
+				end
+				v.model:setVelocity(Vector.scalarMul(1,vel):get())
+				if Vector.distance(v.path[v.targetNodeNum].pos,v.pos) < 1.0 then
+					v.targetNodeNum = v.targetNodeNum+1
+				end
 			end
 		end
-		local p2 = v.pos:copy()
+		local p2 = Vector.create(v.model:getPos())
 		p2.y = p2.y+1.5
 		local dir = Vector.normalize(targetPos-p2)
 

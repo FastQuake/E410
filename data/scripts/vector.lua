@@ -41,6 +41,13 @@ function Vector.__eq(lhs, rhs)
 	return false
 end
 
+function Vector.rangeCompare(lhs,rhs,range)
+	if (math.abs(lhs.x - rhs.x) > range) or (math.abs(lhs.y-rhs.y)>range) or (math.abs(lhs.z-rhs.z)>range) then
+		return false
+	end
+	return true
+end
+
 function Vector.dot(lhs, rhs)
 	local out = lhs.x*rhs.x + lhs.y*rhs.y + lhs.z*rhs.z
 	return out
