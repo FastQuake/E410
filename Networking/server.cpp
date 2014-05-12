@@ -110,6 +110,13 @@ void serverMain(){
 	lua_newtable(l);
 	lua_setglobal(l,"serverObjects");
 
+	//Get some table funcs
+	if(luaL_dostring(l,serverDelete)){
+		cerr << lua_tostring(l, -1) << endl;
+		serverRunning = false;
+		return;
+	}
+
 	//load main server lua function
 	if(luaL_dofile(l,"./data/scripts/server.lua")){
 		cerr << "error " << lua_tostring(l,-1)<< endl;

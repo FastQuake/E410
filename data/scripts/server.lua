@@ -57,7 +57,7 @@ function onReceivePacket(id, data)
 			network.sendPacket(-1,"shoot "..data[2].." "..data[3].." "..data[4].." "..x.." "..y.." "..z)
 			if obj:getTag() == "monster" then
 				local mon = getAiFromObj(obj)
-				mon.hp = mon.hp - 10
+				mon.hp = mon.hp - 100
 				if mon.hp <= 0 then
 					local x,y,z = obj:getPos()
 					y = y + 1.5
@@ -85,19 +85,6 @@ function onPeerDisconnect(id)
 end
 
 function onCollision(a, b)
-	if a:getTag() == "bullet" then
-		--a:remove()
-		serverObjects[a:getID()]:remove()
-		serverObjects[a:getID()] = nil
-		--a = nil
-		return true
-	elseif b:getTag() == "bullet" then 
-		--b:remove()
-		serverObjects[b:getID()]:remove()
-		serverObjects[b:getID()] = nil
-		--b = nil
-		return true
-	end
 	return false
 end
 
@@ -113,7 +100,6 @@ function init()
 	floor:setMass(0)
 	--floor:setScale(100,1,100)
 	--floor:setPos(0,-1,0)
-	AIManager.addMonster(1)
 	AIManager.addNode(1,-0.14,-3.5,3.0);
 	AIManager.addNode(2,-0.14,-3.5,-10);
 	AIManager.addNode(3,8.6,-2.2,3.0);

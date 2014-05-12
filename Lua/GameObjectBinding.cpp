@@ -50,19 +50,25 @@ int l_serverLoadIQM(lua_State *l){
 
 	//TODO This is a very ugly hack to keep track of objects
 	//Fix it after the contest when you have time
-	lua_getglobal(l, "serverObjects");
+	lua_getglobal(l, "__addServerObject");
 	GameObject *out = new (lua_newuserdata(l, sizeof(GameObject))) GameObject;
 	out->setModel(mod);
 	out->modelName = model;
 	out->id = serverID++;
 	out->tag = tag;
-	out->createConvexRigidBody();
+	//out->createConvexRigidBody();
+	out->createCubeRigidBody();
 	serverRendMan.drawList.push_back(out);
 	luaL_getmetatable(l, "MetaGO");
 	lua_setmetatable(l, -2);
-	lua_rawseti(l,-2,out->id); //set serverObjects[id] to GO
+	if(lua_pcall(l,1,1,0)){
+		cout << lua_tostring(l, -1) << endl;
+		global_con->out.println(lua_tostring(l, -1));
+	}
+	int index = l_toNumber(l,-1);
 
-	lua_rawgeti(l,-1,out->id); //return serverObjects[id]
+	lua_getglobal(l,"serverObjects");
+	lua_rawgeti(l,-1,index); //return serverObjects[id]
 
 	ENetPeer peer;
 	peer.address.host = -1;
@@ -245,6 +251,13 @@ int l_delete(lua_State *l){
 int l_serverDelete(lua_State *l){
 	GameObject *obj = l_toGO(l, 1);
 
+	/*lua_getglobal(l,"__serverDelete");
+	lua_pushnumber(l,obj->id);
+	if(lua_pcall(l,1,0,0)){
+		cout << lua_tostring(l, -1) << endl;
+		global_con->out.println(lua_tostring(l, -1));
+	}*/
+
 	serverRendMan.remove(obj);
 	physworld.removeBody(obj->body);
 	Packet p;
@@ -423,8 +436,12 @@ int l_raycast(lua_State *l){
 	physworld.dynWorld->rayTest(pos, pos+dir, rayCallback);
 	if(rayCallback.hasHit()){
 		GameObject *obj = serverRendMan.getBody(rayCallback.m_collisionObject);
-		lua_getglobal(l, "serverObjects");
-		lua_rawgeti(l, -1, obj->id);
+		lua_getglobal(l,"__getServerObject");
+		lua_pushnumber(l,obj->id);
+		if(lua_pcall(l,1,1,0)){
+			cout << lua_tostring(l, -1) << endl;
+			global_con->out.println(lua_tostring(l, -1));
+		}
 		lua_pushnumber(l,rayCallback.m_hitPointWorld.getX());
 		lua_pushnumber(l,rayCallback.m_hitPointWorld.getY());
 		lua_pushnumber(l,rayCallback.m_hitPointWorld.getZ());

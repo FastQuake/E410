@@ -43,9 +43,23 @@ const char *serverDelete = \
 	"if v:getID() == id then\n"
 	"v:remove()\n"
 	"table.remove(serverObjects, k)\n"
+	"return\n"
 	"end\n"
 	"end\n"
+	"end\n"
+	"function __addServerObject(obj)\n"
+	"table.insert(serverObjects, obj)\n"
+	"return #serverObjects\n"
+	"end\n"
+	"function __getServerObject(id)\n"
+	"for k,v in pairs(serverObjects) do\n"
+	"if v:getID() == id then\n"
+	"return v\n"
+	"end\n"
+	"end\n"
+	"return nil\n"
 	"end\n";
+
 
 int stringToInt(string input){
 	int out;
@@ -365,7 +379,8 @@ int main(int argc, char *argv[]){
 							continue;
 						}
 						
-						lua_getglobal(l, "serverObjects");
+						//lua_getglobal(l, "serverObjects");
+						lua_getglobal(l, "__addServerObject");
 						GameObject *out = new (lua_newuserdata(l, sizeof(GameObject))) GameObject;
 						out->setModel(mod);
 						out->magic = GOMAGIC;
@@ -376,11 +391,17 @@ int main(int argc, char *argv[]){
 						//Push gameobject onto global serverObjects table to keep track of it						
 						luaL_getmetatable(l, "MetaGO");
 						lua_setmetatable(l, -2);
-						lua_rawseti(l, -2, out->id);
+						//lua_rawseti(l, -2, out->id);
+						if(lua_pcall(l,1,1,0)){
+							cout << lua_tostring(l, -1) << endl;
+							global_con->out.println(lua_tostring(l, -1));
+						}
+						int index = l_toNumber(l,-1);
 
 						//push gameobject to lua createObject so a game script can handle it
+						lua_getglobal(l,"serverObjects");
 						lua_getglobal(l, "createObject"); //push createObject
-						lua_rawgeti(l, -2, out->id); // get serverObjects[id]
+						lua_rawgeti(l, -2, index); // get serverObjects[id]
 						if(lua_pcall(l,1,0,0)){ //call createObjects(serverObjects[id])
 							cout << lua_tostring(l, -1) << endl;
 							global_con->out.println(lua_tostring(l, -1));

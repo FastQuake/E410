@@ -5,6 +5,7 @@ require "networkutils"
 local monsters = {}
 AIManager = {}
 bulletd = 300
+wave = 1
 function tablelength(T)
   local count = 0
   for _ in pairs(T) do count = count + 1 end
@@ -33,6 +34,7 @@ function removeMonster(obj)
 	for k,v in pairs(monsters) do
 		if v.model:getID() == obj:getID() then
 			v.model:remove()
+			__serverDelete(v.model:getID())
 			table.remove(monsters,k)
 		end
 	end
@@ -66,15 +68,15 @@ function AIManager.getMonsters()
 	return monsters
 end
 
-function AIManager.addMonster(numPlayers)
+function AIManager.addMonster(numPlayers, pos)
 	local monster = {}
 	monster.model = GO.loadIQM("robit.iqm","monster")
 	--monster.model:setBoxBody()
 	monster.model:setExtBoxBody(-0.5,0,-0.5,0.5,2.5,0.5)
 	monster.model:setActivation(true)
 	monster.model:lockAxis(0,0,0)
-	monster.model:setPos(18,4,5)
-	monster.pos = Vector.create(18,2,5)
+	monster.model:setPos(pos:get())
+	monster.pos = pos
 	monster.path = {}
 	monster.targetPlayer = math.random(0,numPlayers-1)
 	monster.bulletTimer = 0
@@ -122,12 +124,14 @@ function AIManager.findVisibleNode(startPos)
 	end
 end
 
-function AIManager.buildMonsterPaths(startPos)
+function AIManager.buildMonsterPaths()
 	for k,v in pairs(monsters) do
+		local peer = Peer.getPeer(peers,v.targetPlayer)
+		local pvec = Vector.create(peer.model:getPos())
 		v.path = {}
 		local ignoreList = {}
 		local nodehere = AIManager.findVisibleNode(v.pos)
-		local nodethere = AIManager.findVisibleNode(startPos)
+		local nodethere = AIManager.findVisibleNode(pvec)
 		--print(nodethere.model:getTag())
 		table.insert(v.path,nodehere)
 		table.insert(ignoreList,nodehere)
@@ -172,7 +176,23 @@ function AIManager.buildMonsterPaths(startPos)
 	end
 end
 
+function AIManager.spawnWave()
+	local numMonsters = math.ceil(0.5*wave)
+	if numMonsters > 10 then
+		numMonsters = 10
+	end
+	for i=1,numMonsters do
+		local p = Vector.create(math.random(-4,4),0,math.random(-4,4))
+		AIManager.addMonster(#peers,p)
+	end
+	AIManager.buildMonsterPaths()
+end
+
 function AIManager.stepMonsters(peers, dt)
+	if #monsters == 0 then
+		wave = wave+1
+		AIManager.spawnWave()
+	end
 	for k,v in pairs(monsters) do
 		local targetPos = Vector.create(Peer.getPeer(peers,v.targetPlayer).model:getPos())
 		targetPos.y = targetPos.y+1

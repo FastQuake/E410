@@ -20,6 +20,7 @@ extern GuiManager *gui;
 extern SoundManager *soundman;
 extern sf::RenderWindow *gwindow;
 extern std::vector<std::string> packetList;
+extern const char *serverDelete;
 
 extern int width;
 extern int height;
