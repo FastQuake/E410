@@ -59,7 +59,7 @@ void RenderManager::renderDepth(ShaderProgram *prg, int lightIndex){
 	Light *light = lights[lightIndex];
 
 	if(light->type == DIRECTIONAL_LIGHT){
-		glFramebufferTextureLayer(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,rendman.depthTextures,0,lightIndex);
+		glFramebufferTextureLayerEXT(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,rendman.depthTextures,0,lightIndex);
 		glClear(GL_DEPTH_BUFFER_BIT);
 		DLight myLight = *static_cast<DLight*>(light);
 		glm::mat4 depthMVP = myLight.mvp();
@@ -69,20 +69,20 @@ void RenderManager::renderDepth(ShaderProgram *prg, int lightIndex){
 	}else if(light->type == POINT_LIGHT){
 		PLight myLight = *static_cast<PLight*>(light);
 		for(int i=0;i<6;i++){
-			glFramebufferTextureLayer(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,rendman.depthCubemaps,0,lightIndex*6+i);
+			glFramebufferTextureLayerEXT(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,rendman.depthCubemaps,0,lightIndex*6+i);
 			glm::mat4 depthMVP = myLight.mvp(i);
 			glUniformMatrix4fv(prg->getUniform("pv"), 1, GL_FALSE, glm::value_ptr(depthMVP));
 			glClear(GL_DEPTH_BUFFER_BIT);
 			drawScene(prg,false,false);
 		}
 	}
-	glFramebufferTextureLayer(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,0,0,0);
+	glFramebufferTextureLayerEXT(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,0,0,0);
 	glViewport(0,0,width,height);
 }
 
 void RenderManager::renderDeferred(ShaderProgram *prg){
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,renderbuffer);
-	glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,normalTex,0);
+	glFramebufferRenderbufferEXT(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,renderbuffer);
+	glFramebufferTexture2DEXT(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,normalTex,0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 #ifdef WINDOWS
 	GLenum draw_bufs[] = {GL_COLOR_ATTACHMENT0};
@@ -92,6 +92,7 @@ void RenderManager::renderDeferred(ShaderProgram *prg){
 	glm::mat4 view = currentCam->view();
 	glUniformMatrix4fv(prg->getUniform("view"), 1, GL_FALSE, glm::value_ptr(view));
 	drawScene(prg,false,true);
+	glFramebufferTexture2DEXT(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,0,0);
 }
 
 void RenderManager::render(ShaderProgram *prg, ShaderProgram *skyprg,float dt){

@@ -227,8 +227,8 @@ int main(int argc, char *argv[]){
 		return EXIT_FAILURE;
 	}
 
-	glGenFramebuffers(1,&rendman.framebuffer);
-	glGenRenderbuffers(1,&rendman.renderbuffer);
+	glGenFramebuffersEXT(1,&rendman.framebuffer);
+	glGenRenderbuffersEXT(1,&rendman.renderbuffer);
 	glGenBuffers(1, &rendman.ubo);
 
 
@@ -257,9 +257,9 @@ int main(int argc, char *argv[]){
 	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_COMPARE_FUNC, GL_GEQUAL);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 
-	glBindRenderbuffer(GL_RENDERBUFFER,rendman.renderbuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER,GL_DEPTH_COMPONENT24,width,height);
-	glBindRenderbuffer(GL_RENDERBUFFER,0);
+	glBindRenderbufferEXT(GL_RENDERBUFFER,rendman.renderbuffer);
+	glRenderbufferStorageEXT(GL_RENDERBUFFER,GL_DEPTH_COMPONENT24,width,height);
+	glBindRenderbufferEXT(GL_RENDERBUFFER,0);
 
 	glUseProgram(prg.getID());
 	glUniform1i(prg.getUniform("shadowCubes"), 1);
@@ -541,7 +541,7 @@ int main(int argc, char *argv[]){
 		//Do all drawing here
 		glEnable(GL_TEXTURE_CUBE_MAP_ARB);
 		glUseProgram(depthPrg.getID());
-		glBindFramebuffer(GL_FRAMEBUFFER,rendman.framebuffer);
+		glBindFramebufferEXT(GL_FRAMEBUFFER,rendman.framebuffer);
 		for(int i=0;i<rendman.lights.size();i++)
 			rendman.renderDepth(&depthPrg,i);
 
