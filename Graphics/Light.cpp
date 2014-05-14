@@ -53,12 +53,12 @@ glm::mat4 PLight::mvp(int face){
 }
 
 glm::mat4 PLight::mvp(){
-	glm::mat4 biasInverse = glm::mat4{
+	glm::mat4 biasInverse = glm::mat4(
 			2.0, 0.0, 0.0, 0.0,
 			0.0, 2.0, 0.0, 0.0,
 			0.0, 0.0, 2.0, 0.0,
 			-1.0, -1.0, -1.0, 1.0
-	};
+	);
 	return biasInverse*glm::translate(glm::mat4(1.0f),-pos);
 }
 

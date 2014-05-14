@@ -270,9 +270,11 @@ bool loadIQM(string filename, Model &target){
 
 		return true;
 	}else{
+		file.close();
 		cout << "Could not open file: " << filename << endl;
 		return false;
 	}
+	file.close();
 
 	return false;
 }
@@ -396,7 +398,8 @@ void Model::animate(string animName, float curTime, std::vector<glm::mat4> *outf
 void Model::draw(ShaderProgram *prg, vector<Texture> textures, vector<glm::mat4> outframe, bool texture, bool normal){
 	bool skin = true;
 	glUseProgram(prg->getID());
-	glm::mat3x4 outframe3x4[outframe.size()];
+	//glm::mat3x4 outframe3x4[outframe.size()];
+	vector<glm::mat3x4> outframe3x4(outframe.size());
 	for(int i=0;i<outframe.size();i++)
 		outframe3x4[i] = glm::mat3x4(outframe[i]);
 

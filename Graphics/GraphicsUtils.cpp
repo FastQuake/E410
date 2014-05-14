@@ -23,7 +23,7 @@ void printLog(int object){
 		glGetProgramInfoLog(object,logLength,NULL,log);
 
 	cerr << log << endl;
-	delete log;
+	delete[] log;
 }
 
 string fileToStr(string filename){
