@@ -129,7 +129,6 @@ void serverMain(){
 	if(lua_pcall(l,0,0,0)){
 		string error = "[SERVER] " + string(lua_tostring(l,-1));
 		cout << error << endl;
-		global_con->out.println("[SERVER] "+error);
 		serverRunning = false;
 		enet_host_destroy(server);
 		return;
@@ -161,7 +160,6 @@ void serverMain(){
 					if(lua_pcall(l, 1, 0, 0)){
 						string error = "[SERVER] " + string(lua_tostring(l,-1));
 						cout << error << endl;
-						global_con->out.println("[SERVER] "+error);
 					}
 					break;
 				case ENET_EVENT_TYPE_DISCONNECT:
@@ -171,7 +169,6 @@ void serverMain(){
 					if(lua_pcall(l, 1, 0, 0)){
 						string error = "[SERVER] " + string(lua_tostring(l,-1));
 						cout << error << endl;
-						global_con->out.println("[SERVER] "+error);
 					}
 					removePeerByPeer(event.peer);
 					break;
@@ -189,7 +186,6 @@ void serverMain(){
 					if(lua_pcall(l,2,0,0)){
 						string error = "[SERVER] " + string(lua_tostring(l,-1));
 						cout << error << endl;
-						global_con->out.println("[SERVER] "+error);
 					}
 					enet_packet_destroy(event.packet);
 					break;
@@ -225,7 +221,6 @@ void serverMain(){
 			//luaL_traceback(l,l,lua_tostring(l,-1),1);
 			string error = "[SERVER] " + string(lua_tostring(l,-1));
 			cout << error << endl;
-			global_con->out.println("[SERVER] "+error);
 		}
 
 		//do physics
@@ -251,7 +246,6 @@ void serverMain(){
 					if(lua_pcall(l,2,1,0)){
 						string error = "[SERVER] " + string(lua_tostring(l,-1));
 						cout << error << endl;
-						global_con->out.println("[SERVER] "+error);
 					}
 					bool check = l_toBool(l,-1);
 					if(check)

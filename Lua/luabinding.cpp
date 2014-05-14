@@ -123,7 +123,7 @@ void bindFunctions(lua_State *l){
 }
 
 void serverBindFunctions(lua_State *l){
-	lua_register(l,"print",l_print);
+	lua_register(l,"print",l_serverPrint);
 	lua_register(l,"matRot",l_rotVec);
 	lua_register(l,"mathMagic",l_mathmagic);
 
@@ -190,6 +190,11 @@ int l_print(lua_State *l){
 	string value = l_toString(l, 1);
 	cout << value << endl;
 	global_con->out.print("\n"+value);
+	return 0;
+}
+int l_serverPrint(lua_State *l){
+	string value = l_toString(l, 1);
+	cout << value << endl;
 	return 0;
 }
 int l_quit(lua_State *l){

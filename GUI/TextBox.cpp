@@ -168,7 +168,6 @@ ScrollText::ScrollText(sf::Vector2f pos, sf::Vector2i size,
 void ScrollText::print(string text){
 	for(int i=0;i<text.length();i++){
 		char c = text.at(i);
-		lines.at(textPos.y) += c;
 		if(c == '\n'){
 			textPos.x = 0;
 			textPos.y++;
@@ -183,6 +182,7 @@ void ScrollText::print(string text){
 			textPos.y++;
 			lines.push_back("");
 		}
+		lines.at(textPos.y) += c;
 	}
 
 	while(lines.size() > history){

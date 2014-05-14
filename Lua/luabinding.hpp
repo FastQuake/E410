@@ -18,6 +18,7 @@ void l_pushStringVector(lua_State *l,std::vector<std::string> vec);
 
 //Bunch 'o' functions
 int l_print(lua_State *l);
+int l_serverPrint(lua_State *l);
 int l_quit(lua_State *l);
 
 #endif
