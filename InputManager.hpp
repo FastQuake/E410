@@ -13,6 +13,17 @@ class InputManager {
 
 		sf::Window *window;
 	public:
+		enum JoyButton{
+			A,
+			B,
+			X,
+			Y,
+			LB,
+			RB,
+			Select,
+			Start,
+			Meta,
+		};
 		InputManager();
 		InputManager(sf::Window *window);
 
@@ -31,6 +42,14 @@ class InputManager {
 		bool isGuiMouseDown(sf::Mouse::Button button);
 		sf::Vector2i getGuiMousePos();
 		void setGuiMousePos(sf::Vector2i pos);
+
+		bool isJoystickConnected();
+		bool isJoystickButtonDown(JoyButton b);
+		sf::Vector2f getLeftAnalog();
+		sf::Vector2f getRightAnalog();
+		sf::Vector2i getDpad();
+		float getLeftTrigger();
+		float getRightTrigger();
 
 		void addInput(std::string input);
 		std::string getString();

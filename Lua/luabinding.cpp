@@ -78,6 +78,10 @@ void bindFunctions(lua_State *l){
 	registerMice(l);
 	lua_setglobal(l,"mouse");
 
+	lua_newtable(l);
+	registerButtons(l);
+	lua_setglobal(l,"button");
+
 	//add sound binding
 	luaL_newlib(l, Sound_funcs);
 	lua_setglobal(l, "sound");

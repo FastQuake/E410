@@ -43,9 +43,19 @@ function onReceivePacket(id, data)
 		if p.right == 0 and p.fwd == 0 then
 			network.sendPacket(-1, "stopanimate "..p.model:getID())
 		end
+	elseif data[1] == "movex" then
+		p.right = tonumber(data[2])
+		p.fwd = tonumber(data[3])
+		network.sendPacket(-1, "animate "..p.model:getID())
+	elseif data[1] == "stopx" then
+		p.fwd = 0
+		p.right = 0
+		network.sendPacket(-1, "stopanimate "..p.model:getID())
 	elseif data[1] == "turn" then
 		local rot = Vector.create(p.model:getRot()) + Vector.create(0,-data[2],0) 
 		p.model:setRot(rot:get())
+	elseif data[1] == "nturn" then
+		p.model:setRot(0,data[2],0)
 	elseif data[1] == "cast" then
 		local obj,x,y,z = GO.castRay(data[2],data[3],data[4],data[5],data[6],data[7],100,4)
 		if obj ~= nil then

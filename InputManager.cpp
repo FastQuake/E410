@@ -96,6 +96,48 @@ void InputManager::addInput(string input){
 	}
 }
 
+bool InputManager::isJoystickConnected(){
+	if(sf::Joystick::isConnected(0))
+		return true;
+	return false;
+}
+bool InputManager::isJoystickButtonDown(JoyButton b){
+	if(sf::Joystick::isButtonPressed(0,b)){
+		return true;
+	}
+	return false;
+}
+sf::Vector2f InputManager::getLeftAnalog(){
+	sf::Vector2f out;
+	out.x = sf::Joystick::getAxisPosition(0,sf::Joystick::X);
+	out.y = sf::Joystick::getAxisPosition(0,sf::Joystick::Y);
+	out.x /= 100;
+	out.y /= 100;
+	return out;
+}
+sf::Vector2f InputManager::getRightAnalog(){
+	sf::Vector2f out;
+	out.x = sf::Joystick::getAxisPosition(0,sf::Joystick::U);
+	out.y = sf::Joystick::getAxisPosition(0,sf::Joystick::V);
+	out.x /= 100;
+	out.y /= 100;
+	return out;
+}
+sf::Vector2i InputManager::getDpad(){
+	sf::Vector2i out;
+	out.x = sf::Joystick::getAxisPosition(0,sf::Joystick::PovX);
+	out.y = sf::Joystick::getAxisPosition(0,sf::Joystick::PovY);
+	out.x /= 100;
+	out.y /= 100;
+	return out;
+}
+float InputManager::getLeftTrigger(){
+	return sf::Joystick::getAxisPosition(0, sf::Joystick::Z)/100;
+}
+float InputManager::getRightTrigger(){
+	return sf::Joystick::getAxisPosition(0, sf::Joystick::R)/100;
+}
+
 string InputManager::getString(){
 	string out = inputString;
 	inputString = "";

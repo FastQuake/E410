@@ -116,7 +116,22 @@ string mice[] = {
   "ButtonCount"
 };
 
-//TODO better error handling
+string buttons[] = {
+	"A",
+	"B",
+	"X",
+	"Y",
+	"LB",
+	"RB",
+	"Select",
+	"Start",
+	"Meta",
+};
+
+int l_isGuiLocked(lua_State *l){
+	lua_pushboolean(l,im->isGuiLocked());
+	return 1;
+}
 
 int l_isKeyDown(lua_State *l){
 	int key;
@@ -187,6 +202,46 @@ int l_setGuiMousePos(lua_State *l){
 	return 0;
 }
 
+int l_isJoystickConnected(lua_State *l){
+	lua_pushboolean(l, im->isJoystickConnected());
+	return 1;
+}
+
+int l_isJoystickButtonDown(lua_State *l){
+	int button = l_toNumber(l,1);
+	bool out = im->isJoystickButtonDown(InputManager::JoyButton(button));
+	lua_pushboolean(l,out);
+	return 1;
+}
+int l_getLeftAnalog(lua_State *l){
+	sf::Vector2f v = im->getLeftAnalog();
+	lua_pushnumber(l,v.x);
+	lua_pushnumber(l,v.y);
+	return 2;
+}
+int l_getRightAnalog(lua_State *l){
+	sf::Vector2f v = im->getRightAnalog();
+	lua_pushnumber(l,v.x);
+	lua_pushnumber(l,v.y);
+	return 2;
+}
+int l_getDpad(lua_State *l){
+	sf::Vector2i v = im->getDpad();
+	lua_pushnumber(l,v.x);
+	lua_pushnumber(l,v.y);
+	return 2;
+}
+int l_getLeftTrigger(lua_State *l){
+	float v = im->getLeftTrigger();
+	lua_pushnumber(l,v);
+	return 1;
+}
+int l_getRightTrigger(lua_State *l){
+	float v = im->getRightTrigger();
+	lua_pushnumber(l,v);
+	return 1;
+}
+
 void registerKeys(lua_State *l){
 	int keyLength = sizeof(keys)/sizeof(keys[0]);
 	for(int i=0;i<keyLength;i++){
@@ -204,5 +259,15 @@ void registerMice(lua_State *l){
 		lua_pushstring(l,mouse);
 		lua_pushnumber(l,i);
 		lua_settable(l, -3);
+	}
+}
+
+void registerButtons(lua_State *l){
+	int buttonLength = sizeof(buttons)/sizeof(buttons[0]);
+	for(int i=0;i<buttonLength;i++){
+		const char* button = buttons[i].c_str();
+		lua_pushstring(l, button);
+		lua_pushnumber(l,i);
+		lua_settable(l,-3);
 	}
 }
