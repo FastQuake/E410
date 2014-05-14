@@ -59,7 +59,6 @@ int l_spriteSetAnimate(lua_State *l){
 	Sprite *s = l_toSprite(l,1);
 	bool anim = l_toBool(l,2);
 	s->animate = anim;
-	cout << s->animate << endl;
 	return 0;
 }
 int l_spriteDelete(lua_State *l){
