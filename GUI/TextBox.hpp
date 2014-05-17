@@ -9,7 +9,7 @@
 class TextBox : public GuiElement {
 	public:
 		sf::Text text;
-		TextBox(sf::Vector2f pos, int length, sf::Color colour);
+		TextBox(glm::vec2 pos, int length, sf::Color colour);
 
 		std::string getString();
 		void updateString(std::string input);
@@ -32,7 +32,7 @@ class ScrollText : public GuiElement {
 	public:
 		sf::Text text;
 
-		ScrollText(sf::Vector2f pos, sf::Vector2i size, sf::Color colour);
+		ScrollText(glm::vec2 pos, glm::ivec2 size, sf::Color colour);
 
 		void print(std::string text);
 		void println(std::string text);

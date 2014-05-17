@@ -102,7 +102,7 @@ int l_GuisetPos(lua_State *l){
 	float x = l_toNumber(l, 2);
 	float y = l_toNumber(l, 3);
 
-	e->pos = sf::Vector2f(x,y);
+	e->pos = glm::vec2(x,y);
 	return 0;
 }
 int l_GuisetScale(lua_State *l){
@@ -110,7 +110,7 @@ int l_GuisetScale(lua_State *l){
 	float x = l_toNumber(l, 2);
 	float y = l_toNumber(l, 3);
 
-	e->scale = sf::Vector2f(x,y);
+	e->scale = glm::vec2(x,y);
 	return 0;
 }
 int l_GuisetVisible(lua_State *l){
@@ -139,7 +139,7 @@ int l_Guidelete(lua_State *l){
 //Text related functions
 int l_GuiCreateText(lua_State *l){
 	ScrollText *t = new (lua_newuserdata(l, sizeof(ScrollText))) 
-		ScrollText(sf::Vector2f(0,0), sf::Vector2i(1000,50),
+		ScrollText(glm::vec2(0,0), glm::vec2(1000,50),
 			sf::Color::White);
 
 	gui->add(t);
@@ -266,7 +266,7 @@ int l_GuisetColour(lua_State *l){
 //Input related functions
 int l_GuiCreateInput(lua_State *l){
 	TextBox *t = new (lua_newuserdata(l, sizeof(TextBox))) 
-		TextBox(sf::Vector2f(0,0), 80,
+		TextBox(glm::vec2(0,0), 80,
 			sf::Color::White);
 
 	gui->add(t);
@@ -347,8 +347,8 @@ int l_GuisetPadding(lua_State *l){
 }
 //Box related functions
 int l_GuiCreateBox(lua_State *l){
-	Box *b = new (lua_newuserdata(l, sizeof(Box))) Box(sf::Vector2f(0,0),
-			sf::Vector2f(0,0),sf::Color::Transparent);
+	Box *b = new (lua_newuserdata(l, sizeof(Box))) Box(glm::vec2(0,0),
+			glm::vec2(0,0),sf::Color::Transparent);
 
 	gui->add(b);
 

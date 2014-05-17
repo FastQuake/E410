@@ -59,7 +59,7 @@ void Button::update(InputManager *im){
 }
 
 void Button::draw(sf::RenderWindow *screen){
-	sf::Vector2f tpos = pos;
+	glm::vec2 tpos = pos;
 	if(pos.x < 0){
 		tpos.x = width + pos.x;
 	}
@@ -69,7 +69,7 @@ void Button::draw(sf::RenderWindow *screen){
 	sf::RectangleShape rect(sf::Vector2f(colBox.width, colBox.height));
 	rect.setFillColor(bgColour);
 	rect.setPosition(colBox.left, colBox.top);
-	text.setPosition(tpos);
+	text.setPosition(sf::Vector2f(tpos.x,tpos.y));
 
 	screen->draw(rect);
 	screen->draw(text);

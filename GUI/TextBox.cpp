@@ -3,7 +3,7 @@
 #include "../globals.hpp"
 using namespace std;
 
-TextBox::TextBox(sf::Vector2f pos, int length, sf::Color colour):
+TextBox::TextBox(glm::vec2 pos, int length, sf::Color colour):
 rect(sf::Vector2f(7,14)){
 	this->magic = GUIINPUT_MAGIC;
 	this->length = length;
@@ -61,7 +61,7 @@ void TextBox::update(InputManager *im){
 	if(global_con->visible == true && this != &global_con->in)
 		return;
 	//use temp pos incase index is negative
-	sf::Vector2f tpos = pos;
+	glm::vec2 tpos = pos;
 	if(pos.x < 0){
 		tpos.x = width + pos.x;
 	}
@@ -125,14 +125,14 @@ void TextBox::update(InputManager *im){
 }
 
 void TextBox::draw(sf::RenderWindow *screen){
-	sf::Vector2f tpos = pos;
+	glm::vec2 tpos = pos;
 	if(pos.x < 0){
 		tpos.x = width + pos.x;
 	}
 	if(pos.y < 0){
 		tpos.y = height + pos.y;
 	}
-	text.setPosition(tpos);
+	text.setPosition(sf::Vector2f(tpos.x,tpos.y));
 	if(blinkTimer.getElapsedTime().asMilliseconds() > 500){
 		drawCursor = !drawCursor;
 		blinkTimer.restart();
@@ -143,7 +143,7 @@ void TextBox::draw(sf::RenderWindow *screen){
 	screen->draw(text);
 }
 
-ScrollText::ScrollText(sf::Vector2f pos, sf::Vector2i size, 
+ScrollText::ScrollText(glm::vec2 pos, glm::ivec2 size, 
 		sf::Color colour){
 
 	this->magic = GUITEXT_MAGIC;
@@ -206,7 +206,7 @@ void ScrollText::update(InputManager *im){
 }
 
 void ScrollText::draw(sf::RenderWindow *screen){
-	sf::Vector2f tpos = pos;
+	glm::vec2 tpos = pos;
 	if(pos.x < 0){
 		tpos.x = width + pos.x;
 	}

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include <glm/glm.hpp>
 #include "../InputManager.hpp"
 
 #define GUIELEM_MAGIC "ELEM"
@@ -16,9 +17,9 @@ class GuiElement{
 		bool alive;
 		bool locks;
 
-		sf::Vector2f pos;
-		sf::Vector2i size;
-		sf::Vector2f scale;
+		glm::vec2 pos;
+		glm::ivec2 size;
+		glm::vec2 scale;
 		int zindex;
 
 		GuiElement();

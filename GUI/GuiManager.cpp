@@ -4,7 +4,7 @@ using namespace std;
 
 GuiElement::GuiElement(){
 	magic = GUIELEM_MAGIC;
-	scale = sf::Vector2f(1,1);
+	scale = glm::ivec2(1,1);
 	zindex = 0;
 }
 

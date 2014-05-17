@@ -140,7 +140,7 @@ int main(int argc, char *argv[]){
 	InputManager ime(gwindow);
 	im = &ime;
 
-	Console con(l,sf::Vector2f(0,0),
+	Console con(l,glm::vec2(0,0),
 			sf::Color(50,50,50),sf::Color::White);
 
 	global_con = &con;

@@ -1,9 +1,9 @@
 #include "Console.hpp"
 using namespace std;
 
-Console::Console(lua_State *l,sf::Vector2f pos, sf::Color bg, sf::Color fg) :
-out(pos,sf::Vector2i(80,24),fg),
-in(sf::Vector2f(pos.x,pos.y+(24*14)),80,fg),
+Console::Console(lua_State *l,glm::vec2 pos, sf::Color bg, sf::Color fg) :
+out(pos,glm::vec2(80,24),fg),
+in(glm::vec2(pos.x,pos.y+(24*14)),80,fg),
 bg(sf::Vector2f(81*7,24*14)){
 	
 		this->pos = pos;
@@ -13,9 +13,9 @@ bg(sf::Vector2f(81*7,24*14)){
 
 		this->bg.setFillColor(bg);
 		this->bg.setOutlineThickness(0);
-		this->bg.setPosition(pos);
+		this->bg.setPosition(sf::Vector2f(pos.x,pos.y));
 
-		size = sf::Vector2i(80,24);
+		size = glm::ivec2(80,24);
 
 		zindex = 1000;
 		visible = false;

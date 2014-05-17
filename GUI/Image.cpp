@@ -7,7 +7,7 @@ Image::Image(){
 
 	img.loadFromImage(*resman.loadImage("default.png"));
 
-	scale = sf::Vector2f(1,1);
+	scale = glm::vec2(1,1);
 	
 	visible = true;
 	updates = false;
@@ -17,7 +17,7 @@ Image::Image(){
 
 
 void Image::draw(sf::RenderWindow *screen){
-	sf::Vector2f tpos = pos;
+	glm::vec2 tpos = pos;
 	if(pos.x < 0){
 		tpos.x = width + pos.x;
 	}
@@ -26,7 +26,7 @@ void Image::draw(sf::RenderWindow *screen){
 	}
 	sf::Sprite out;
 	out.setTexture(img);
-	out.setPosition(tpos);
-	out.scale(scale);
+	out.setPosition(sf::Vector2f(tpos.x,tpos.y));
+	out.scale(sf::Vector2f(scale.x,scale.y));
 	screen->draw(out);
 }
