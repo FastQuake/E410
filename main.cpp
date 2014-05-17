@@ -1,5 +1,6 @@
 #include <GL/glew.h>
 #include <SFML/Graphics.hpp>
+#include <SDL2/SDL.h>
 #include <iostream>
 #include <sstream>
 #include <cmath>
@@ -88,6 +89,11 @@ string floatToString(float input){
 
 int main(int argc, char *argv[]){
 	srand(time(NULL));
+	if(SDL_Init(SDL_INIT_EVERYTHING) == -1){
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,"Error!",
+				"Could not intialize SDL", NULL);
+		return EXIT_FAILURE;
+	}
 	//Set Default settings
 	width = 800;
 	height = 600;
