@@ -35,17 +35,19 @@ uniform Light {
 	vec4 numLights;
 };
 
-float specular(float lc){
+float specular(){
 	float specularReflection = 0.0;
 	vec3 normalVector = texelFetch(normalTex,ivec2(gl_FragCoord.xy),0).rgb;
 	vec3 surfaceCamVector = -normalize(((view*coord3d_f).xyz));
 	for(int i=0;i<numLights.x;i++){
-		vec3 incidenceVector = vec3(lightPositions[i]-coord3d_f);
-		float attenuation = (lightIntensities[i].x/(4.0*3.14159265359*pow(length(incidenceVector),2.0)));
-		vec3 reflectionVector = reflect(normalize(incidenceVector),normalVector);
-		specularReflection += attenuation*pow(max(0.0, dot(surfaceCamVector, reflectionVector)),0.5);
+		vec3 incidenceVector = vec3(lightPositions[i]-view*coord3d_f);
+		if(dot(normalVector,normalize(incidenceVector)) >= 0.0){
+			float attenuation = (lightIntensities[i].x/(pow(length(incidenceVector),2.0)));
+			vec3 reflectionVector = reflect(-normalize(incidenceVector),normalVector);
+			specularReflection += attenuation*pow(max(0.0, dot(surfaceCamVector, reflectionVector)),15.0);
+		}
 	}
-	return specularReflection*max(lc,0.0);
+	return specularReflection;//*max(lc,0.0);
 }
 
 void main(){
@@ -69,5 +71,6 @@ void main(){
 		lightCoefficient += (1.0-shadowed)*(lightIntensities[i].x/(pow(distance(lightPositions[i],coord3d_f),2.0)));
 	}
 	lightCoefficient = max(lightCoefficient,0.01f);
-	outColour = vec4((specular(lightCoefficient)+lightCoefficient)*texColour.rgb,1.0);
+
+	outColour = vec4(specular()+lightCoefficient+texColour.rgb,1.0);
 }
