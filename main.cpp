@@ -87,11 +87,15 @@ string floatToString(float input){
 	return out.str();
 }
 
+void errMsg(string msg){
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error!",
+			msg.c_str(), NULL); //<- change this to screen when we have that
+}
+
 int main(int argc, char *argv[]){
 	srand(time(NULL));
 	if(SDL_Init(SDL_INIT_EVERYTHING) == -1){
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,"Error!",
-				"Could not intialize SDL", NULL);
+		errMsg("Could not intialize SDL");
 		return EXIT_FAILURE;
 	}
 	//Set Default settings
@@ -151,25 +155,20 @@ int main(int argc, char *argv[]){
 
 	GLenum glewStatus = glewInit();
 	if(glewStatus != GLEW_OK){
-		cerr << "Error: " << glewGetErrorString(glewStatus) << endl;
+		errMsg((char*)glewGetErrorString(glewStatus));
 		return EXIT_FAILURE;
 	}
 
 	if(!GLEW_ARB_uniform_buffer_object){
-		cerr << "UBOs not supported!" << endl;
+		errMsg("UBOs not supported!");
 		return EXIT_FAILURE;
 	}
 	if(!GLEW_ARB_texture_cube_map_array){
-		cerr << "Cubemap arrays not supported!" << endl;
+		errMsg("Cubemap arrays not supported!");
 		return EXIT_FAILURE;
 	}
-	if(GLEW_ARB_debug_output){
-
-	}else{
-		cout << "Warning: ARB_debug_output unsupported" << endl;
-	}
 	if(GLEW_VERSION_3_0 == false){
-		cerr << "OpenGL 3.0 not supported!" << endl;
+		errMsg("OpenGL 3.3 not supported!");
 		return EXIT_FAILURE;
 	}
 
@@ -217,6 +216,7 @@ int main(int argc, char *argv[]){
 
 
 	if(!programsGood){
+		errMsg("Shaders failed to compile\nCheck console for more details");
 		return EXIT_FAILURE;
 	}
 	
@@ -229,7 +229,7 @@ int main(int argc, char *argv[]){
 	lua_setglobal(l, "serverObjects");
 	int status = luaL_dofile(l, "./data/scripts/main.lua");
 	if(status){
-		cerr << "Could not load file " << lua_tostring(l,-1) << endl; 
+		cerr << lua_tostring(l,-1) << endl; 
 		return EXIT_FAILURE;
 	}
 
