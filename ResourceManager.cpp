@@ -88,6 +88,7 @@ sf::SoundBuffer *ResourceManager::loadSound(string name){
 	}
 }
 Texture ResourceManager::loadTexture(string name){
+	name = imgDir + name;	
 	if(name.length() == 0){
 		Texture error;
 		error.id = -1;
@@ -97,34 +98,51 @@ Texture ResourceManager::loadTexture(string name){
 	map<string, Texture>::iterator it = texs.find(name);
 	if(it == texs.end()){
 		GLuint i;
-		sf::Vector2i size;
-		sf::Image *img = loadImage(name);
-		if(img == NULL){
+		SDL_Surface *img = IMG_Load(name.c_str());
+		if(!img){
 			Texture error;
 			error.id = -1;
 			return error;
 		}
-		size.x = img->getSize().x;
-		size.y = img->getSize().y;
+
+		//img = SDL_ConvertSurfaceFormat(img, SDL_PIXELFORMAT_RGBA8888,0);
+		Texture out;
+		out.width = img->w;
+		out.height = img->h;	
+		//Get texture format
+		int tformat = GL_RGBA;
+		switch(img->format->BytesPerPixel){
+			case 4:
+				if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+					tformat = GL_BGRA;
+				else
+					tformat = GL_RGBA;
+				break;
+			case 3:
+				if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+					tformat = GL_BGR;
+				else
+					tformat = GL_RGB;
+				break;
+		}
+
 		glGenTextures(1, &i);
 		glBindTexture(GL_TEXTURE_2D, i);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexImage2D(GL_TEXTURE_2D,
 				0,
-				GL_RGBA,
-				size.x,
-				size.y,
+				tformat,
+				out.width,
+				out.height,
 				0,
-				GL_RGBA,
+				tformat,
 				GL_UNSIGNED_BYTE,
-				img->getPixelsPtr());
-		cout << "IMAGE X:"<<img->getSize().x << " IMAGE Y:" << img->getSize().y << endl;
-		Texture out;
-		out.height = size.y;
-		out.width = size.x;
+				img->pixels);
+		cout << "IMAGE X:"<<out.width << " IMAGE Y:" << out.height << endl;
 		out.id = i;
 		texs[name] = out;
+		SDL_FreeSurface(img);
 		return texs[name];
 	} else {
 		return it->second;

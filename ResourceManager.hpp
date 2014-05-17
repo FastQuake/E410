@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <SDL2/SDL_image.h>
 #include <map>
 #include "Graphics/model.hpp"
 #include "Graphics/Texture.hpp"

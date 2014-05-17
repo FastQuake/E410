@@ -150,6 +150,9 @@ function AIManager.buildMonsterPaths()
 			local dead = 0
 			local endNode = v.path[#v.path]
 			local neighbors = endNode.neighbors
+			if neighbors == nil then
+				return
+			end
 			for l,w in pairs(neighbors) do
 				local ignored = false
 				if tableContains(ignoreList,w) == true then
