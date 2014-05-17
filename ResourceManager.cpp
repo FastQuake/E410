@@ -105,19 +105,20 @@ Texture ResourceManager::loadTexture(string name){
 			return error;
 		}
 
-		//img = SDL_ConvertSurfaceFormat(img, SDL_PIXELFORMAT_RGBA8888,0);
 		Texture out;
 		out.width = img->w;
 		out.height = img->h;	
 		//Get texture format
 		int tformat = GL_RGBA;
 		switch(img->format->BytesPerPixel){
+			//If 4 colours or RGBA most likely
 			case 4:
 				if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
 					tformat = GL_BGRA;
 				else
 					tformat = GL_RGBA;
 				break;
+			//If 3 colours of RGB most likely
 			case 3:
 				if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
 					tformat = GL_BGR;
