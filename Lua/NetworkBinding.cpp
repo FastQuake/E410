@@ -9,7 +9,7 @@ using namespace std;
 
 int l_startServer(lua_State *l){
 	if(serverRunning == false){
-		serverThread->launch();
+		serverThread = SDL_CreateThread((SDL_ThreadFunction)serverMain, "server", (void*)NULL);
 		return 0;
 	}
 
@@ -20,7 +20,7 @@ int l_startServer(lua_State *l){
 int l_killServer(lua_State *l){
 	if(serverRunning == true){
 		serverRunning = false;
-		serverThread->wait();
+		SDL_WaitThread(serverThread, NULL);
 		return 0;
 	}
 

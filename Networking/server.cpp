@@ -6,7 +6,7 @@
 #include "../Lua/GameObjectBinding.hpp"
 using namespace std;
 
-sf::Thread *serverThread;
+SDL_Thread *serverThread;
 int serverPort = 1255;
 bool serverRunning = false;
 RenderManager serverRendMan;

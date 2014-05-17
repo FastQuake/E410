@@ -288,10 +288,6 @@ int main(int argc, char *argv[]){
 		return EXIT_FAILURE;
 	}
 
-	//setfunction for server thread
-	sf::Thread sThread(&serverMain);
-	serverThread = &sThread;
-
 	//Set stuff for main game loop
 	sf::Clock dtTimer;
 	dtTimer.restart();
@@ -576,5 +572,5 @@ int main(int argc, char *argv[]){
 	delete[] pstr;
 	enet_host_destroy(client);
 	serverRunning = false;
-	serverThread->wait();
+	SDL_WaitThread(serverThread, NULL);
 }

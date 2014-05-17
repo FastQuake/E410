@@ -1,14 +1,14 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 #include <iostream>
-#include <SFML/System.hpp>
+#include <SDL2/SDL_thread.h>
 #include <vector>
 #include <enet/enet.h>
 #include "Physics.hpp"
 #include "../Graphics/RenderManager.hpp"
 #include "../globals.hpp"
 
-extern sf::Thread *serverThread;
+extern SDL_Thread *serverThread;
 extern int serverPort;
 extern bool serverRunning;
 extern RenderManager serverRendMan;
