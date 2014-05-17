@@ -58,6 +58,7 @@ public:
 	void createConvexRigidBody();
 	void createCubeRigidBody();
 	void createCubeRigidBody(extents e);
+	void createSphereRigidBody(float radius);
 	void updateMass(float mass);
 private:
 	btTriangleMesh *trimesh;

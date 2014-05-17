@@ -391,6 +391,12 @@ int l_setExtBoxBody(lua_State *l){
 	obj->createCubeRigidBody(e);
 	return 0;
 }
+int l_setSphereBody(lua_State *l){
+	GameObject *obj = l_toGO(l,1);
+	float radius = l_toNumber(l,2);
+	obj->createSphereRigidBody(radius);
+	return 0;
+}
 
 int l_serverLockAxis(lua_State *l){
 	GameObject *obj = l_toGO(l,1);

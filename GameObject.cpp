@@ -263,6 +263,26 @@ void GameObject::createCubeRigidBody(extents e){
 	originOffset.setY(ooy);
 	originOffset.setZ(ooz);
 }
+void GameObject::createSphereRigidBody(float radius){
+	if(collisionshape != NULL)
+		delete collisionshape;
+	collisionshape = new btSphereShape(radius);
+
+	if(motion != NULL)
+		delete motion;
+	motion = new btDefaultMotionState(btTransform(btQuaternion(0,0,0,1),btVector3(0,0,0)));
+
+	btVector3 inertia;
+	collisionshape->calculateLocalInertia(mass,inertia);
+	btRigidBody::btRigidBodyConstructionInfo ci(mass,motion,collisionshape,inertia);
+
+	if(body != NULL){
+		physworld.removeBody(body);
+		delete body;
+	}
+	body = new btRigidBody(ci);
+	physworld.addBody(body);
+}
 
 void GameObject::updateMass(float mass){
 	this->mass = btScalar(mass);

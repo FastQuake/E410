@@ -30,6 +30,7 @@ int l_setConvexBody(lua_State *l);
 int l_setTriangleBody(lua_State *l);
 int l_setBoxBody(lua_State *l);
 int l_setExtBoxBody(lua_State *l);
+int l_setSphereBody(lua_State *l);
 int l_setActivation(lua_State *l);
 int l_setG(lua_State *l);
 int l_setCast(lua_State *l);
@@ -101,6 +102,7 @@ const static struct luaL_Reg Server_GO_methods[]={
 	{"setTriangleBody",l_setTriangleBody},
 	{"setBoxBody",l_setBoxBody},
 	{"setExtBoxBody",l_setExtBoxBody},
+	{"setSphereBody",l_setSphereBody},
 	{"setMass", l_setMass},
 	{"setActivation",l_setActivation},
 	{"setG", l_setG},
