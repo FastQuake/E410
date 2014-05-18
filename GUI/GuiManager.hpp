@@ -12,7 +12,6 @@
 
 extern GLfloat boxQuad[6*2];
 extern GLuint quadVBO;
-extern GLuint quadVAO;
 
 class GuiElement{
 	public:
