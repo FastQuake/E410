@@ -1,6 +1,8 @@
 #include <GL/glew.h>
 #include <SFML/Graphics.hpp>
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <iostream>
 #include <sstream>
 #include <cmath>
@@ -96,6 +98,16 @@ int main(int argc, char *argv[]){
 	srand(time(NULL));
 	if(SDL_Init(SDL_INIT_EVERYTHING) == -1){
 		errMsg("Could not intialize SDL");
+		return EXIT_FAILURE;
+	}
+	int flags = IMG_INIT_JPG | IMG_INIT_JPG;
+	int initted = IMG_Init(flags);
+	if((initted&flags) != flags){
+		errMsg("Could not load JPG and PNG loader");
+		return EXIT_FAILURE;
+	}
+	if(TTF_Init() == -1){
+		errMsg(TTF_GetError());
 		return EXIT_FAILURE;
 	}
 	//Set Default settings
