@@ -137,6 +137,9 @@ void RenderManager::updateUBO(){
 			glm::vec4 lightPositions[MAX_LIGHTS];
 			glm::vec4 lightTypes[MAX_LIGHTS];
 			glm::vec4 lightIntensities[MAX_LIGHTS];
+			glm::vec4 lightAConstants[MAX_LIGHTS];
+			glm::vec4 lightALinears[MAX_LIGHTS];
+			glm::vec4 lightAExponentials[MAX_LIGHTS];
 			glm::vec4 numLights;
 		};
 	toUBO data;
@@ -146,6 +149,9 @@ void RenderManager::updateUBO(){
 			data.lightPositions[i] = glm::vec4(lights[i]->pos,1.0);
 			data.lightTypes[i].x = lights[i]->type;
 			data.lightIntensities[i].x = lights[i]->intensity;
+			data.lightAConstants[i].x = lights[i]->AConstant;
+			data.lightALinears[i].x = lights[i]->ALinear;
+			data.lightAExponentials[i].x = lights[i]->AExponential;
 	}
 	data.numLights.x = lights.size();
 	glBindBufferARB(GL_UNIFORM_BUFFER,ubo);

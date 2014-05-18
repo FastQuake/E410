@@ -143,7 +143,7 @@ function init()
 
 	planetLight = GO.createLight()
 	planetLight:setPos(-3.5,0,5)
-	planetLight:setIntensity(80)
+	planetLight:setIntensity(50)
 
 	pSprite = GO.createSprite("psprite.png")
 	pSprite:setPos(-80,0,0)
@@ -189,16 +189,16 @@ function update(dt)
 		GO.deleteLight(planetLight)
 
 		light = GO.createLight()
-		light:setPos(18,3,-5)
-		light:setIntensity(205)
+		light:setPos(18,4.5,-5)
+		light:setIntensity(80)
 
 		light4 = GO.createLight()
 		light4:setPos(11,15,-5)
-		light4:setIntensity(430)
+		light4:setIntensity(80)
 
 		light3 = GO.createLight()
 		light3:setPos(-3,6.0,-5)
-		light3:setIntensity(800)
+		light3:setIntensity(80)
 	end
 	if state == states.play then
 		h:update()
@@ -314,6 +314,6 @@ function update(dt)
 		GO.deleteLight(light4)
 		planetLight = GO.createLight()
 		planetLight:setPos(-3.5,0,5)
-		planetLight:setIntensity(80)
+		planetLight:setIntensity(50)
 	end
 end
