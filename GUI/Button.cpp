@@ -7,12 +7,9 @@ Button::Button(lua_State *l){
 	magic = GUIBUTTON_MAGIC;
 	hasCallback = false;
 
-	bgColour = sf::Color::Black;
+	bgColour = glm::vec4(0,0,0,1);
 
-	text.setFont(*resman.loadFont(defaultFont));
-	text.setCharacterSize(12);
-	text.setStyle(sf::Text::Regular);
-	text.setColor(sf::Color::White);
+	text = "";
 
 	padding = 0;
 	colBox = text.getLocalBounds();
@@ -21,7 +18,7 @@ Button::Button(lua_State *l){
 	colBox.width += padding;
 	colBox.height += padding;
 
-	bTimer.restart();
+	bTimer.reset();
 
 	visible = true;
 	updates = true;
@@ -45,8 +42,8 @@ void Button::update(InputManager *im){
 	if(im->isGuiMouseDown(sf::Mouse::Left) && this->visible){
 		sf::Vector2i pos = im->getGuiMousePos();
 		if(colBox.contains(pos.x, pos.y)){
-			if(hasCallback && bTimer.getElapsedTime().asMilliseconds() > 300){
-				bTimer.restart();
+			if(hasCallback && bTimer.getElapsedTime() > 0.300){
+				bTimer.reset();
 				lua_rawgeti(l, LUA_REGISTRYINDEX, luaCallback);
 				lua_pushvalue(l, -1);
 				if(lua_pcall(l, 0, 0, 0)){

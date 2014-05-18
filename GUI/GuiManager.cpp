@@ -10,7 +10,6 @@ GLfloat boxQuad[] = {  -1,-1,
 						1,1,};
 
 GLuint quadVBO;
-GLuint quadVAO;
 
 float remap(float value,float oldmin, float oldmax, float newmin, float newmax){
 	float oldRange = (oldmax - oldmin);
@@ -29,9 +28,6 @@ GuiManager::GuiManager(InputManager *im, ShaderProgram *prg){
 	glGenBuffers(1, &quadVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(boxQuad),boxQuad,GL_STATIC_DRAW);
-	glGenVertexArrays(1, &quadVAO);
-	glBindVertexArray(quadVAO);
-	glVertexAttribPointer(prg->getAttribute("coord2d"),2,GL_FLOAT,GL_FALSE,0,NULL);
 	glEnableVertexAttribArray(0);
 }
 

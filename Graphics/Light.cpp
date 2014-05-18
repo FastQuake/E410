@@ -1,6 +1,13 @@
 #include "Light.hpp"
 #include "../globals.hpp"
 
+Light::Light(){
+	intensity = 330.0;
+	AConstant = 8.2;
+	ALinear = 0.5;
+	AExponential = 0.2;
+}
+
 glm::mat4 PLight::pointProjection = glm::perspective(90.0f, 1.0f, 1.0f, 75.0f);
 
 glm::mat4 DLight::mvp(){

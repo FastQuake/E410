@@ -46,18 +46,20 @@ Model *ResourceManager::loadNoGLModel(std::string name){
 	}
 }
 
-sf::Font *ResourceManager::loadFont(string name){
-	map<string, sf::Font>::iterator it = fonts.find(name);
-
+TTF_Font *ResourceManager::loadFont(string name){
+	map<string, TTF_Font*>::iterator it = fonts.find(name);
+	name = fontDir + name;
 	if(it == fonts.end()){
-		sf::Font f;
-		if(f.loadFromFile(fontDir+name) == false){
+		TTF_Font *f;
+		f = TTF_OpenFont(name.c_str(),18);
+		if(!f){
+			cout << TTF_GetError() << endl;
 			return NULL;
 		}
 		fonts[name] = f;
-		return &fonts[name];
+		return fonts[name];
 	} else {
-		return &it->second;
+		return it->second;
 	}
 }
 

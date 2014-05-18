@@ -17,10 +17,13 @@ public:
 	std::string magic;
 	glm::vec3 pos;
 	int type;
-	float intensity = 330.0;
-	float AConstant = 8.2;
-	float ALinear = 0.5;
-	float AExponential = 0.2;
+	float intensity;
+	float AConstant;
+	float ALinear;
+	float AExponential;
+
+	Light();
+
 	virtual glm::mat4 mvp()=0;
 };
 
