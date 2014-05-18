@@ -2,7 +2,7 @@
 using namespace std;
 
 Console::Console(lua_State *l,glm::vec2 pos, sf::Color bg, sf::Color fg) :
-out(pos,glm::vec2(80,24),fg),
+out(pos,glm::ivec2(80,24),fg),
 in(glm::vec2(pos.x,pos.y+(24*14)),80,fg),
 bg(sf::Vector2f(81*7,24*14)){
 	
