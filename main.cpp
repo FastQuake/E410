@@ -143,12 +143,6 @@ int main(int argc, char *argv[]){
 	Console con(l,glm::vec2(0,0),
 			sf::Color(50,50,50),sf::Color::White);
 
-	global_con = &con;
-
-	GuiManager guie(im);
-	guie.add(&con);
-	gui = &guie;
-
 	//Create sound manager
 	SoundManager m;
 	soundman = &m;
@@ -214,11 +208,22 @@ int main(int argc, char *argv[]){
 	}
 	spriteprg = &sprg;
 
+	ShaderProgram gprg("./data/shaders/guivertex.glsl","./data/shaders/guifragment.glsl");
+	if(!gprg.good){
+		programsGood = false;
+		cerr << "Bad gui shader program. Execution cannot continue." << endl;
+	}
 
 	if(!programsGood){
 		errMsg("Shaders failed to compile\nCheck console for more details");
 		return EXIT_FAILURE;
 	}
+
+	//Create GUI manager
+	GuiManager guie(im, &gprg);
+	gui = &guie;
+	//global_con = &con;
+	//guie.add(&con);
 	
 	//Load main lua file and then call init function
 	lua_pushnumber(l, width);
@@ -562,7 +567,8 @@ int main(int argc, char *argv[]){
 
 
 		//Do sfml drawing here
-		gui->draw(gwindow);
+		glUseProgram(gprg.getID());
+		gui->draw(&gprg);
 
 		gwindow->display();
 		dt = dtTimer.restart();

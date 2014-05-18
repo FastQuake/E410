@@ -4,18 +4,19 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "GuiManager.hpp"
+#include "../Graphics/Texture.hpp"
 
 #define GUIIMAGE_MAGIC "ELEI"
 
 class Image : public GuiElement {
 	public:
-		sf::Texture img;
+		Texture tex;
 
 		Image();
 
+		void setImage(std::string name);
 		void update(InputManager *im){};
-		void draw(sf::RenderWindow *screen);
-
+		void draw(ShaderProgram *prg);
 };
 
 

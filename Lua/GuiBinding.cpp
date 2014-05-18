@@ -236,10 +236,10 @@ int l_GuisetFont(lua_State *l){
 }
 int l_GuisetColour(lua_State *l){
 	GuiElement *e = l_toGuiElement(l, 1);
-	int r = l_toNumber(l, 2);
-	int g = l_toNumber(l, 3);
-	int b = l_toNumber(l, 4);
-	int a = l_toNumber(l, 5);
+	float r = l_toNumber(l, 2);
+	float g = l_toNumber(l, 3);
+	float b = l_toNumber(l, 4);
+	float a = l_toNumber(l, 5);
 	//If it is a button
 	if(lastChar(e->magic) == 'B'){
 		Button *bb = (Button*)e;
@@ -255,7 +255,7 @@ int l_GuisetColour(lua_State *l){
 		t->text.setColor(sf::Color(r,g,b,a));
 	} else if(lastChar(e->magic) == 'C'){
 		Box *c = (Box*)e;
-		c->colour = sf::Color(r,g,b,a);	
+		c->colour = glm::vec4(r,g,b,a);	
 	}else {
 		lua_pushstring(l, "Argument does not contain text");
 		lua_error(l);
@@ -295,13 +295,7 @@ int l_GuisetImg(lua_State *l){
 	Image *i = l_toGuiImage(l, 1);
 	string img = l_toString(l, 2);
 
-	sf::Image *i2 = resman.loadImage(img);
-	if(i2 == NULL){
-		lua_pushstring(l, "Image cannot be found");
-		lua_error(l);
-	}
-
-	i->img.loadFromImage(*i2);
+	i->setImage(img);
 	return 0;
 }
 //Button related functions
@@ -348,7 +342,7 @@ int l_GuisetPadding(lua_State *l){
 //Box related functions
 int l_GuiCreateBox(lua_State *l){
 	Box *b = new (lua_newuserdata(l, sizeof(Box))) Box(glm::vec2(0,0),
-			glm::vec2(0,0),sf::Color::Transparent);
+			glm::vec2(0,0),glm::vec4(0,0,0,0));
 
 	gui->add(b);
 

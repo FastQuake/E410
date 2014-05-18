@@ -4,10 +4,15 @@
 #include <iostream>
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include <GL/glew.h>
 #include <glm/glm.hpp>
 #include "../InputManager.hpp"
-
+#include "../Graphics/GraphicsUtils.hpp"
 #define GUIELEM_MAGIC "ELEM"
+
+extern GLfloat boxQuad[6*2];
+extern GLuint quadVBO;
+extern GLuint quadVAO;
 
 class GuiElement{
 	public:
@@ -20,13 +25,14 @@ class GuiElement{
 		glm::vec2 pos;
 		glm::ivec2 size;
 		glm::vec2 scale;
+		glm::vec4 colour;
 		int zindex;
 
 		GuiElement();
 		virtual ~GuiElement(){};
 
 		virtual void update(InputManager *im){};
-		virtual void draw(sf::RenderWindow *screen){};
+		virtual void draw(ShaderProgram *prg){};
 };
 
 class GuiManager{
@@ -35,14 +41,14 @@ class GuiManager{
 		InputManager *im;
 	public:
 
-		GuiManager(InputManager *im);
+		GuiManager(InputManager *im, ShaderProgram *prg);
 
 		void add(GuiElement *element);
 		void remove(GuiElement *element);
 		void sortElem();
 
 		void update();
-		void draw(sf::RenderWindow *screen);
+		void draw(ShaderProgram *prg);
 };
 
 #endif

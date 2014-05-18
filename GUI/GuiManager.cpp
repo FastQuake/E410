@@ -2,14 +2,31 @@
 #include "GuiManager.hpp"
 using namespace std;
 
+GLfloat boxQuad[] = {  -1,-1,
+						1,-1,
+						-1,1,
+						-1,1,
+						1,-1,
+						1,1,};
+
+GLuint quadVBO;
+GLuint quadVAO;
+
 GuiElement::GuiElement(){
 	magic = GUIELEM_MAGIC;
 	scale = glm::ivec2(1,1);
 	zindex = 0;
 }
 
-GuiManager::GuiManager(InputManager *im){
+GuiManager::GuiManager(InputManager *im, ShaderProgram *prg){
 	this->im = im;
+	glGenBuffers(1, &quadVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(boxQuad),boxQuad,GL_STATIC_DRAW);
+	glGenVertexArrays(1, &quadVAO);
+	glBindVertexArray(quadVAO);
+	glVertexAttribPointer(prg->getAttribute("coord2d"),2,GL_FLOAT,GL_FALSE,0,NULL);
+	glEnableVertexAttribArray(0);
 }
 
 void GuiManager::add(GuiElement *element){
@@ -46,12 +63,13 @@ void GuiManager::update(){
 	}
 }
 
-void GuiManager::draw(sf::RenderWindow *screen){
+void GuiManager::draw(ShaderProgram *prg){
 	bool lock = false;
-	screen->pushGLStates();
+	glDisable(GL_DEPTH_TEST);
+	glEnableVertexAttribArray(prg->getAttribute("coord2d"));
 	for(int i=0;i<elements.size();i++){
 		if(elements.at(i)->visible){
-			elements.at(i)->draw(screen);
+			elements.at(i)->draw(prg);
 			lock |= elements.at(i)->locks;
 		}
 	}
@@ -60,5 +78,6 @@ void GuiManager::draw(sf::RenderWindow *screen){
 	} else {
 		im->lockToGui(false);
 	}
-	screen->popGLStates();
+	glDisableVertexAttribArray(prg->getAttribute("coord2d"));
+	glEnable(GL_DEPTH_TEST);
 }

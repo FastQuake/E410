@@ -4,18 +4,18 @@
 #include <iostream>
 #include <vector>
 #include "GuiManager.hpp"
+#include "../Graphics/Texture.hpp"
 
 #define GUIBOX_MAGIC "ELEC"
 
 class Box : public GuiElement{
 	public:
-		sf::Color colour;
-		Box(glm::vec2 pos, glm::vec2 size, sf::Color colour);
+		Box(glm::vec2 pos, glm::vec2 size, glm::vec4 colour);
 
 		void update(InputManager *im){};
-		void draw(sf::RenderWindow *screen);	
+		void draw(ShaderProgram *prg);	
 	private:
-		sf::RectangleShape rect;
+		Texture tex;
 };
 
 #endif
