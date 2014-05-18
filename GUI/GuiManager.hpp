@@ -51,4 +51,6 @@ class GuiManager{
 		void draw(ShaderProgram *prg);
 };
 
+float remap(float value,float oldmin, float oldmax, float newmin, float newmax);
+
 #endif

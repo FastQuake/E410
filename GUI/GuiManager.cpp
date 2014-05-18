@@ -12,6 +12,12 @@ GLfloat boxQuad[] = {  -1,-1,
 GLuint quadVBO;
 GLuint quadVAO;
 
+float remap(float value,float oldmin, float oldmax, float newmin, float newmax){
+	float oldRange = (oldmax - oldmin);
+	float newRange = (newmax - newmin);
+	return (((value-oldmin)*newRange)/oldRange)+newmin;
+}
+
 GuiElement::GuiElement(){
 	magic = GUIELEM_MAGIC;
 	scale = glm::ivec2(1,1);

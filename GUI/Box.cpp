@@ -32,7 +32,9 @@ void Box::draw(ShaderProgram *prg){
 	tScale.y = scale.y/height;
 
 	tpos.x = tpos.x/width;
-	tpos.y = -tpos.y/height;
+	tpos.y = tpos.y/height;
+	tpos.x = remap(tpos.x,0,1,-1,1)+(tScale.x);
+	tpos.y = -(remap(tpos.y,0,1,-1,1)+(tScale.y));
 
 	glBindTexture(GL_TEXTURE_2D, tex.id);
 	glUniform1i(prg->getUniform("inTexture"),0);
