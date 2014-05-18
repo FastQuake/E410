@@ -25,6 +25,9 @@ uniform Light {
 	vec4 lightPositions[MAX_LIGHTS];
 	vec4 lightTypes[MAX_LIGHTS];
 	vec4 lightIntensities[MAX_LIGHTS];
+	vec4 lightAConstants[MAX_LIGHTS];
+	vec4 lightALinears[MAX_LIGHTS];
+	vec4 lightAExponentials[MAX_LIGHTS];
 	vec4 numLights;
 };
 

@@ -139,7 +139,7 @@ int l_Guidelete(lua_State *l){
 //Text related functions
 int l_GuiCreateText(lua_State *l){
 	ScrollText *t = new (lua_newuserdata(l, sizeof(ScrollText))) 
-		ScrollText(glm::vec2(0,0), glm::vec2(1000,50),
+		ScrollText(glm::vec2(0,0), glm::ivec2(1000,50),
 			sf::Color::White);
 
 	gui->add(t);

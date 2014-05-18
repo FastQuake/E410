@@ -244,7 +244,7 @@ int main(int argc, char *argv[]){
 
 
 	glBindBufferARB(GL_UNIFORM_BUFFER,rendman.ubo);
-	glBufferDataARB(GL_UNIFORM_BUFFER,sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*(1+MAX_LIGHTS*3),NULL,GL_DYNAMIC_DRAW);
+	glBufferDataARB(GL_UNIFORM_BUFFER,sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*(1+MAX_LIGHTS*6),NULL,GL_DYNAMIC_DRAW);
 	glBindBufferBase(GL_UNIFORM_BUFFER,0,rendman.ubo);
 	glBindBufferARB(GL_UNIFORM_BUFFER,0);
 
