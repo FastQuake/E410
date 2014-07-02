@@ -15,6 +15,7 @@ class Image : public GuiElement {
 		Image();
 
 		void setImage(std::string name);
+		void setImage(Texture t);
 		void update(InputManager *im){};
 		void draw(ShaderProgram *prg);
 };

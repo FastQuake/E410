@@ -6,6 +6,7 @@ class Timer {
 		Timer();
 		void reset();
 		float getElapsedTime();
+		int getElapsedTicks();
 	private:
 		uint32_t ticks;
 };

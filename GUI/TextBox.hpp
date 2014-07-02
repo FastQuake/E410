@@ -2,24 +2,27 @@
 #define TEXTBOX_HPP
 
 #include "GuiManager.hpp"
+#include "Text.hpp"
+#include "Box.hpp"
+#include "../Timer.hpp"
 
 #define GUITEXT_MAGIC "ELET"
 #define GUIINPUT_MAGIC "ELEI"
 
 class TextBox : public GuiElement {
 	public:
-		sf::Text text;
-		TextBox(glm::vec2 pos, int length, sf::Color colour);
+		Text text;
+		TextBox(glm::vec2 pos, int length, glm::vec4 colour);
 
 		std::string getString();
 		void updateString(std::string input);
 
 		void update(InputManager *im);
-		void draw(sf::RenderWindow *screen);
+		void draw(ShaderProgram *prg);
 	private:
-		sf::RectangleShape rect;
-		sf::Clock inputTimer;
-		sf::Clock blinkTimer;
+		Box rect;
+		Timer inputTimer;
+		Timer blinkTimer;
 		bool drawCursor;
 		bool focused;
 
@@ -30,16 +33,16 @@ class TextBox : public GuiElement {
 
 class ScrollText : public GuiElement {
 	public:
-		sf::Text text;
+		Text text;
 
-		ScrollText(glm::vec2 pos, glm::ivec2 size, sf::Color colour);
+		ScrollText(glm::vec2 pos, glm::ivec2 size, glm::vec4 colour);
 
 		void print(std::string text);
 		void println(std::string text);
 		void clear();
 
 		void update(InputManager *im);
-		void draw(sf::RenderWindow *screen);
+		void draw(ShaderProgram *prg);
 	private:
 		sf::Vector2i textPos;
 

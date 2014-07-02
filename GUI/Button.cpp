@@ -9,12 +9,10 @@ Button::Button(lua_State *l){
 
 	bgColour = glm::vec4(0,0,0,1);
 
-	text = "";
-
 	padding = 0;
-	colBox = text.getLocalBounds();
-	colBox.left -= padding;
-	colBox.top -= padding;
+	colBox = text.getBounds();
+	colBox.x -= padding;
+	colBox.y -= padding;
 	colBox.width += padding;
 	colBox.height += padding;
 
@@ -29,9 +27,9 @@ Button::Button(lua_State *l){
 }
 
 void Button::updateShape(){
-	colBox = text.getGlobalBounds();
-	colBox.left -= (padding/2);
-	colBox.top -= (padding/2);
+	colBox = text.getBounds();
+	colBox.x -= (padding/2);
+	colBox.y -= (padding/2);
 	colBox.width += (padding);
 	colBox.height += (padding);
 }
@@ -41,7 +39,7 @@ void Button::update(InputManager *im){
 	updateShape();
 	if(im->isGuiMouseDown(sf::Mouse::Left) && this->visible){
 		sf::Vector2i pos = im->getGuiMousePos();
-		if(colBox.contains(pos.x, pos.y)){
+		if(colBox.contains(glm::vec2(pos.x, pos.y))){
 			if(hasCallback && bTimer.getElapsedTime() > 0.300){
 				bTimer.reset();
 				lua_rawgeti(l, LUA_REGISTRYINDEX, luaCallback);
@@ -55,7 +53,7 @@ void Button::update(InputManager *im){
 	}
 }
 
-void Button::draw(sf::RenderWindow *screen){
+void Button::draw(ShaderProgram *prg){
 	glm::vec2 tpos = pos;
 	if(pos.x < 0){
 		tpos.x = width + pos.x;
@@ -63,11 +61,9 @@ void Button::draw(sf::RenderWindow *screen){
 	if(pos.y < 0){
 		tpos.y = height + pos.y;
 	}
-	sf::RectangleShape rect(sf::Vector2f(colBox.width, colBox.height));
-	rect.setFillColor(bgColour);
-	rect.setPosition(colBox.left, colBox.top);
-	text.setPosition(sf::Vector2f(tpos.x,tpos.y));
+	Box rect(glm::vec2(colBox.x, colBox.y), glm::vec2(colBox.width, colBox.height), bgColour);
+	text.setPos(tpos);
 
-	screen->draw(rect);
-	screen->draw(text);
+	rect.draw(prg);
+	text.draw(prg);
 }

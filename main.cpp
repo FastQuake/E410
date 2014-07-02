@@ -153,7 +153,7 @@ int main(int argc, char *argv[]){
 	im = &ime;
 
 	Console con(l,glm::vec2(0,0),
-			sf::Color(50,50,50),sf::Color::White);
+			glm::vec4(0.2,0.2,0.2,1), glm::vec4(1,1,1,1));
 
 	//Create sound manager
 	SoundManager m;
@@ -315,6 +315,12 @@ int main(int argc, char *argv[]){
 	glGetIntegerv(GL_MAJOR_VERSION, &majv);
 	glGetIntegerv(GL_MINOR_VERSION, &minv);
 	cout << "GL Version: "<< majv << "." << minv << endl;
+
+	//Create test text
+	Text t;
+	t.setFont(defaultFont);
+	t.setString("HELLO WORLD!");
+	t.setPos(glm::vec2(100,100));
 
 	gwindow->setActive(true);
 	char *pstr = new char[65536];
@@ -581,6 +587,10 @@ int main(int argc, char *argv[]){
 		//Do sfml drawing here
 		glUseProgram(gprg.getID());
 		gui->draw(&gprg);
+
+		glDisable(GL_DEPTH_TEST);
+		t.draw(&gprg);
+		glEnable(GL_DEPTH_TEST);
 
 		gwindow->display();
 		dt = dtTimer.restart();

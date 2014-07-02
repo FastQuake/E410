@@ -3,29 +3,26 @@
 #include "../globals.hpp"
 using namespace std;
 
-TextBox::TextBox(glm::vec2 pos, int length, sf::Color colour):
-rect(sf::Vector2f(7,14)){
+TextBox::TextBox(glm::vec2 pos, int length, glm::vec4 colour):
+rect(glm::vec2(0,0),glm::vec2(7,14), colour){
 	this->magic = GUIINPUT_MAGIC;
 	this->length = length;
 	this->pos = pos;
-	inputTimer.restart();
-	blinkTimer.restart();
+	inputTimer.reset();
+	blinkTimer.reset();
 	drawCursor = false;
 	focused = false;
 	
 	textPos = 0;
 	textString = "";
 
-	text.setFont(*resman.loadFont(defaultFont));
-	text.setCharacterSize(12);
-	text.setStyle(sf::Text::Regular);
-	text.setColor(colour);
+	text.setFont(defaultFont);
+	text.setColour(colour);
 	text.setString(textString);
-	text.setPosition(pos.x,pos.y);
+	text.setPos(pos);
 
-	rect.setPosition(pos.x,pos.y);
-	rect.setFillColor(colour);
-	rect.setOutlineThickness(0);
+	rect.pos = pos;
+	rect.colour = colour;
 
 	visible = true;
 	updates = true;
@@ -69,13 +66,13 @@ void TextBox::update(InputManager *im){
 		tpos.y = height + pos.y;
 	}
 	//Clicking on textbox will give it focus
-	int halfchar = (text.findCharacterPos(1).x-tpos.x);
+	int halfchar = (text.getCharSize()-tpos.x);
 	if(halfchar == 0)
 		halfchar = 1;
 	if(im->isGuiMouseDown(sf::Mouse::Left) && this->visible){
 		sf::IntRect colBox(sf::Vector2i(tpos.x,tpos.y),
 				sf::Vector2i(halfchar*length, 
-					text.getCharacterSize()));
+					text.getCharSize()));
 		if(colBox.contains(im->getGuiMousePos())){
 			focused = true;
 			im->getString();
@@ -87,7 +84,7 @@ void TextBox::update(InputManager *im){
 		focused = true;
 		updateString(im->getString());
 	}
-	if(inputTimer.getElapsedTime().asMilliseconds() > 50){
+	if(inputTimer.getElapsedTicks() > 50){
 		if(im->isGuiKeyDown(sf::Keyboard::Left)){
 			if(textPos != 0){
 				textPos--;
@@ -98,18 +95,18 @@ void TextBox::update(InputManager *im){
 				textPos++;
 			}
 		}
-		inputTimer.restart();
+		inputTimer.reset();
 	}
 
 	//Set the postion of the text cursor
 	if(textPos > length){
-		rect.setPosition(tpos.x+(length*halfchar),tpos.y);
+		rect.pos = glm::vec2(tpos.x+(length*halfchar),tpos.y);
 		//rect.setPosition(tpos.x+(length*7),tpos.y);
 	} else {
-		rect.setPosition(tpos.x+(textPos*halfchar),tpos.y);
+		rect.pos = glm::vec2(tpos.x+(textPos*halfchar),tpos.y);
 		//rect.setPosition(tpos.x+(textPos*7),tpos.y);
 	}
-	rect.setSize(sf::Vector2f(halfchar,text.getCharacterSize()));
+	rect.size = glm::vec2(halfchar,text.getCharSize());
 
 	//Display text normally if length is smaller than max width
 	if(textString.length() < length){
@@ -124,7 +121,7 @@ void TextBox::update(InputManager *im){
 	}
 }
 
-void TextBox::draw(sf::RenderWindow *screen){
+void TextBox::draw(ShaderProgram *prg){
 	glm::vec2 tpos = pos;
 	if(pos.x < 0){
 		tpos.x = width + pos.x;
@@ -132,19 +129,19 @@ void TextBox::draw(sf::RenderWindow *screen){
 	if(pos.y < 0){
 		tpos.y = height + pos.y;
 	}
-	text.setPosition(sf::Vector2f(tpos.x,tpos.y));
-	if(blinkTimer.getElapsedTime().asMilliseconds() > 500){
+	text.setPos(tpos);
+	if(blinkTimer.getElapsedTicks() > 500){
 		drawCursor = !drawCursor;
-		blinkTimer.restart();
+		blinkTimer.reset();
 	}
 	if(drawCursor && focused){
-		screen->draw(rect);
+		rect.draw(prg);
 	}
-	screen->draw(text);
+	text.draw(prg);
 }
 
 ScrollText::ScrollText(glm::vec2 pos, glm::ivec2 size, 
-		sf::Color colour){
+		glm::vec4 colour){
 
 	this->magic = GUITEXT_MAGIC;
 	this->pos = pos;
@@ -153,11 +150,9 @@ ScrollText::ScrollText(glm::vec2 pos, glm::ivec2 size,
 	lines.push_back("");
 	history = 500;
 
-	text.setFont(*resman.loadFont(defaultFont));
-	text.setCharacterSize(12);
-	text.setStyle(sf::Text::Regular);
-	text.setColor(colour);
-	text.setPosition(pos.x,pos.y);
+	text.setFont(defaultFont);
+	text.setColour(colour);
+	text.setPos(pos);
 
 	visible = true;
 	updates = true;
@@ -205,7 +200,7 @@ void ScrollText::clear(){
 void ScrollText::update(InputManager *im){
 }
 
-void ScrollText::draw(sf::RenderWindow *screen){
+void ScrollText::draw(ShaderProgram *prg){
 	glm::vec2 tpos = pos;
 	if(pos.x < 0){
 		tpos.x = width + pos.x;
@@ -215,16 +210,16 @@ void ScrollText::draw(sf::RenderWindow *screen){
 	}
 	if(lines.size() < size.y){
 		for(int i=0;i<lines.size();i++){
-			text.setPosition(tpos.x,tpos.y+(i*text.getCharacterSize()));
+			text.setPos(glm::vec2(tpos.x,tpos.y+(i*text.getCharSize())));
 			text.setString(lines.at(i));
-			screen->draw(text);
+			text.draw(prg);
 		}
 	}else{
 		int j = (size.y-1);
 		for(int i=0;i<size.y;i++){
-			text.setPosition(tpos.x,tpos.y+(j*14));
+			text.setPos(glm::vec2(tpos.x,tpos.y+(j*14)));
 			text.setString(lines.at((lines.size()-1)-i));
-			screen->draw(text);
+			text.draw(prg);
 			j--;
 		}
 	}

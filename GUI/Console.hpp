@@ -10,10 +10,10 @@
 
 class Console : public GuiElement{
 	private:
-		sf::RectangleShape bg;
+		Box bg;
 
-		sf::Color bgColour;
-		sf::Clock inputTimer;
+		glm::vec4 bgColour;
+		Timer inputTimer;
 		lua_State *l;
 
 		int currentPos;
@@ -23,10 +23,10 @@ class Console : public GuiElement{
 		ScrollText out;
 		TextBox in;
 
-		Console(lua_State *l,glm::vec2 pos, sf::Color bg, sf::Color fg);
+		Console(lua_State *l,glm::vec2 pos, glm::vec4 bg, glm::vec4 fg);
 
 		void update(InputManager *im);
-		void draw(sf::RenderWindow *screen);
+		void draw(ShaderProgram *prg);
 
 };
 

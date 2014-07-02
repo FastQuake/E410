@@ -1,3 +1,4 @@
+#include <sstream>
 #include "ResourceManager.hpp"
 using namespace std;
 
@@ -46,20 +47,26 @@ Model *ResourceManager::loadNoGLModel(std::string name){
 	}
 }
 
-TTF_Font *ResourceManager::loadFont(string name){
-	map<string, TTF_Font*>::iterator it = fonts.find(name);
-	name = fontDir + name;
+Font *ResourceManager::loadFont(string name, int size){
+	stringstream ss;
+	ss << name << ":" << size;	
+	map<string, Font>::iterator it = fonts.find(ss.str());
+	string filename = fontDir + name;
 	if(it == fonts.end()){
 		TTF_Font *f;
-		f = TTF_OpenFont(name.c_str(),18);
+		f = TTF_OpenFont(filename.c_str(),size);
 		if(!f){
 			cout << TTF_GetError() << endl;
 			return NULL;
 		}
-		fonts[name] = f;
-		return fonts[name];
+		Font out;
+		out.name = name;
+		out.f = f;
+		out.size = size;
+		fonts[ss.str()] = out;
+		return &fonts[ss.str()];
 	} else {
-		return it->second;
+		return &it->second;
 	}
 }
 

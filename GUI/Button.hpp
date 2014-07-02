@@ -5,13 +5,15 @@
 #include <SFML/Graphics.hpp>
 #include <lua.hpp>
 #include "GuiManager.hpp"
+#include "Text.hpp"
+#include "ColBox.hpp"
 #include "../Timer.hpp"
 
 #define GUIBUTTON_MAGIC "ELEB"
 
 class Button : public GuiElement {
 	public:
-		std::string text;
+		Text text;
 		glm::vec4 bgColour;
 		float padding;
 		int luaCallback;
@@ -22,9 +24,9 @@ class Button : public GuiElement {
 		void updateShape();
 
 		void update(InputManager *im);
-		void draw(sf::RenderWindow *screen);
+		void draw(ShaderProgram *prg);
 	private:
-		sf::FloatRect colBox;
+		ColBox colBox;
 		Timer bTimer;
 		lua_State *l;
 };

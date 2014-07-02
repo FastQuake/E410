@@ -31,6 +31,7 @@ void setSettings(){
 	glDepthFunc(GL_LESS);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+	glEnable(GL_TEXTURE_2D);
 
 	glClearColor(0.0,0.0,0.0,1.0);
 

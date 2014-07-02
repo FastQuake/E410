@@ -1,19 +1,15 @@
 #include "Console.hpp"
 using namespace std;
 
-Console::Console(lua_State *l,glm::vec2 pos, sf::Color bg, sf::Color fg) :
+Console::Console(lua_State *l,glm::vec2 pos, glm::vec4 bg, glm::vec4 fg) :
 out(pos,glm::ivec2(80,24),fg),
 in(glm::vec2(pos.x,pos.y+(24*14)),80,fg),
-bg(sf::Vector2f(81*7,24*14)){
+bg(pos,glm::vec2(81*7,24*14), bg){
 	
 		this->pos = pos;
 		this->l = l;
 
 		bgColour = bg;
-
-		this->bg.setFillColor(bg);
-		this->bg.setOutlineThickness(0);
-		this->bg.setPosition(sf::Vector2f(pos.x,pos.y));
 
 		size = glm::ivec2(80,24);
 
@@ -25,13 +21,13 @@ bg(sf::Vector2f(81*7,24*14)){
 
 		currentPos = -1;
 
-		inputTimer.restart();
+		inputTimer.reset();
 }
 
 void Console::update(InputManager *im){
 	//Handle all console stuff here
 	if(im->isGuiKeyDown(sf::Keyboard::Return) && 
-			inputTimer.getElapsedTime().asMilliseconds() > 100){
+			inputTimer.getElapsedTicks() > 100){
 		//out.println(in.getString());
 		string luaString = in.getString();
 		out.print("> "+luaString);
@@ -42,7 +38,7 @@ void Console::update(InputManager *im){
 			cerr << error << endl;
 		}
 		out.print("\n");
-		inputTimer.restart();
+		inputTimer.reset();
 
 		currentPos = -1;
 		history.push_back(luaString);
@@ -53,7 +49,7 @@ void Console::update(InputManager *im){
 
 	//Move up and down through history
 	if(im->isGuiKeyDown(sf::Keyboard::Up) &&
-			inputTimer.getElapsedTime().asMilliseconds() > 100){
+			inputTimer.getElapsedTicks() > 100){
 
 		if(currentPos < (int)history.size()-1){
 			currentPos++;
@@ -62,10 +58,10 @@ void Console::update(InputManager *im){
 			in.updateString(history.at(pos));
 		}
 
-		inputTimer.restart();
+		inputTimer.reset();
 	}
 	if(im->isGuiKeyDown(sf::Keyboard::Down)&&
-			inputTimer.getElapsedTime().asMilliseconds() > 100){
+			inputTimer.getElapsedTicks() > 100){
 
 		if(currentPos > -1){
 			currentPos--;
@@ -80,7 +76,7 @@ void Console::update(InputManager *im){
 			in.updateString(history.at(pos));
 		}
 
-		inputTimer.restart();
+		inputTimer.reset();
 	}
 	
 	//Call update for text input
@@ -88,18 +84,18 @@ void Console::update(InputManager *im){
 	in.update(im);
 }
 
-void Console::draw(sf::RenderWindow *screen){
+void Console::draw(ShaderProgram *prg){
 	//set background for output box
-	bg.setSize(sf::Vector2f((size.x+1)*7,size.y*14));
-	bg.setPosition(pos.x,pos.y);
-	bg.setFillColor(bgColour);
-	screen->draw(bg);
+	bg.size = glm::vec2((size.x+1)*7,size.y*14);
+	bg.pos = pos;
+	bg.colour = bgColour;
+	bg.draw(prg);
 
 	//set background for input box
-	bg.setSize(sf::Vector2f((size.x+1)*7,14));
-	bg.setPosition(pos.x,pos.y+(size.y)*14);
-	bg.setFillColor(sf::Color(bgColour.r-30,bgColour.g-30,bgColour.b-30));
-	screen->draw(bg);
-	out.draw(screen);
-	in.draw(screen);
+	bg.size = glm::vec2((size.x+1)*7,14);
+	bg.pos = glm::vec2(pos.x,pos.y+(size.y)*14);
+	bg.colour = glm::vec4(bgColour.r-0.11,bgColour.g-0.11,bgColour.b-0.11,1);
+	bg.draw(prg);
+	out.draw(prg);
+	in.draw(prg);
 }

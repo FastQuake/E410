@@ -151,6 +151,11 @@ function init()
 	i:setImg("planet.png")
 	i:setScale(100,100)
 
+	i2 = GUI.createImg()
+	i2:setImg("default.png")
+	i2:setScale(64,64)
+	i2:setPos(200,100)
+
 	planetLight = GO.createLight()
 	planetLight:setPos(-3.5,0,5)
 	planetLight:setIntensity(50)

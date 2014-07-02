@@ -140,7 +140,7 @@ int l_Guidelete(lua_State *l){
 int l_GuiCreateText(lua_State *l){
 	ScrollText *t = new (lua_newuserdata(l, sizeof(ScrollText))) 
 		ScrollText(glm::vec2(0,0), glm::ivec2(1000,50),
-			sf::Color::White);
+			glm::vec4(1,1,1,1));
 
 	gui->add(t);
 
@@ -187,17 +187,17 @@ int l_GuisetCharSize(lua_State *l){
 	//If it is a button
 	if(lastChar(e->magic) == 'B'){
 		Button *b = (Button*)e;
-		b->text.setCharacterSize(size);
+		b->text.setCharSize(size);
 	}
 	//If it is a textbox
 	else if(lastChar(e->magic) == 'T'){
 		ScrollText *t = (ScrollText*)e;
-		t->text.setCharacterSize(size);
+		t->text.setCharSize(size);
 
 	}
 	else if(lastChar(e->magic) == 'I'){
 		TextBox *t = (TextBox*)e;
-		t->text.setCharacterSize(size);
+		t->text.setCharSize(size);
 	} else {
 		lua_pushstring(l, "Argument does not contain text");
 		lua_error(l);
@@ -208,7 +208,7 @@ int l_GuisetCharSize(lua_State *l){
 int l_GuisetFont(lua_State *l){
 	GuiElement *e = l_toGuiElement(l, 1);
 	string font = l_toString(l, 2);
-	sf::Font *f = resman.loadFont(font);
+	Font *f = resman.loadFont(font, 12);
 	if(f == NULL){
 		lua_pushstring(l,"Font cannot be found");
 		lua_error(l);
@@ -216,17 +216,17 @@ int l_GuisetFont(lua_State *l){
 	//If it is a button
 	if(lastChar(e->magic) == 'B'){
 		Button *b = (Button*)e;
-		b->text.setFont(*f);
+		b->text.setFont(font);
 	}
 	//If it is a textbox
 	else if(lastChar(e->magic) == 'T'){
 		ScrollText *t = (ScrollText*)e;
-		t->text.setFont(*f);
+		t->text.setFont(font);
 
 	}
 	else if(lastChar(e->magic) == 'I'){
 		TextBox *t = (TextBox*)e;
-		t->text.setFont(*f);
+		t->text.setFont(font);
 	} else {
 		lua_pushstring(l, "Argument does not contain text");
 		lua_error(l);
@@ -243,16 +243,16 @@ int l_GuisetColour(lua_State *l){
 	//If it is a button
 	if(lastChar(e->magic) == 'B'){
 		Button *bb = (Button*)e;
-		bb->text.setColor(sf::Color(r,g,b,a));
+		bb->text.setColour(glm::vec4(r,g,b,a));
 	}
 	//If it is a textbox
 	else if(lastChar(e->magic) == 'T'){
 		ScrollText *t = (ScrollText*)e;
-		t->text.setColor(sf::Color(r,g,b,a));
+		t->text.setColour(glm::vec4(r,g,b,a));
 	}
 	else if(lastChar(e->magic) == 'I'){
 		TextBox *t = (TextBox*)e;
-		t->text.setColor(sf::Color(r,g,b,a));
+		t->text.setColour(glm::vec4(r,g,b,a));
 	} else if(lastChar(e->magic) == 'C'){
 		Box *c = (Box*)e;
 		c->colour = glm::vec4(r,g,b,a);	
@@ -267,7 +267,7 @@ int l_GuisetColour(lua_State *l){
 int l_GuiCreateInput(lua_State *l){
 	TextBox *t = new (lua_newuserdata(l, sizeof(TextBox))) 
 		TextBox(glm::vec2(0,0), 80,
-			sf::Color::White);
+			glm::vec4(1,1,1,1));
 
 	gui->add(t);
 
@@ -315,7 +315,7 @@ int l_GuisetBGColour(lua_State *l){
 	int b = l_toNumber(l, 4);
 	int a = l_toNumber(l, 5);
 
-	bb->bgColour = sf::Color(r,g,b,a);
+	bb->bgColour = glm::vec4(r,g,b,a);
 	return 0;
 }
 int l_Guisetcallback(lua_State *l){
