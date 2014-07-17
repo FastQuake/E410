@@ -94,7 +94,7 @@ bool loadIQMMesh(string filename, iqmheader header, Model &target, unsigned char
 			string texture = &str[m.material];
 			tex = resman.loadTexture(texture);
 			
-			if(tex.id == -1){
+			if(tex.id == 0){
 				cout << "Could not find " << texture <<endl;
 				tex = resman.loadTexture("default.png");
 			}

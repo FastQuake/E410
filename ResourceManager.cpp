@@ -100,7 +100,7 @@ Texture ResourceManager::loadTexture(string name){
 	name = imgDir + name;	
 	if(name.length() == 0){
 		Texture error;
-		error.id = -1;
+		error.id = 0;
 		cerr << "Texture name is empty." << endl;
 		return error;
 	}
@@ -110,7 +110,7 @@ Texture ResourceManager::loadTexture(string name){
 		SDL_Surface *img = IMG_Load(name.c_str());
 		if(!img){
 			Texture error;
-			error.id = -1;
+			error.id = 0;
 			return error;
 		}
 

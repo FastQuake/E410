@@ -201,7 +201,7 @@ int l_setTexture(lua_State *l){
 	string tex = l_toString(l, 2);
 	
 	Texture texture = resman.loadTexture(tex);
-	if(texture.id == -1){
+	if(texture.id == 0){
 		cout << "Can't find texture " << tex << endl;
 		texture = resman.loadTexture("default.png");
 	}

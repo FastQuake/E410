@@ -3,7 +3,7 @@
 using namespace std;
 
 Text::Text(){
-	t.id = -1;
+	t.id = 0;
 	f.size = 12;
 	i.colour = glm::vec4(0,0,0,1);
 	i.pos = glm::vec2(0,0);
@@ -19,12 +19,12 @@ void Text::setColour(glm::vec4 colour){
 
 void Text::setFont(string name){
 	f = *resman.loadFont(name, f.size);
-	t.id = -1;
+	t.id = 0;
 }
 
 void Text::setCharSize(int size){
 	f = *resman.loadFont(f.name, size);
-	t.id = -1;
+	t.id = 0;
 }
 
 int Text::getCharSize(){
@@ -42,7 +42,7 @@ ColBox Text::getBounds(){
 
 void Text::setString(string str){
 	if(f.f == NULL){
-		t.id = -1;
+		t.id = 0;
 		return;
 	}
 
@@ -61,9 +61,9 @@ void Text::setString(string str){
 	t.width = s->w;
 	t.height = s->h;
 
-	if(t.id != -1){
+	if(t.id != 0){
 		glDeleteTextures(1, &t.id);
-		t.id = -1;
+		t.id = 0;
 	}
 	glGenTextures(1, &t.id);
 	glBindTexture(GL_TEXTURE_2D, t.id);
@@ -85,7 +85,7 @@ void Text::setString(string str){
 }
 
 void Text::draw(ShaderProgram *prg){
-	if(t.id != -1){
+	if(t.id != 0){
 		i.draw(prg);
 	}
 }
