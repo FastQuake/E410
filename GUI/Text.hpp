@@ -19,6 +19,9 @@ class Text {
 		Texture t;
 		Font f;
 		Image i;
+		std::string str;
+		SDL_Colour colour;
+		void renderToTexture();
 	public:
 		Text();
 

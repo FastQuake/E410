@@ -67,8 +67,6 @@ void GuiManager::update(){
 
 void GuiManager::draw(ShaderProgram *prg){
 	bool lock = false;
-	glDisable(GL_DEPTH_TEST);
-	glEnableVertexAttribArray(prg->getAttribute("coord2d"));
 	for(int i=0;i<elements.size();i++){
 		if(elements.at(i)->visible){
 			elements.at(i)->draw(prg);
@@ -80,6 +78,4 @@ void GuiManager::draw(ShaderProgram *prg){
 	} else {
 		im->lockToGui(false);
 	}
-	glDisableVertexAttribArray(prg->getAttribute("coord2d"));
-	glEnable(GL_DEPTH_TEST);
 }

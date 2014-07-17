@@ -586,12 +586,13 @@ int main(int argc, char *argv[]){
 
 		//Do sfml drawing here
 		glUseProgram(gprg.getID());
+		glDisable(GL_DEPTH_TEST);
+		glEnableVertexAttribArray(gprg.getAttribute("coord2d"));
 		gui->draw(&gprg);
 
-		glDisable(GL_DEPTH_TEST);
 		t.draw(&gprg);
+		glDisableVertexAttribArray(gprg.getAttribute("coord2d"));
 		glEnable(GL_DEPTH_TEST);
-
 		gwindow->display();
 		dt = dtTimer.restart();
 	}

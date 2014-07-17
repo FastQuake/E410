@@ -5,42 +5,12 @@ using namespace std;
 Text::Text(){
 	t.id = 0;
 	f.size = 12;
-	i.colour = glm::vec4(0,0,0,1);
 	i.pos = glm::vec2(0,0);
+	str = "null";
+	colour = {255,255,255};
 }
 
-void Text::setPos(glm::vec2 pos){
-	i.pos = pos;
-}
-
-void Text::setColour(glm::vec4 colour){
-	i.colour = colour;
-}
-
-void Text::setFont(string name){
-	f = *resman.loadFont(name, f.size);
-	t.id = 0;
-}
-
-void Text::setCharSize(int size){
-	f = *resman.loadFont(f.name, size);
-	t.id = 0;
-}
-
-int Text::getCharSize(){
-	return f.size;
-}
-
-ColBox Text::getBounds(){
-	ColBox out;
-	out.x = i.pos.x;
-	out.y = i.pos.y;
-	out.width = t.width;
-	out.height = t.height;
-	return out;
-}
-
-void Text::setString(string str){
+void Text::renderToTexture(){
 	if(f.f == NULL){
 		t.id = 0;
 		return;
@@ -49,8 +19,7 @@ void Text::setString(string str){
 	if(str.length() == 0)
 		return;
 
-	SDL_Color c = {0,0,0};
-	SDL_Surface *s = TTF_RenderUTF8_Blended(f.f, str.c_str(), c);
+	SDL_Surface *s = TTF_RenderUTF8_Blended(f.f, str.c_str(), colour);
 
 	if(s == NULL){
 		cout << "Bad surface on " << f.name << endl;
@@ -82,6 +51,43 @@ void Text::setString(string str){
 	SDL_FreeSurface(s);
 
 	i.setImage(t);
+}
+
+void Text::setPos(glm::vec2 pos){
+	i.pos = pos;
+}
+
+void Text::setColour(glm::vec4 colour){
+	this->colour = {colour.r,colour.g,colour.b};
+	renderToTexture();
+}
+
+void Text::setFont(string name){
+	f = *resman.loadFont(name, f.size);
+	renderToTexture();
+}
+
+void Text::setCharSize(int size){
+	f = *resman.loadFont(f.name, size);
+	renderToTexture();
+}
+
+int Text::getCharSize(){
+	return f.size;
+}
+
+ColBox Text::getBounds(){
+	ColBox out;
+	out.x = i.pos.x;
+	out.y = i.pos.y;
+	out.width = t.width;
+	out.height = t.height;
+	return out;
+}
+
+void Text::setString(string str){
+	this->str = str;
+	renderToTexture();
 }
 
 void Text::draw(ShaderProgram *prg){
