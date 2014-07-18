@@ -86,13 +86,13 @@ void Console::update(InputManager *im){
 
 void Console::draw(ShaderProgram *prg){
 	//set background for output box
-	bg.size = glm::vec2((size.x+1)*7,size.y*14);
+	bg.scale = glm::vec2((size.x+1)*7,size.y*14);
 	bg.pos = pos;
 	bg.colour = bgColour;
 	bg.draw(prg);
 
 	//set background for input box
-	bg.size = glm::vec2((size.x+1)*7,14);
+	bg.scale = glm::vec2((size.x+1)*7,14);
 	bg.pos = glm::vec2(pos.x,pos.y+(size.y)*14);
 	bg.colour = glm::vec4(bgColour.r-0.11,bgColour.g-0.11,bgColour.b-0.11,1);
 	bg.draw(prg);
