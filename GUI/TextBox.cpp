@@ -3,6 +3,8 @@
 #include "../globals.hpp"
 using namespace std;
 
+int monoWidth = 7; //Hardcoded monospace font character width, DejaVu Sans Mono @ 12pt
+
 TextBox::TextBox(glm::vec2 pos, int length, glm::vec4 colour):
 rect(glm::vec2(0,0),glm::vec2(7,14), colour){
 	this->magic = GUIINPUT_MAGIC;
@@ -66,12 +68,10 @@ void TextBox::update(InputManager *im){
 		tpos.y = height + pos.y;
 	}
 	//Clicking on textbox will give it focus
-	int halfchar = (text.getCharSize()-tpos.x);
-	if(halfchar == 0)
-		halfchar = 1;
+
 	if(im->isGuiMouseDown(sf::Mouse::Left) && this->visible){
 		sf::IntRect colBox(sf::Vector2i(tpos.x,tpos.y),
-				sf::Vector2i(halfchar*length, 
+				sf::Vector2i(length*monoWidth,
 					text.getCharSize()));
 		if(colBox.contains(im->getGuiMousePos())){
 			focused = true;
@@ -100,13 +100,13 @@ void TextBox::update(InputManager *im){
 
 	//Set the postion of the text cursor
 	if(textPos > length){
-		rect.pos = glm::vec2(tpos.x+(length*halfchar),tpos.y);
+		rect.pos = glm::vec2(tpos.x+(length*monoWidth),tpos.y);
 		//rect.setPosition(tpos.x+(length*7),tpos.y);
 	} else {
-		rect.pos = glm::vec2(tpos.x+(textPos*halfchar),tpos.y);
+		rect.pos = glm::vec2(tpos.x+(textPos*monoWidth),tpos.y);
 		//rect.setPosition(tpos.x+(textPos*7),tpos.y);
 	}
-	rect.size = glm::vec2(halfchar,text.getCharSize());
+	rect.size = glm::vec2(monoWidth,text.getCharSize());
 
 	//Display text normally if length is smaller than max width
 	if(textString.length() < length){
