@@ -11,13 +11,17 @@ Text::Text(){
 }
 
 void Text::renderToTexture(){
-	if(f.f == NULL){
+	if(t.id != 0){
+		glDeleteTextures(1, &t.id);
 		t.id = 0;
-		return;
 	}
 
-	if(str.length() == 0)
+	if(f.f == NULL){
 		return;
+	}
+	if(str.length() == 0){
+		return;
+	}
 
 	SDL_Surface *s = TTF_RenderUTF8_Blended(f.f, str.c_str(), colour);
 
@@ -30,10 +34,6 @@ void Text::renderToTexture(){
 	t.width = s->w;
 	t.height = s->h;
 
-	if(t.id != 0){
-		glDeleteTextures(1, &t.id);
-		t.id = 0;
-	}
 	glGenTextures(1, &t.id);
 	glBindTexture(GL_TEXTURE_2D, t.id);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

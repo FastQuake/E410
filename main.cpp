@@ -153,7 +153,7 @@ int main(int argc, char *argv[]){
 	im = &ime;
 
 	Console con(l,glm::vec2(0,0),
-			glm::vec4(0.2,0.2,0.2,1), glm::vec4(1,1,1,1));
+			glm::vec4(0.2,0.2,0.2,1), glm::vec4(255,255,255,1));
 
 	//Create sound manager
 	SoundManager m;
@@ -234,8 +234,8 @@ int main(int argc, char *argv[]){
 	//Create GUI manager
 	GuiManager guie(im, &gprg);
 	gui = &guie;
-	//global_con = &con;
-	//guie.add(&con);
+	global_con = &con;
+	guie.add(&con);
 	
 	//Load main lua file and then call init function
 	lua_pushnumber(l, width);
