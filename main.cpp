@@ -316,12 +316,6 @@ int main(int argc, char *argv[]){
 	glGetIntegerv(GL_MINOR_VERSION, &minv);
 	cout << "GL Version: "<< majv << "." << minv << endl;
 
-	//Create test text
-	Text t;
-	t.setFont(defaultFont);
-	t.setString("HELLO WORLD!");
-	t.setPos(glm::vec2(100,100));
-
 	gwindow->setActive(true);
 	char *pstr = new char[65536];
 	while(gwindow->isOpen()){
@@ -589,8 +583,6 @@ int main(int argc, char *argv[]){
 		glDisable(GL_DEPTH_TEST);
 		glEnableVertexAttribArray(gprg.getAttribute("coord2d"));
 		gui->draw(&gprg);
-
-		t.draw(&gprg);
 		glDisableVertexAttribArray(gprg.getAttribute("coord2d"));
 		glEnable(GL_DEPTH_TEST);
 		gwindow->display();

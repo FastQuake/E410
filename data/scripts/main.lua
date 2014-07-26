@@ -126,7 +126,7 @@ function onKeyRelease(key)
 end
 
 function init()
-	--title = Title.create()
+	title = Title.create()
 	--Create stuff for GUI
 	--[[fpsCounter = GUI.createText()
 	fpsCounter:setCharSize(26)
@@ -138,23 +138,8 @@ function init()
 	cam:setRot(0,0,0)
 	camera.setCam(cam)
 
-	--h = HUD.create(player)
-	--h:show(false)
-
-	b = GUI.createBox()
-	b:setScale(400,400)
-	b:setPos(-410,-410)
-	b:setColour(0.5,0.5,0.5,1)
-	b:setZ(-1)
-
-	i = GUI.createImg()
-	i:setImg("planet.png")
-	i:setScale(100,100)
-
-	i2 = GUI.createImg()
-	i2:setImg("default.png")
-	i2:setScale(64,64)
-	i2:setPos(200,100)
+	h = HUD.create(player)
+	h:show(false)
 
 	planetLight = GO.createLight()
 	planetLight:setPos(-3.5,0,5)
@@ -179,8 +164,8 @@ jumptimer = 0
 sentStop = false
 
 function update(dt)
-	--[[if time > 1 then
-		fpsCounter:setString("FPS: "..frames)
+	if time > 1 then
+		--fpsCounter:setString("FPS: "..frames)
 		frames = 0
 		time = 0
 	end
@@ -330,5 +315,5 @@ function update(dt)
 		planetLight = GO.createLight()
 		planetLight:setPos(-3.5,0,5)
 		planetLight:setIntensity(80)
-	end]]--
+	end
 end

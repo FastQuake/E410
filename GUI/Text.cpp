@@ -4,7 +4,7 @@ using namespace std;
 
 Text::Text(){
 	t.id = 0;
-	f.size = 12;
+	f = *resman.loadFont(defaultFont,12);
 	i.pos = glm::vec2(0,0);
 	str = "null";
 	colour = {255,255,255};
