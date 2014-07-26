@@ -23,6 +23,7 @@ function Title.create()
 	title.top.title:setString("E410")
 	title.top.title:setCharSize(48)
 	title.top.title:setPos(10,10)
+	title.top.title:setColour(255,255,255,255)
 
 	title.top.play = GUI.createButton()
 	title.top.play:setString("Play")
