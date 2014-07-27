@@ -9,8 +9,9 @@ solution("E410")
 			includedirs({"/usr/include/bullet/","/usr/local/include/bullet/"})
 			if os.is("windows") == true then
 				defines({"WINDOWS"})
+				linkoptions({"-mwindows"})
 				includedirs({"/usr/x86_64-w64-mingw32/include/bullet/","/usr/i686-w64-mingw32/include/bullet/"})
-				links({"sfml-system","sfml-window","sfml-graphics","sfml-audio","glew32","opengl32","lua52","enet","ws2_32","wsock32","winmm","BulletCollision","BulletDynamics","LinearMath"})
+				links({"sfml-system","sfml-window","sfml-graphics","sfml-audio","mingw32","SDL2main","SDL2","SDL2_image","SDL2_ttf","glew32","opengl32","lua52","enet","ws2_32","wsock32","winmm","BulletCollision","BulletDynamics","LinearMath"})
 			elseif os.is("linux") then
 				defines({"LINUX"})
 				buildoptions({"`pkg-config --cflags lua5.2`"})
