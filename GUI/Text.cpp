@@ -2,6 +2,15 @@
 #include "../globals.hpp"
 using namespace std;
 
+string replaceChar(string str, const string& replace, char c){
+	size_t i = str.find_first_of(replace);
+	while(i != string::npos){
+		str[i] = c;
+		i = str.find_first_of(replace, i+1);
+	}
+	return str;
+}
+
 Text::Text(){
 	t.id = 0;
 	f = *resman.loadFont(defaultFont,12);
@@ -87,6 +96,8 @@ ColBox Text::getBounds(){
 
 void Text::setString(string str){
 	this->str = str;
+	this->str = replaceChar(this->str, "\t", ' ');
+	this->str = replaceChar(this->str, "\n", ' ');
 	renderToTexture();
 }
 

@@ -143,7 +143,7 @@ function Title.create()
 	title.sett.textBoxes = GUI.createText()
 	title.sett.textBoxes:setString(title.settText)
 	title.sett.textBoxes:setCharSize(18)
-	title.sett.textBoxes:setPos(-440, -300)
+	title.sett.textBoxes:setPos(-400, -300)
 
 	title.sett.AA = GUI.createInput()
 	title.sett.AA:setCharSize(18)
@@ -247,7 +247,7 @@ function Title.create()
 	title.creds.text = GUI.createText()
 	title.creds.text:setString(title.creditText)
 	title.creds.text:setCharSize(18)
-	title.creds.text:setPos(-420,-300)
+	title.creds.text:setPos(-400,-300)
 
 	--Add planet geometry
 	title.planet = GO.loadIQM("planet.iqm")
