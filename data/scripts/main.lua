@@ -210,68 +210,26 @@ function update(dt)
 		if player.hp <= 0 then
 			network.reset()
 		end
-		if input.isJoystickConnected() then
-			local mx,my = input.getRightAnalog()
-			if (math.abs(mx) > 0.2 or math.abs(my) > 0.2) then
-				cam:turn(-joySens*my*dt,joySens*mx*dt)
-				player.newRot = player.oldRot-(joySens*mx*dt)
-				if player.newRot ~= player.oldRot and 
-					(math.abs(mx-oldTX) > 0.1 or math.abs(my-oldTY) > 0.1)	then
-					network.sendPacket("nturn "..player.newRot)
-				end
-				oldTX = mx
-				oldTY = my
+		local mousex, mousey = input.getMousePos()
+		mousex = mousex - (width/2)
+		mousey = mousey - (height/2)
+		cam:turn(-mousey*sensitvity,
+		mousex*sensitvity)
+		input.setMousePos(width/2, height/2)
+		player.newRot = player.oldRot-mousex*sensitvity
+		if player.newRot ~= player.oldRot then
+			network.sendPacket("turn "..mousex*sensitvity.." "..-mousey*sensitvity)
+		end
+		if input.isMouseDown(mouse.Left) and bulletTimer > 0.3 then
+			if player.ammo > 0 then
+				local pos = Vector.create(cam:getPos())
+				local dir = Vector.create(cam:getLookat())
+				network.sendPacket("shoot "..(pos+dir).." "..dir)
+				player.ammo = player.ammo -1
+			else
+				sound.playSound("click.wav")
 			end
-			if input.getRightTrigger() > 0.4 and bulletTimer > 0.3 then
-				if player.ammo > 0 then
-					local pos = Vector.create(cam:getPos())
-					local dir = Vector.create(cam:getLookat())
-					network.sendPacket("shoot "..(pos+dir).." "..dir)
-					player.ammo = player.ammo -1
-				else
-					sound.playSound("click.wav")
-				end
-				bulletTimer = 0
-			end
-			mx,my = input.getLeftAnalog()
-			if (math.abs(mx-oldAX) > 0.1 or math.abs(my-oldAY) > 0.1) then
-				if(math.abs(mx) > 0.2 or math.abs(my) > 0.2) then
-					network.sendPacket("movex "..mx.." "..-my)
-					sentStop = true
-					oldAX = mx
-					oldAY = my
-				elseif sentStop == true then
-					network.sendPacket("stopx")
-					sentStop = false
-				end
-			end
-			if input.isJoystickButtonDown(button.A) and jumptimer > 0.3 then
-				network.sendPacket("jump")
-				jumptimer = 0
-			end
-			jumptimer = jumptimer + dt
-		else
-			local mousex, mousey = input.getMousePos()
-			mousex = mousex - (width/2)
-			mousey = mousey - (height/2)
-			cam:turn(-mousey*sensitvity,
-			mousex*sensitvity)
-			input.setMousePos(width/2, height/2)
-			player.newRot = player.oldRot-mousex*sensitvity
-			if player.newRot ~= player.oldRot then
-				network.sendPacket("turn "..mousex*sensitvity.." "..-mousey*sensitvity)
-			end
-			if input.isMouseDown(mouse.Left) and bulletTimer > 0.3 then
-				if player.ammo > 0 then
-					local pos = Vector.create(cam:getPos())
-					local dir = Vector.create(cam:getLookat())
-					network.sendPacket("shoot "..(pos+dir).." "..dir)
-					player.ammo = player.ammo -1
-				else
-					sound.playSound("click.wav")
-				end
-				bulletTimer = 0
-			end
+			bulletTimer = 0
 		end
 		if paused then
 			pausetimer = pausetimer+dt

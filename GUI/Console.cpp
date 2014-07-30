@@ -26,7 +26,7 @@ bg(pos,glm::vec2(81*7,24*14), bg){
 
 void Console::update(InputManager *im){
 	//Handle all console stuff here
-	if(im->isGuiKeyDown(sf::Keyboard::Return) && 
+	if(im->isGuiKeyDown(SDLK_RETURN) && 
 			inputTimer.getElapsedTicks() > 100){
 		//out.println(in.getString());
 		string luaString = in.getString();

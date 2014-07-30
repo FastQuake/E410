@@ -6,6 +6,7 @@ InputManager::InputManager(){
 	isLocked = false;
 	isFocused = true;
 	inputString = "";
+	keys = (uint8_t*)SDL_GetKeyboardState(NULL);
 }
 
 bool InputManager::isGuiLocked(){

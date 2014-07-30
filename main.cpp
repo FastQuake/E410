@@ -175,7 +175,7 @@ int main(int argc, char *argv[]){
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION,3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION,3);
 	screen = SDL_CreateWindow("E410|Dev", SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,
@@ -210,14 +210,14 @@ int main(int argc, char *argv[]){
 		errMsg("OpenGL 3.3 not supported!");
 		return EXIT_FAILURE;
 	}
-	/*if(!GLEW_ARB_uniform_buffer_object){
+	if(!GLEW_ARB_uniform_buffer_object){
 		errMsg("UBOs not supported!");
 		return EXIT_FAILURE;
 	}
 	if(!GLEW_ARB_texture_cube_map_array){
 		errMsg("Cubemap arrays not supported!");
 		return EXIT_FAILURE;
-	}*/
+	}
 
 	bool programsGood = true;
 
