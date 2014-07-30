@@ -7,7 +7,7 @@ Text::Text(){
 	f = *resman.loadFont(defaultFont,12);
 	i.pos = glm::vec2(0,0);
 	str = "null";
-	colour = {255,255,255};
+	colour = (SDL_Color){255,255,255};
 }
 
 void Text::renderToTexture(){
@@ -58,7 +58,7 @@ void Text::setPos(glm::vec2 pos){
 }
 
 void Text::setColour(glm::vec4 colour){
-	this->colour = {colour.r,colour.g,colour.b};
+	this->colour = (SDL_Color){colour.r,colour.g,colour.b};
 	renderToTexture();
 }
 
