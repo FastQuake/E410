@@ -58,7 +58,7 @@ void Text::setPos(glm::vec2 pos){
 }
 
 void Text::setColour(glm::vec4 colour){
-	this->colour = (SDL_Color){colour.r,colour.g,colour.b};
+	this->colour = (SDL_Color){colour.r*255,colour.g*255,colour.b*255};
 	renderToTexture();
 }
 

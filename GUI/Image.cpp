@@ -8,7 +8,7 @@ Image::Image(){
 	tex = resman.loadTexture("default.png");
 
 	scale = glm::vec2(tex.width,tex.height);
-	colour = glm::vec4(0,0,0,0); //This is useless for images and setting alpha to 1 breaks transparent textures; TODO: Implement GUI element alpha setting
+	colour = glm::vec4(0,0,0,1);
 	
 	visible = true;
 	updates = false;
@@ -27,7 +27,6 @@ void Image::setImage(Texture t){
 }
 
 void Image::draw(ShaderProgram *prg){
-	colour = glm::vec4(0,0,0,0);
 	glm::vec2 tpos = pos;
 	if(pos.x < 0){
 		tpos.x = width + pos.x;

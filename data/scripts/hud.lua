@@ -12,7 +12,7 @@ function HUD.create(player)
 	h.gui.hp = GUI.createBox()
 	h.gui.hp:setScale(400,30)
 	h.gui.hp:setPos(width/2-200,10)
-	h.gui.hp:setColour(200,0,0,255)
+	h.gui.hp:setColour(0.78,0,0,1)
 
 	h.gui.ammo = GUI.createText()
 	h.gui.ammo:setString(player.ammo)
