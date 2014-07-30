@@ -16,7 +16,7 @@ solution("E410")
 				defines({"LINUX"})
 				buildoptions({"`pkg-config --cflags lua5.2`"})
 				linkoptions({"`pkg-config --libs lua5.2`","-Wl,-rpath=./libs "})
-				links({"sfml-system","sfml-window","sfml-graphics","sfml-audio","SDL2","SDL2_image","SDL2_ttf","GL","GLEW","enet","BulletCollision","BulletDynamics","LinearMath"})
+				links({"sfml-system","sfml-window","sfml-graphics","sfml-audio","SDL2","SDL2_image","SDL2_ttf","SDL2_mixer","GL","GLEW","enet","BulletCollision","BulletDynamics","LinearMath"})
 			end
 			location("./build")
 

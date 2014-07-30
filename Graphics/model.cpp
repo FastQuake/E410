@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <SFML/Graphics.hpp>
 #include "model.hpp"
 #include "../globals.hpp"
 using namespace std;

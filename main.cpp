@@ -1,5 +1,4 @@
 #include <GL/glew.h>
-#include <SFML/Graphics.hpp>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
@@ -108,6 +107,15 @@ int main(int argc, char *argv[]){
 	}
 	if(TTF_Init() == -1){
 		errMsg(TTF_GetError());
+		return EXIT_FAILURE;
+	}
+	//Set up audio device thing
+	int audio_rate = 22050;
+	uint16_t audio_format = AUDIO_S16;
+	int audio_channels = 4;
+	int audio_buffers = 4096;
+	if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers)){
+		errMsg("Could not open audio device!");
 		return EXIT_FAILURE;
 	}
 	//Set Default settings
@@ -595,4 +603,6 @@ int main(int argc, char *argv[]){
 	enet_host_destroy(client);
 	serverRunning = false;
 	SDL_WaitThread(serverThread, NULL);
+	Mix_CloseAudio();
+	SDL_Quit();
 }

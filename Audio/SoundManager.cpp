@@ -2,17 +2,18 @@
 using namespace std;
 
 SoundManager::SoundManager(){
-	soundTimer.restart();
+	soundTimer.reset();
 }
 
 void SoundManager::update(){
-	if(soundTimer.getElapsedTime().asSeconds() > 5){
+	if(soundTimer.getElapsedTime() > 5){
 		for(int i=0;i<sounds.size();i++){
-			if(sounds[i].sound.getStatus() != sf::Sound::Playing){
+			if(Mix_Playing(sounds[i].channel) == false){
+				Mix_HaltChannel(sounds[i].channel);
 				sounds.erase(sounds.begin()+i);
 				i = 0;
 			}
 		}
-		soundTimer.restart();
+		soundTimer.reset();
 	}
 }

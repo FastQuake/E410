@@ -3,11 +3,12 @@
 #include <iostream>
 #include <vector>
 #include "Sound.hpp"
+#include "../Timer.hpp"
 
 class SoundManager{
 	public:
 		std::vector<Sound> sounds;
-		sf::Clock soundTimer;
+		Timer soundTimer;
 
 		SoundManager();
 		void update();

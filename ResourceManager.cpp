@@ -70,30 +70,16 @@ Font *ResourceManager::loadFont(string name, int size){
 	}
 }
 
-sf::Image *ResourceManager::loadImage(string name){
-	map<string, sf::Image>::iterator it = images.find(name);
-	if(it == images.end()){
-		sf::Image i;
-		if(i.loadFromFile(imgDir+name) == false){
-			return NULL;
-		}
-		images[name] = i;
-		return &images[name];
-	} else {
-		return &it->second;
-	}
-}
-sf::SoundBuffer *ResourceManager::loadSound(string name){
-	map<string, sf::SoundBuffer>::iterator it = sounds.find(name);
+Mix_Chunk *ResourceManager::loadSound(string name){
+	map<string, Mix_Chunk*>::iterator it = sounds.find(name);
+	name = soundDir + name;
 	if(it == sounds.end()){
-		sf::SoundBuffer b;
-		if(b.loadFromFile(soundDir+name) == false){
-			return NULL;
-		}
+		Mix_Chunk *b;
+		b = Mix_LoadWAV(name.c_str());
 		sounds[name] = b;
-		return &sounds[name];
+		return sounds[name];
 	} else {
-		return &it->second;
+		return it->second;
 	}
 }
 Texture ResourceManager::loadTexture(string name){

@@ -2,18 +2,20 @@
 #define SOUND_HPP
 
 #include <iostream>
-#include <SFML/Audio.hpp>
+#include <SDL2/SDL_mixer.h>
 
 #define SOUND_MAGIC "SND"
 
 class Sound {
 	public:
 		std::string magic;
+		int channel;
 		bool good;
-		sf::Sound sound;
+		Mix_Chunk *sound;
 
 		Sound();
 		void setSound(std::string name);
+		void play();
 };
 
 #endif
