@@ -409,7 +409,6 @@ void Model::draw(ShaderProgram *prg, vector<Texture> textures, vector<glm::mat4>
 		skin = false;
 
 	glUniform1i(prg->getUniform("skin"),skin);
-
 	glBindBuffer(GL_ARRAY_BUFFER,verts_vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tris_ebo);
 	vertex *vert = NULL;

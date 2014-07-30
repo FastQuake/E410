@@ -198,6 +198,10 @@ int main(int argc, char *argv[]){
 		return EXIT_FAILURE;
 	}
 
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
 	InputManager ime;
 	im = &ime;
 
@@ -268,7 +272,6 @@ int main(int argc, char *argv[]){
 	glDepthFunc(GL_LESS);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	glEnable(GL_TEXTURE_2D);
 	glClearColor(0.0,0.0,0.0,1.0);
 
 	//Create GUI manager
@@ -594,7 +597,6 @@ int main(int argc, char *argv[]){
 		}
 
 		//Do all drawing here
-		glEnable(GL_TEXTURE_CUBE_MAP);
 		glUseProgram(depthPrg.getID());
 		glBindFramebuffer(GL_FRAMEBUFFER,rendman.framebuffer);
 		for(int i=0;i<rendman.lights.size();i++)
@@ -610,7 +612,6 @@ int main(int argc, char *argv[]){
 		glUniformMatrix4fv(prg.getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
 		glUniformMatrix4fv(prg.getUniform("pointProj"),1,GL_FALSE,glm::value_ptr(PLight::pointProjection));
 		rendman.render(&prg,&skyprg,dt);
-		glDisable(GL_TEXTURE_CUBE_MAP);
 		rendman.renderSprites(spriteprg,dt);
 
 
