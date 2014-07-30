@@ -154,9 +154,9 @@ void RenderManager::updateUBO(){
 			data.lightAExponentials[i].x = lights[i]->AExponential;
 	}
 	data.numLights.x = lights.size();
-	glBindBufferARB(GL_UNIFORM_BUFFER,ubo);
-	glBufferSubDataARB(GL_UNIFORM_BUFFER,0,sizeof(data),&data);
-	glBindBufferARB(GL_UNIFORM_BUFFER,0);
+	glBindBuffer(GL_UNIFORM_BUFFER,ubo);
+	glBufferSubData(GL_UNIFORM_BUFFER,0,sizeof(data),&data);
+	glBindBuffer(GL_UNIFORM_BUFFER,0);
 }
 
 void RenderManager::remove(GameObject *obj){

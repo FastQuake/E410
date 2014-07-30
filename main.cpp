@@ -1,7 +1,7 @@
-#include <GL/glew.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#include "Graphics/gl_core_3_3.h"
 #include <iostream>
 #include <sstream>
 #include <cmath>
@@ -175,7 +175,7 @@ int main(int argc, char *argv[]){
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION,3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION,3);
 	screen = SDL_CreateWindow("E410|Dev", SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,
@@ -189,6 +189,15 @@ int main(int argc, char *argv[]){
 	else
 		SDL_GL_SetSwapInterval(0);
 
+	if(ogl_LoadFunctions() == ogl_LOAD_FAILED){
+		errMsg("Could not load GL functions and extensions");
+		return EXIT_FAILURE;
+	}
+	if(ogl_IsVersionGEQ(3,3) == false){
+		errMsg("OpenGL 3.3 not supported!");
+		return EXIT_FAILURE;
+	}
+
 	InputManager ime;
 	im = &ime;
 
@@ -198,26 +207,6 @@ int main(int argc, char *argv[]){
 	//Create sound manager
 	SoundManager m;
 	soundman = &m;
-
-	glewExperimental = GL_TRUE;
-	GLenum glewStatus = glewInit();
-	if(glewStatus != GLEW_OK){
-		errMsg((char*)glewGetErrorString(glewStatus));
-		return EXIT_FAILURE;
-	}
-
-	if(GLEW_VERSION_3_3 == false){
-		errMsg("OpenGL 3.3 not supported!");
-		return EXIT_FAILURE;
-	}
-	if(!GLEW_ARB_uniform_buffer_object){
-		errMsg("UBOs not supported!");
-		return EXIT_FAILURE;
-	}
-	if(!GLEW_ARB_texture_cube_map_array){
-		errMsg("Cubemap arrays not supported!");
-		return EXIT_FAILURE;
-	}
 
 	bool programsGood = true;
 
@@ -306,10 +295,10 @@ int main(int argc, char *argv[]){
 	glGenBuffers(1, &rendman.ubo);
 
 
-	glBindBufferARB(GL_UNIFORM_BUFFER,rendman.ubo);
-	glBufferDataARB(GL_UNIFORM_BUFFER,sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*(1+MAX_LIGHTS*6),NULL,GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER,rendman.ubo);
+	glBufferData(GL_UNIFORM_BUFFER,sizeof(glm::mat4)*MAX_LIGHTS+sizeof(glm::vec4)*(1+MAX_LIGHTS*6),NULL,GL_DYNAMIC_DRAW);
 	glBindBufferBase(GL_UNIFORM_BUFFER,0,rendman.ubo);
-	glBindBufferARB(GL_UNIFORM_BUFFER,0);
+	glBindBuffer(GL_UNIFORM_BUFFER,0);
 
 	glGenTextures(1,&rendman.normalTex);
 	glActiveTexture(GL_TEXTURE2);
@@ -322,14 +311,14 @@ int main(int argc, char *argv[]){
 
 	glGenTextures(1,&rendman.depthCubemaps);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, rendman.depthCubemaps);
-	glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY_ARB,0,GL_DEPTH_COMPONENT16,512,512,MAX_LIGHTS*6,0,GL_DEPTH_COMPONENT,GL_FLOAT,NULL);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_COMPARE_FUNC, GL_GEQUAL);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, rendman.depthCubemaps);
+	glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY,0,GL_DEPTH_COMPONENT16,512,512,MAX_LIGHTS*6,0,GL_DEPTH_COMPONENT,GL_FLOAT,NULL);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_COMPARE_FUNC, GL_GEQUAL);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 
 	glBindRenderbuffer(GL_RENDERBUFFER,rendman.renderbuffer);
 	glRenderbufferStorage(GL_RENDERBUFFER,GL_DEPTH_COMPONENT24,width,height);
@@ -605,7 +594,7 @@ int main(int argc, char *argv[]){
 		}
 
 		//Do all drawing here
-		glEnable(GL_TEXTURE_CUBE_MAP_ARB);
+		glEnable(GL_TEXTURE_CUBE_MAP);
 		glUseProgram(depthPrg.getID());
 		glBindFramebuffer(GL_FRAMEBUFFER,rendman.framebuffer);
 		for(int i=0;i<rendman.lights.size();i++)
@@ -621,7 +610,7 @@ int main(int argc, char *argv[]){
 		glUniformMatrix4fv(prg.getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
 		glUniformMatrix4fv(prg.getUniform("pointProj"),1,GL_FALSE,glm::value_ptr(PLight::pointProjection));
 		rendman.render(&prg,&skyprg,dt);
-		glDisable(GL_TEXTURE_CUBE_MAP_ARB);
+		glDisable(GL_TEXTURE_CUBE_MAP);
 		rendman.renderSprites(spriteprg,dt);
 
 

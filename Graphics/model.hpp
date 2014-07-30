@@ -1,7 +1,7 @@
 #ifndef MODEL_HPP
 #define MODEL_HPP
 
-#include <GL/glew.h>
+#include "gl_core_3_3.h"
 #include <iostream>
 #include <vector>
 #include <glm/glm.hpp>

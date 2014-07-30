@@ -2,7 +2,7 @@
 #define SPRITE_HPP_
 
 #include <iostream>
-#include <GL/glew.h>
+#include "gl_core_3_3.h"
 #include <glm/glm.hpp>
 #include "GraphicsUtils.hpp"
 #include "../GameObject.hpp"

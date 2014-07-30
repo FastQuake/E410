@@ -4,6 +4,7 @@
 #include "server.hpp"
 #include "../Lua/luabinding.hpp"
 #include "../Lua/GameObjectBinding.hpp"
+#include "../Timer.hpp"
 using namespace std;
 
 SDL_Thread *serverThread;
@@ -136,8 +137,8 @@ void serverMain(){
 
 
 	serverPacketList.clear();
-	sf::Clock timer;
-	sf::Time dt = timer.restart();
+	Timer timer;
+	float dt;
 	ENetEvent event;
 	char *pstr = new char[65536];
 	while(serverRunning){
@@ -216,7 +217,7 @@ void serverMain(){
 
 		//Do luaside updating
 		lua_getglobal(l,"update");
-		lua_pushnumber(l, dt.asSeconds());
+		lua_pushnumber(l, dt);
 		if(lua_pcall(l,1,0,0)){
 			//luaL_traceback(l,l,lua_tostring(l,-1),1);
 			string error = "[SERVER] " + string(lua_tostring(l,-1));
@@ -224,7 +225,7 @@ void serverMain(){
 		}
 
 		//do physics
-		physworld.step(dt.asSeconds());
+		physworld.step(dt);
 
 		//Check for collisions
 		int numManis = physworld.dynWorld->getDispatcher()->getNumManifolds();
@@ -287,7 +288,8 @@ void serverMain(){
 		}
 
 
-		dt = timer.restart();
+		dt = timer.getElapsedTime();
+		timer.reset();
 	}
 
 	peers.clear();	

@@ -4,7 +4,7 @@ solution("E410")
 		project("E410")
 			kind("COnsoleApp")
 			language("C++")
-			files({"**.hpp","**.cpp"})
+			files({"**.hpp","**.cpp", "**.c","**.h"})
 			libdirs({os.findlib("gl","glew","lua5.2")})
 			includedirs({"/usr/include/bullet/","/usr/local/include/bullet/"})
 			if os.is("windows") == true then
@@ -16,7 +16,7 @@ solution("E410")
 				defines({"LINUX"})
 				buildoptions({"`pkg-config --cflags lua5.2`"})
 				linkoptions({"`pkg-config --libs lua5.2`","-Wl,-rpath=./libs "})
-				links({"sfml-system","sfml-window","sfml-graphics","sfml-audio","SDL2","SDL2_image","SDL2_ttf","SDL2_mixer","GL","GLEW","enet","BulletCollision","BulletDynamics","LinearMath"})
+				links({"SDL2","SDL2_image","SDL2_ttf","SDL2_mixer","GL","enet","BulletCollision","BulletDynamics","LinearMath"})
 			end
 			location("./build")
 

@@ -1,7 +1,7 @@
 #ifndef GRAPHICSUTILS_HPP
 #define GRAPHICSUTILS_HPP
 
-#include <GL/glew.h>
+#include "gl_core_3_3.h"
 #include <iostream>
 #include <vector>
 
