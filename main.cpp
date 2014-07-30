@@ -306,9 +306,9 @@ int main(int argc, char *argv[]){
 	}
 
 	//Set stuff for main game loop
-	sf::Clock dtTimer;
-	dtTimer.restart();
-	sf::Time dt;
+	Timer dtTimer;
+	dtTimer.reset();
+	float dt;
 
 	int majv;
 	int minv;
@@ -542,7 +542,7 @@ int main(int argc, char *argv[]){
 
 		//call lua update
 		lua_getglobal(l,"update");
-		lua_pushnumber(l,dt.asSeconds());
+		lua_pushnumber(l,dt);
 		if(lua_pcall(l,1,0,0)){
 			cout << lua_tostring(l, -1) << endl;
 			global_con->out.println(lua_tostring(l, -1));
@@ -551,7 +551,7 @@ int main(int argc, char *argv[]){
 		gui->update();
 		for(int i=0;i<rendman.drawList.size();i++){
 			if(rendman.drawList[i]->animate){
-				rendman.drawList[i]->aTime += dt.asSeconds();
+				rendman.drawList[i]->aTime += dt;
 				rendman.drawList[i]->model->animate(rendman.drawList[i]->currentAnimation,
 				rendman.drawList[i]->aTime,&rendman.drawList[i]->outframe);
 			}
@@ -573,9 +573,9 @@ int main(int argc, char *argv[]){
 		glUseProgram(prg.getID());
 		glUniformMatrix4fv(prg.getUniform("projection"),1,GL_FALSE,glm::value_ptr(projection));
 		glUniformMatrix4fv(prg.getUniform("pointProj"),1,GL_FALSE,glm::value_ptr(PLight::pointProjection));
-		rendman.render(&prg,&skyprg,dt.asSeconds());
+		rendman.render(&prg,&skyprg,dt);
 		glDisable(GL_TEXTURE_CUBE_MAP_ARB);
-		rendman.renderSprites(spriteprg,dt.asSeconds());
+		rendman.renderSprites(spriteprg,dt);
 
 
 		//Do sfml drawing here
@@ -586,7 +586,8 @@ int main(int argc, char *argv[]){
 		glDisableVertexAttribArray(gprg.getAttribute("coord2d"));
 		glEnable(GL_DEPTH_TEST);
 		gwindow->display();
-		dt = dtTimer.restart();
+		dt = dtTimer.getElapsedTime();
+		dtTimer.reset();
 	}
 
 	delete gwindow;
