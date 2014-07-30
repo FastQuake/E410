@@ -32,7 +32,8 @@ GuiManager *gui;
 SoundManager *soundman;
 ENetPeer *serverPeer;
 ENetHost *client;
-sf::RenderWindow *gwindow;
+SDL_Window *screen = NULL;
+bool running;
 vector<string> packetList;
 ShaderProgram *debugprg;
 GLuint debugvbo;
@@ -93,22 +94,33 @@ void errMsg(string msg){
 			msg.c_str(), NULL); //<- change this to screen when we have that
 }
 
+void checkSDLError(){
+	const char *error = SDL_GetError();
+	if(*error != '\0'){
+		errMsg(error);
+		SDL_ClearError();
+	}
+}
+
 int main(int argc, char *argv[]){
 	srand(time(NULL));
 	if(SDL_Init(SDL_INIT_EVERYTHING) == -1){
 		errMsg("Could not intialize SDL");
 		return EXIT_FAILURE;
 	}
+	checkSDLError();
 	int flags = IMG_INIT_JPG | IMG_INIT_JPG;
 	int initted = IMG_Init(flags);
 	if((initted&flags) != flags){
 		errMsg("Could not load JPG and PNG loader");
 		return EXIT_FAILURE;
 	}
+	checkSDLError();
 	if(TTF_Init() == -1){
 		errMsg(TTF_GetError());
 		return EXIT_FAILURE;
 	}
+	checkSDLError();
 	//Set up audio device thing
 	int audio_rate = 22050;
 	uint16_t audio_format = AUDIO_S16;
@@ -118,6 +130,7 @@ int main(int argc, char *argv[]){
 		errMsg("Could not open audio device!");
 		return EXIT_FAILURE;
 	}
+	SDL_ClearError();
 	Mix_AllocateChannels(16);
 	//Set Default settings
 	width = 800;
@@ -153,12 +166,30 @@ int main(int argc, char *argv[]){
 	atexit(enet_deinitialize);
 	ENetEvent enetEvent;
 
-	//Create sfml window with opengl context
-	gwindow = NULL;
-	setSettings();
-	sf::Event event;
+	//Create SDL window with opengl context
+	SDL_GLContext context;
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION,3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION,3);
+	screen = SDL_CreateWindow("E410|Dev", SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,
+			settings.width, settings.height,
+			SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
+	checkSDLError();
+	context = SDL_GL_CreateContext(screen);
+	checkSDLError();
+	if(settings.vsync)
+		SDL_GL_SetSwapInterval(1);
+	else
+		SDL_GL_SetSwapInterval(0);
 
-	InputManager ime(gwindow);
+	InputManager ime;
 	im = &ime;
 
 	Console con(l,glm::vec2(0,0),
@@ -168,24 +199,25 @@ int main(int argc, char *argv[]){
 	SoundManager m;
 	soundman = &m;
 
+	glewExperimental = GL_TRUE;
 	GLenum glewStatus = glewInit();
 	if(glewStatus != GLEW_OK){
 		errMsg((char*)glewGetErrorString(glewStatus));
 		return EXIT_FAILURE;
 	}
 
-	if(!GLEW_ARB_uniform_buffer_object){
+	if(GLEW_VERSION_3_3 == false){
+		errMsg("OpenGL 3.3 not supported!");
+		return EXIT_FAILURE;
+	}
+	/*if(!GLEW_ARB_uniform_buffer_object){
 		errMsg("UBOs not supported!");
 		return EXIT_FAILURE;
 	}
 	if(!GLEW_ARB_texture_cube_map_array){
 		errMsg("Cubemap arrays not supported!");
 		return EXIT_FAILURE;
-	}
-	if(GLEW_VERSION_3_0 == false){
-		errMsg("OpenGL 3.3 not supported!");
-		return EXIT_FAILURE;
-	}
+	}*/
 
 	bool programsGood = true;
 
@@ -240,6 +272,16 @@ int main(int argc, char *argv[]){
 		return EXIT_FAILURE;
 	}
 
+	//Set some opengl stuff
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glEnable(GL_TEXTURE_2D);
+	glClearColor(0.0,0.0,0.0,1.0);
+
 	//Create GUI manager
 	GuiManager guie(im, &gprg);
 	gui = &guie;
@@ -259,8 +301,8 @@ int main(int argc, char *argv[]){
 		return EXIT_FAILURE;
 	}
 
-	glGenFramebuffersEXT(1,&rendman.framebuffer);
-	glGenRenderbuffersEXT(1,&rendman.renderbuffer);
+	glGenFramebuffers(1,&rendman.framebuffer);
+	glGenRenderbuffers(1,&rendman.renderbuffer);
 	glGenBuffers(1, &rendman.ubo);
 
 
@@ -289,9 +331,9 @@ int main(int argc, char *argv[]){
 	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_COMPARE_FUNC, GL_GEQUAL);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY_ARB, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 
-	glBindRenderbufferEXT(GL_RENDERBUFFER,rendman.renderbuffer);
-	glRenderbufferStorageEXT(GL_RENDERBUFFER,GL_DEPTH_COMPONENT24,width,height);
-	glBindRenderbufferEXT(GL_RENDERBUFFER,0);
+	glBindRenderbuffer(GL_RENDERBUFFER,rendman.renderbuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER,GL_DEPTH_COMPONENT24,width,height);
+	glBindRenderbuffer(GL_RENDERBUFFER,0);
 
 	glUseProgram(prg.getID());
 	glUniform1i(prg.getUniform("shadowCubes"), 1);
@@ -325,50 +367,45 @@ int main(int argc, char *argv[]){
 	glGetIntegerv(GL_MINOR_VERSION, &minv);
 	cout << "GL Version: "<< majv << "." << minv << endl;
 
-	gwindow->setActive(true);
 	char *pstr = new char[65536];
-	while(gwindow->isOpen()){
-		while(gwindow->pollEvent(event)){
-			if(event.type == sf::Event::Closed){
-				gwindow->close();
+	SDL_Event e;
+	running = true;
+	while(running){
+		while(SDL_PollEvent(&e)){
+			if(e.type == SDL_QUIT){
+				running = false;
 			}
-			if(event.type == sf::Event::Resized){
-				width = event.size.width;
-				height = event.size.height;
-				glViewport(0,0,width,height);
+			if(e.type == SDL_WINDOWEVENT){
+				if(e.window.event == SDL_WINDOWEVENT_RESIZED){
+					width = e.window.data1;
+					height = e.window.data2;
+					glViewport(0,0,width,height);
 
-				sf::View view = gwindow->getView();
-				view.setSize(width,height);
-				view.setCenter(width/2, height/2);
-				gwindow->setView(view);
 
-				lua_pushnumber(l, width);
-				lua_setglobal(l, "width");
-				lua_pushnumber(l, height);
-				lua_setglobal(l, "height");
+					lua_pushnumber(l, width);
+					lua_setglobal(l, "width");
+					lua_pushnumber(l, height);
+					lua_setglobal(l, "height");
+				} else if(e.window.event == SDL_WINDOWEVENT_FOCUS_GAINED){
+					im->setFocus(true);
+				} else if(e.window.event == SDL_WINDOWEVENT_FOCUS_LOST){
+					im->setFocus(false);
+				}
 			}
-			if(event.type == sf::Event::GainedFocus){
-				im->setFocus(true);
+			if(e.type == SDL_TEXTINPUT){
+				im->addInput(string(e.text.text));
 			}
-			if(event.type == sf::Event::LostFocus){
-				im->setFocus(false);
-			}
-			if(event.type == sf::Event::TextEntered){
-				if((event.text.unicode == '\b') ||
-					(event.text.unicode == '\t') ||
-					(event.text.unicode >= 32 && event.text.unicode <= 126))
-						im->addInput(sf::String(event.text.unicode));
-			}
-			if(event.type == sf::Event::KeyPressed){
+			if(e.type == SDL_KEYDOWN){
+				SDL_Keycode key = e.key.keysym.sym;
 				//Toggle console is user hits f1
-				if(event.key.code == sf::Keyboard::F1){
+				if(key == SDLK_F1){
 					im->getString();
 					con.visible = !con.visible;
 					con.updates = !con.updates;
-					im->setGuiMousePos(sf::Vector2i(width/2,height/2));
+					im->setGuiMousePos(glm::ivec2(width/2,height/2));
 				} else if(im->isGuiLocked() == false){
 					lua_getglobal(l, "onKeyDown");
-					lua_pushnumber(l, event.key.code);
+					lua_pushnumber(l, key);
 					if(lua_pcall(l,1,0,0)){
 						cout << lua_tostring(l, -1) << endl;
 						global_con->out.println(lua_tostring(l, -1));
@@ -376,10 +413,11 @@ int main(int argc, char *argv[]){
 
 				}
 			}
-			if(event.type == sf::Event::KeyReleased){
+			if(e.type == SDL_KEYUP){
+				SDL_Keycode key = e.key.keysym.sym;
 				if(im->isGuiLocked() == false){
 					lua_getglobal(l, "onKeyRelease");
-					lua_pushnumber(l, event.key.code);
+					lua_pushnumber(l, key);
 					if(lua_pcall(l,1,0,0)){
 							cout << lua_tostring(l, -1) << endl;
 							global_con->out.println(lua_tostring(l, -1));
@@ -544,9 +582,9 @@ int main(int argc, char *argv[]){
 		
 		//Check if gui is locked and show cursor
 		if(im->isGuiLocked()){
-			gwindow->setMouseCursorVisible(true);
+			SDL_ShowCursor(true);
 		} else {
-			gwindow->setMouseCursorVisible(false);
+			SDL_ShowCursor(false);
 		}
 
 		//call lua update
@@ -569,7 +607,7 @@ int main(int argc, char *argv[]){
 		//Do all drawing here
 		glEnable(GL_TEXTURE_CUBE_MAP_ARB);
 		glUseProgram(depthPrg.getID());
-		glBindFramebufferEXT(GL_FRAMEBUFFER,rendman.framebuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER,rendman.framebuffer);
 		for(int i=0;i<rendman.lights.size();i++)
 			rendman.renderDepth(&depthPrg,i);
 
@@ -594,12 +632,12 @@ int main(int argc, char *argv[]){
 		gui->draw(&gprg);
 		glDisableVertexAttribArray(gprg.getAttribute("coord2d"));
 		glEnable(GL_DEPTH_TEST);
-		gwindow->display();
+
+		SDL_GL_SwapWindow(screen);
 		dt = dtTimer.getElapsedTime();
 		dtTimer.reset();
 	}
 
-	delete gwindow;
 	delete[] pstr;
 	enet_host_destroy(client);
 	serverRunning = false;

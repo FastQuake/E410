@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <vector>
-#include <SFML/Graphics.hpp>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include "../InputManager.hpp"

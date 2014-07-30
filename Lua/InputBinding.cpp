@@ -152,7 +152,7 @@ int l_isMouseDown(lua_State *l){
 	return 1;
 }
 int l_getMousePos(lua_State *l){
-	sf::Vector2i pos = im->getMousePos();
+	glm::ivec2 pos = im->getMousePos();
 	lua_pushnumber(l,pos.x);
 	lua_pushnumber(l,pos.y);
 	return 2;
@@ -162,7 +162,7 @@ int l_setMousePos(lua_State *l){
 	x = l_toNumber(l, 1);
 	y = l_toNumber(l, 2);
 
-	im->setMousePos(sf::Vector2i(x,y));
+	im->setMousePos(glm::ivec2(x,y));
 
 	return 0;
 }
@@ -187,7 +187,7 @@ int l_isGuiMouseDown(lua_State *l){
 	return 1;
 }
 int l_getGuiMousePos(lua_State *l){
-	sf::Vector2i pos = im->getGuiMousePos();
+	glm::ivec2 pos = im->getGuiMousePos();
 	lua_pushnumber(l,pos.x);
 	lua_pushnumber(l,pos.y);
 	return 2;
@@ -197,49 +197,9 @@ int l_setGuiMousePos(lua_State *l){
 	x = l_toNumber(l, 1);
 	y = l_toNumber(l, 2);
 
-	im->setGuiMousePos(sf::Vector2i(x,y));
+	im->setGuiMousePos(glm::ivec2(x,y));
 
 	return 0;
-}
-
-int l_isJoystickConnected(lua_State *l){
-	lua_pushboolean(l, im->isJoystickConnected());
-	return 1;
-}
-
-int l_isJoystickButtonDown(lua_State *l){
-	int button = l_toNumber(l,1);
-	bool out = im->isJoystickButtonDown(InputManager::JoyButton(button));
-	lua_pushboolean(l,out);
-	return 1;
-}
-int l_getLeftAnalog(lua_State *l){
-	sf::Vector2f v = im->getLeftAnalog();
-	lua_pushnumber(l,v.x);
-	lua_pushnumber(l,v.y);
-	return 2;
-}
-int l_getRightAnalog(lua_State *l){
-	sf::Vector2f v = im->getRightAnalog();
-	lua_pushnumber(l,v.x);
-	lua_pushnumber(l,v.y);
-	return 2;
-}
-int l_getDpad(lua_State *l){
-	sf::Vector2i v = im->getDpad();
-	lua_pushnumber(l,v.x);
-	lua_pushnumber(l,v.y);
-	return 2;
-}
-int l_getLeftTrigger(lua_State *l){
-	float v = im->getLeftTrigger();
-	lua_pushnumber(l,v);
-	return 1;
-}
-int l_getRightTrigger(lua_State *l){
-	float v = im->getRightTrigger();
-	lua_pushnumber(l,v);
-	return 1;
 }
 
 void registerKeys(lua_State *l){

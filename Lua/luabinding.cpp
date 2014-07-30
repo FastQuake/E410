@@ -198,7 +198,7 @@ int l_serverPrint(lua_State *l){
 	return 0;
 }
 int l_quit(lua_State *l){
-	gwindow->close();
+	running = false;
 	return 0;
 }
 void errorTrace(lua_State *l, string error){

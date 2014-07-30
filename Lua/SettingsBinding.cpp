@@ -9,32 +9,16 @@ using namespace std;
 Settings settings;
 
 void setSettings(){
-	if(gwindow != NULL)
-		delete gwindow;
-	//Create sfml window
-	sf::ContextSettings cs;
-	cs.majorVersion = 3;
-	cs.majorVersion = 0;
-	cs.depthBits = 24;
-	cs.stencilBits = 8;
-	cs.antialiasingLevel = settings.AA;
-	sf::Uint32 style = settings.fullscreen ? sf::Style::Fullscreen : sf::Style::Default;
-	gwindow = new sf::RenderWindow(sf::VideoMode(settings.width,settings.height),
-			"E410 | dev", style, cs);
-	gwindow->setVerticalSyncEnabled(settings.vsync);
-	gwindow->setFramerateLimit(settings.maxFPS);
-
-	//reset GL states cause SFML changes them
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glEnable(GL_TEXTURE_2D);
-
-	glClearColor(0.0,0.0,0.0,1.0);
-
+	SDL_SetWindowSize(screen, settings.width, settings.height);
+	if(settings.fullscreen){
+		SDL_SetWindowFullscreen(screen, SDL_WINDOW_FULLSCREEN);
+	}
+	if(settings.vsync){
+		SDL_GL_SetSwapInterval(1);
+	}
+	else {
+		SDL_GL_SetSwapInterval(0);
+	}
 }
 void saveSettings(){
 	ofstream ss("./data/scripts/settings.lua");
@@ -60,22 +44,18 @@ void saveSettings(){
 int l_setVsync(lua_State *l){
 	bool b = l_toBool(l, 1);
 	settings.vsync = b;
-	if(gwindow != NULL)
-		gwindow->setVerticalSyncEnabled(b);
+	if(screen != NULL)
+		setSettings();
 	return 0;
 }
 int l_setAA(lua_State *l){
 	int aa = l_toNumber(l,1);
 	settings.AA = aa;
-	if(gwindow != NULL)
-		setSettings();
 	return 0;
 }
 int l_setFPS(lua_State *l){
 	int fps = l_toNumber(l,1);
 	settings.maxFPS = fps;
-	if(gwindow != NULL)
-		gwindow->setFramerateLimit(fps);
 	return 0;
 }
 int l_setSize(lua_State *l){
@@ -83,14 +63,14 @@ int l_setSize(lua_State *l){
 	int y = l_toNumber(l, 2);
 	settings.width = x;
 	settings.height = y;
-	if(gwindow != NULL)
+	if(screen != NULL)
 		setSettings();
 	return 0;
 }
 int l_setFullscreen(lua_State *l){
 	bool fullscreen = l_toBool(l, 1);
 	settings.fullscreen = fullscreen;
-	if(gwindow != NULL)
+	if(screen != NULL)
 		setSettings();
 	return 0;
 }

@@ -3,7 +3,6 @@
 
 #include <map>
 #include <bullet/btBulletDynamicsCommon.h>
-#include <SFML/Graphics.hpp>
 #include "model.hpp"
 #include "FPSCamera.hpp"
 #include "../GameObject.hpp"

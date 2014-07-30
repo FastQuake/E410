@@ -2,7 +2,6 @@
 #define BUTTON_HPP
 
 #include <iostream>
-#include <SFML/Graphics.hpp>
 #include <lua.hpp>
 #include "GuiManager.hpp"
 #include "Text.hpp"

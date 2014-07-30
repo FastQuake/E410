@@ -18,7 +18,8 @@ extern ResourceManager resman;
 extern RenderManager rendman;
 extern GuiManager *gui;
 extern SoundManager *soundman;
-extern sf::RenderWindow *gwindow;
+extern SDL_Window *screen;
+extern bool running;
 extern std::vector<std::string> packetList;
 extern const char *serverDelete;
 

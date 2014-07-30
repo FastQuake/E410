@@ -2,54 +2,34 @@
 #define INPUTMANAGER_HPP
 
 #include <iostream>
-#include <SFML/Window.hpp>
+#include <stdint.h>
+#include <SDL2/SDL.h>
+#include <glm/glm.hpp>
 
 class InputManager {
 	private:
 		bool isFocused;
 		bool isLocked;
+		uint8_t *keys;
 
 		std::string inputString;
-
-		sf::Window *window;
 	public:
-		enum JoyButton{
-			A,
-			B,
-			X,
-			Y,
-			LB,
-			RB,
-			Select,
-			Start,
-			Meta,
-		};
 		InputManager();
-		InputManager(sf::Window *window);
-
-		void setWindow(sf::Window *window);
 
 		bool isGuiLocked();
 		void lockToGui(bool yes);
 		void setFocus(bool yes);
 
-		bool isKeyDown(sf::Keyboard::Key key);
-		bool isMouseDown(sf::Mouse::Button button);
-		sf::Vector2i getMousePos();
-		void setMousePos(sf::Vector2i pos);
+		bool isKeyDown(SDL_Keycode key);
+		bool isMouseDown(int button);
+		glm::ivec2 getMousePos();
+		void setMousePos(glm::ivec2 pos);
 
-		bool isGuiKeyDown(sf::Keyboard::Key key);
-		bool isGuiMouseDown(sf::Mouse::Button button);
-		sf::Vector2i getGuiMousePos();
-		void setGuiMousePos(sf::Vector2i pos);
+		bool isGuiKeyDown(SDL_Keycode key);
+		bool isGuiMouseDown(int button);
+		glm::ivec2 getGuiMousePos();
+		void setGuiMousePos(glm::ivec2 pos);
 
-		bool isJoystickConnected();
-		bool isJoystickButtonDown(JoyButton b);
-		sf::Vector2f getLeftAnalog();
-		sf::Vector2f getRightAnalog();
-		sf::Vector2i getDpad();
-		float getLeftTrigger();
-		float getRightTrigger();
 
 		void addInput(std::string input);
 		std::string getString();

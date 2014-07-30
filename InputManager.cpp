@@ -8,19 +8,6 @@ InputManager::InputManager(){
 	inputString = "";
 }
 
-InputManager::InputManager(sf::Window *window){
-	this->window = window;
-
-	isLocked = false;
-	isFocused = true;
-
-	inputString = "";
-}
-
-void InputManager::setWindow(sf::Window *window){
-	this->window = window;
-}
-
 bool InputManager::isGuiLocked(){
 	return isLocked;
 }
@@ -33,57 +20,65 @@ void InputManager::setFocus(bool yes){
 	isFocused = yes;
 }
 
-bool InputManager::isKeyDown(sf::Keyboard::Key key){
-	if(!isLocked && isFocused && sf::Keyboard::isKeyPressed(key)){
+bool InputManager::isKeyDown(SDL_Keycode key){
+	SDL_Scancode sc = SDL_GetScancodeFromKey(key);
+	if(!isLocked && isFocused && keys[sc]){
 		return true;
 	}
 	return false;
 }
 
-bool InputManager::isMouseDown(sf::Mouse::Button button){
-	if(!isLocked && isFocused && sf::Mouse::isButtonPressed(button)){
+bool InputManager::isMouseDown(int button){
+	int mask = SDL_GetMouseState(NULL, NULL);
+	if(!isLocked && isFocused && (mask&SDL_BUTTON(button))){
 		return true;
 	}
 	return false;
 }
 
-sf::Vector2i InputManager::getMousePos(){
+glm::ivec2 InputManager::getMousePos(){
 	if(!isLocked && isFocused){
-		return sf::Mouse::getPosition(*window);
+		glm::ivec2 out;
+		SDL_GetMouseState(&out.x,&out.y);
+		return out;
 	}
-	return sf::Vector2i(width/2,height/2);
+	return glm::ivec2(width/2,height/2);
 }
 
-void InputManager::setMousePos(sf::Vector2i pos){
+void InputManager::setMousePos(glm::ivec2 pos){
 	if(!isLocked && isFocused){
-		sf::Mouse::setPosition(pos, *window);
+		SDL_WarpMouseInWindow(NULL, pos.x, pos.y);
 	}
 }
 
-bool InputManager::isGuiKeyDown(sf::Keyboard::Key key){
-	if(isLocked && isFocused && sf::Keyboard::isKeyPressed(key)){
+bool InputManager::isGuiKeyDown(SDL_Keycode key){
+	SDL_Scancode sc = SDL_GetScancodeFromKey(key);
+	if(isLocked && isFocused && keys[sc]){
 		return true;
 	}
 	return false;
 }
 
-bool InputManager::isGuiMouseDown(sf::Mouse::Button button){
-	if(isLocked && isFocused && sf::Mouse::isButtonPressed(button)){
+bool InputManager::isGuiMouseDown(int button){
+	int mask = SDL_GetMouseState(NULL, NULL);
+	if(isLocked && isFocused && (mask&SDL_BUTTON(button))){
 		return true;
 	}
 	return false;
 }
 
-sf::Vector2i InputManager::getGuiMousePos(){
+glm::ivec2 InputManager::getGuiMousePos(){
 	if(isLocked && isFocused){
-		return sf::Mouse::getPosition(*window);
+		glm::ivec2 out;
+		SDL_GetMouseState(&out.x,&out.y);
+		return out;
 	}
-	return sf::Vector2i(0,0);
+	return glm::ivec2(0,0);
 }
 
-void InputManager::setGuiMousePos(sf::Vector2i pos){
+void InputManager::setGuiMousePos(glm::ivec2 pos){
 	if(isLocked && isFocused){
-		sf::Mouse::setPosition(pos, *window);
+		SDL_WarpMouseInWindow(NULL, pos.x, pos.y);
 	}
 }
 
@@ -94,48 +89,6 @@ void InputManager::addInput(string input){
 	if(input != "\r"){
 		inputString += input;
 	}
-}
-
-bool InputManager::isJoystickConnected(){
-	if(sf::Joystick::isConnected(0))
-		return true;
-	return false;
-}
-bool InputManager::isJoystickButtonDown(JoyButton b){
-	if(sf::Joystick::isButtonPressed(0,b)){
-		return true;
-	}
-	return false;
-}
-sf::Vector2f InputManager::getLeftAnalog(){
-	sf::Vector2f out;
-	out.x = sf::Joystick::getAxisPosition(0,sf::Joystick::X);
-	out.y = sf::Joystick::getAxisPosition(0,sf::Joystick::Y);
-	out.x /= 100;
-	out.y /= 100;
-	return out;
-}
-sf::Vector2f InputManager::getRightAnalog(){
-	sf::Vector2f out;
-	out.x = sf::Joystick::getAxisPosition(0,sf::Joystick::U);
-	out.y = sf::Joystick::getAxisPosition(0,sf::Joystick::V);
-	out.x /= 100;
-	out.y /= 100;
-	return out;
-}
-sf::Vector2i InputManager::getDpad(){
-	sf::Vector2i out;
-	out.x = sf::Joystick::getAxisPosition(0,sf::Joystick::PovX);
-	out.y = sf::Joystick::getAxisPosition(0,sf::Joystick::PovY);
-	out.x /= 100;
-	out.y /= 100;
-	return out;
-}
-float InputManager::getLeftTrigger(){
-	return sf::Joystick::getAxisPosition(0, sf::Joystick::Z)/100;
-}
-float InputManager::getRightTrigger(){
-	return sf::Joystick::getAxisPosition(0, sf::Joystick::R)/100;
 }
 
 string InputManager::getString(){

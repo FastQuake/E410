@@ -70,10 +70,11 @@ void TextBox::update(InputManager *im){
 	//Clicking on textbox will give it focus
 
 	if(im->isGuiMouseDown(sf::Mouse::Left) && this->visible){
-		sf::IntRect colBox(sf::Vector2i(tpos.x,tpos.y),
-				sf::Vector2i(length*monoWidth,
-					text.getCharSize()));
-		if(colBox.contains(im->getGuiMousePos())){
+		ColBox colBox;
+		colBox.x = tpos.x; colBox.y = tpos.y;
+		colBox.width = length*monoWidth; colBox.height = text.getCharSize();
+		glm::ivec2 p = im->getGuiMousePos();
+		if(colBox.contains(glm::vec2(p.x,p.y))){
 			focused = true;
 			im->getString();
 		} else {
