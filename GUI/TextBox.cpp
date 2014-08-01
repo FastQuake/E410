@@ -67,9 +67,9 @@ void TextBox::update(InputManager *im){
 	if(pos.y < 0){
 		tpos.y = height + pos.y;
 	}
-	//Clicking on textbox will give it focus
 
-	if(im->isGuiMouseDown(sf::Mouse::Left) && this->visible){
+	//Clicking on textbox will give it focus
+	if(im->isGuiMouseDown(SDL_BUTTON_LEFT) && this->visible){
 		ColBox colBox;
 		colBox.x = tpos.x; colBox.y = tpos.y;
 		colBox.width = length*monoWidth; colBox.height = text.getCharSize();
@@ -86,15 +86,18 @@ void TextBox::update(InputManager *im){
 		updateString(im->getString());
 	}
 	if(inputTimer.getElapsedTicks() > 50){
-		if(im->isGuiKeyDown(sf::Keyboard::Left)){
+		if(im->isGuiKeyDown(SDLK_LEFT)){
 			if(textPos != 0){
 				textPos--;
 			}
 		}
-		if(im->isGuiKeyDown(sf::Keyboard::Right)){
+		if(im->isGuiKeyDown(SDLK_RIGHT)){
 			if(textPos != textString.length()){
 				textPos++;
 			}
+		}
+		if(im->isGuiKeyDown(SDLK_BACKSPACE)){
+			updateString("\b");
 		}
 		inputTimer.reset();
 	}

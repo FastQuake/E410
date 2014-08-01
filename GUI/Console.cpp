@@ -48,7 +48,7 @@ void Console::update(InputManager *im){
 	}
 
 	//Move up and down through history
-	if(im->isGuiKeyDown(sf::Keyboard::Up) &&
+	if(im->isGuiKeyDown(SDLK_UP) &&
 			inputTimer.getElapsedTicks() > 100){
 
 		if(currentPos < (int)history.size()-1){
@@ -60,7 +60,7 @@ void Console::update(InputManager *im){
 
 		inputTimer.reset();
 	}
-	if(im->isGuiKeyDown(sf::Keyboard::Down)&&
+	if(im->isGuiKeyDown(SDLK_DOWN)&&
 			inputTimer.getElapsedTicks() > 100){
 
 		if(currentPos > -1){
