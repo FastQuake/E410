@@ -247,7 +247,7 @@ int l_isKeyDown(lua_State *l){
 	int key;
 	key = l_toNumber(l, 1);
 
-	bool state = im->isKeyDown((sf::Keyboard::Key)key);
+	bool state = im->isKeyDown((SDL_Keycode)key);
 	
 	lua_pushboolean(l, state);
 	return 1;
@@ -256,7 +256,7 @@ int l_isMouseDown(lua_State *l){
 	int but;
 	but = l_toNumber(l, 1);
 
-	bool state = im->isMouseDown((sf::Mouse::Button)but);
+	bool state = im->isMouseDown((int)but);
 
 	lua_pushboolean(l, state);
 	return 1;
@@ -282,7 +282,7 @@ int l_isGuiKeyDown(lua_State *l){
 	int key;
 	key = l_toNumber(l, 1);
 
-	bool state = im->isGuiKeyDown((sf::Keyboard::Key)key);
+	bool state = im->isGuiKeyDown((SDL_Keycode)key);
 	
 	lua_pushboolean(l, state);
 	return 1;
@@ -291,7 +291,7 @@ int l_isGuiMouseDown(lua_State *l){
 	int but;
 	but = l_toNumber(l, 1);
 
-	bool state = im->isGuiMouseDown((sf::Mouse::Button)but);
+	bool state = im->isGuiMouseDown((int)but);
 
 	lua_pushboolean(l, state);
 	return 1;

@@ -150,7 +150,7 @@ ScrollText::ScrollText(glm::vec2 pos, glm::ivec2 size,
 	this->magic = GUITEXT_MAGIC;
 	this->pos = pos;
 	this->size = size;
-	textPos = sf::Vector2i(0,0);
+	textPos = glm::ivec2(0,0);
 	lines.push_back("");
 	history = 500;
 
@@ -198,7 +198,7 @@ void ScrollText::clear(){
 	for(int i=0; i<lines.size();i++){
 		lines[i] = "";
 	}
-	textPos = sf::Vector2i(0,0);
+	textPos = glm::ivec2(0,0);
 }
 
 void ScrollText::update(InputManager *im){

@@ -2,7 +2,6 @@
 #define IMAGE_HPP
 
 #include <iostream>
-#include <SFML/Graphics.hpp>
 #include "GuiManager.hpp"
 #include "../Graphics/Texture.hpp"
 

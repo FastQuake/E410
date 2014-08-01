@@ -44,7 +44,7 @@ class ScrollText : public GuiElement {
 		void update(InputManager *im);
 		void draw(ShaderProgram *prg);
 	private:
-		sf::Vector2i textPos;
+		glm::ivec2 textPos;
 
 		int history;
 
