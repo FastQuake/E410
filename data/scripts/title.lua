@@ -102,7 +102,7 @@ function Title.create()
 	--Create settings window
 	title.sett = {}
 	title.sett.box = GUI.createBox()
-	title.sett.box:setScale(400,400)
+	title.sett.box:setSize(400,400)
 	title.sett.box:setPos(-410,-410)
 	title.sett.box:setColour(0.39,0.39,0.39,1)
 	title.sett.box:setZ(-1)
@@ -181,9 +181,9 @@ function Title.create()
 	--Create multiplayer window
 	title.mult = {}
 	title.mult.box = GUI.createBox()
-	title.mult.box:setScale(400,400)
+	title.mult.box:setSize(400,400)
 	title.mult.box:setPos(-410,-410)
-	title.mult.box:setColour(0.19,0.19,0.19,1)
+	title.mult.box:setColour(0.39,0.39,0.39,1)
 	title.mult.box:setZ(-1)
 
 	title.mult.title = GUI.createText()
@@ -217,9 +217,9 @@ function Title.create()
 	--Create credits window
 	title.creds = {}
 	title.creds.box = GUI.createBox()
-	title.creds.box:setScale(400,400)
+	title.creds.box:setSize(400,400)
 	title.creds.box:setPos(-410,-410)
-	title.creds.box:setColour(0.19,0.19,0.19,1)
+	title.creds.box:setColour(0.39,0.39,0.39,1)
 	title.creds.box:setZ(-1)
 
 	title.creds.title = GUI.createText()

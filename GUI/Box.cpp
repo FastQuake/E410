@@ -3,10 +3,10 @@
 using namespace std;
 
 //Generic box object
-Box::Box(glm::vec2 pos, glm::vec2 size, glm::vec4 colour){
+Box::Box(glm::vec2 pos, glm::ivec2 size, glm::vec4 colour){
 
 		this->pos = pos;
-		scale = size;
+		this->size = size;
 		this->colour = colour;
 		magic = GUIBOX_MAGIC;
 
@@ -28,8 +28,11 @@ void Box::draw(ShaderProgram *prg){
 	}
 	
 	glm::vec2 tScale;
-	tScale.x = scale.x/width;
-	tScale.y = scale.y/height;
+	tScale.x = (float)size.x/width;
+	tScale.y = (float)size.y/height;
+	tScale *= scale;
+
+	//cout << tScale.x << endl;
 
 	tpos.x = tpos.x/width;
 	tpos.y = tpos.y/height;

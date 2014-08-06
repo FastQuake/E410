@@ -113,6 +113,14 @@ int l_GuisetScale(lua_State *l){
 	e->scale = glm::vec2(x,y);
 	return 0;
 }
+int l_GuisetSize(lua_State *l){
+	GuiElement *e = l_toGuiElement(l, 1);
+	int x = l_toNumber(l, 2);
+	int y = l_toNumber(l, 3);
+
+	e->size = glm::ivec2(x,y);
+	return 0;
+}
 int l_GuisetVisible(lua_State *l){
 	GuiElement *e = l_toGuiElement(l, 1);
 	bool vis = l_toBool(l,2);
@@ -342,7 +350,7 @@ int l_GuisetPadding(lua_State *l){
 //Box related functions
 int l_GuiCreateBox(lua_State *l){
 	Box *b = new (lua_newuserdata(l, sizeof(Box))) Box(glm::vec2(0,0),
-			glm::vec2(0,0),glm::vec4(0,0,0,0));
+			glm::ivec2(0,0),glm::vec4(0,0,0,0));
 
 	gui->add(b);
 

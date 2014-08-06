@@ -10,7 +10,7 @@
 
 class Box : public GuiElement{
 	public:
-		Box(glm::vec2 pos, glm::vec2 size, glm::vec4 colour);
+		Box(glm::vec2 pos, glm::ivec2 size, glm::vec4 colour);
 
 		void update(InputManager *im){};
 		void draw(ShaderProgram *prg);	

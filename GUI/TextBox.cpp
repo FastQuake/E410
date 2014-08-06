@@ -84,22 +84,23 @@ void TextBox::update(InputManager *im){
 	if(focused == true || this == &global_con->in){
 		focused = true;
 		updateString(im->getString());
-	}
-	if(inputTimer.getElapsedTicks() > 50){
-		if(im->isGuiKeyDown(SDLK_LEFT)){
-			if(textPos != 0){
-				textPos--;
+
+		if(inputTimer.getElapsedTicks() > 50){
+			if(im->isGuiKeyDown(SDLK_LEFT)){
+				if(textPos != 0){
+					textPos--;
+				}
 			}
-		}
-		if(im->isGuiKeyDown(SDLK_RIGHT)){
-			if(textPos != textString.length()){
-				textPos++;
+			if(im->isGuiKeyDown(SDLK_RIGHT)){
+				if(textPos != textString.length()){
+					textPos++;
+				}
 			}
+			if(im->isGuiKeyDown(SDLK_BACKSPACE)){
+				updateString("\b");
+			}
+			inputTimer.reset();
 		}
-		if(im->isGuiKeyDown(SDLK_BACKSPACE)){
-			updateString("\b");
-		}
-		inputTimer.reset();
 	}
 
 	//Set the postion of the text cursor

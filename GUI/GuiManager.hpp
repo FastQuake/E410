@@ -21,7 +21,7 @@ class GuiElement{
 		bool locks;
 
 		glm::vec2 pos;
-		glm::ivec2 size; //TODO: I think that size and scale are being used inconsitently/incorrectly. This should be looked at.
+		glm::ivec2 size; 
 		glm::vec2 scale;
 		glm::vec4 colour;
 		int zindex;

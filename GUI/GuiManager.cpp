@@ -19,7 +19,7 @@ float remap(float value,float oldmin, float oldmax, float newmin, float newmax){
 
 GuiElement::GuiElement(){
 	magic = GUIELEM_MAGIC;
-	scale = glm::ivec2(1,1);
+	scale = glm::vec2(1,1);
 	zindex = 0;
 }
 

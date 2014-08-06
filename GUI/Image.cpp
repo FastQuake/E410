@@ -7,7 +7,7 @@ Image::Image(){
 
 	tex = resman.loadTexture("default.png");
 
-	scale = glm::vec2(tex.width,tex.height);
+	size = glm::ivec2(tex.width,tex.height);
 	colour = glm::vec4(0,0,0,1);
 	
 	visible = true;
@@ -18,12 +18,12 @@ Image::Image(){
 
 void Image::setImage(std::string name){
 	tex = resman.loadTexture(name);
-	scale = glm::vec2(tex.width, tex.height);
+	size = glm::ivec2(tex.width, tex.height);
 }
 
 void Image::setImage(Texture t){
 	tex = t;
-	scale = glm::vec2(tex.width, tex.height);
+	size = glm::ivec2(tex.width, tex.height);
 }
 
 void Image::draw(ShaderProgram *prg){
@@ -36,8 +36,9 @@ void Image::draw(ShaderProgram *prg){
 	}
 
 	glm::vec2 tScale;
-	tScale.x = scale.x/width;
-	tScale.y = scale.y/height;
+	tScale.x = (float)size.x/width;
+	tScale.y = (float)size.y/height;
+	tScale *= scale;
 
 	tpos.x = tpos.x/width;
 	tpos.y = tpos.y/height;

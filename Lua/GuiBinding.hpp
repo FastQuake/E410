@@ -16,6 +16,7 @@ Box *l_toGuiBox(lua_State *l, int pos);
 
 int l_GuisetPos(lua_State *l);
 int l_GuisetScale(lua_State *l);
+int l_GuisetSize(lua_State *l);
 int l_GuisetVisible(lua_State *l);
 int l_GuisetZ(lua_State *l);
 int l_Guidelete(lua_State *l);
@@ -57,6 +58,7 @@ static const struct luaL_Reg GUI_methods[] = {
 	{"__gc", l_Guidelete},
 	{"setPos",l_GuisetPos},
 	{"setScale",l_GuisetScale},
+	{"setSize", l_GuisetSize},
 	{"setVisible",l_GuisetVisible},
 	{"setZ",l_GuisetZ},
 	{"setString", l_GuisetString},

@@ -10,7 +10,7 @@ function HUD.create(player)
 	h.gui = {}
 	--Create healthbar
 	h.gui.hp = GUI.createBox()
-	h.gui.hp:setScale(400,30)
+	h.gui.hp:setSize(400,30)
 	h.gui.hp:setPos(width/2-200,10)
 	h.gui.hp:setColour(0.78,0,0,1)
 
@@ -37,7 +37,7 @@ end
 function HUD:update()
 	local scale = self.player.hp/100
 	self.gui.hp:setPos(width/2 - (400*scale)/2,10)
-	self.gui.hp:setScale(scale*400,30)
+	self.gui.hp:setSize(scale*400,30)
 	self.gui.ammo:setString(player.ammo)
 	
 	if player.model ~= nil then
