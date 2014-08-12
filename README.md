@@ -1,7 +1,7 @@
 E410
 =====
 
-Copyright © 2014 John Brooks
+Copyright © 2014 John Brooks and Lucas Fryzek
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
